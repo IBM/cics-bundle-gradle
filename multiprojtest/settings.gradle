@@ -1,0 +1,4 @@
+rootProject.name = 'multiprojtest'
+include 'helloworldwar'
+include 'the-cics-bundle'
+

@@ -1,0 +1,28 @@
+plugins {
+    id 'war'
+    id 'org.gretty' version '2.3.0'
+}
+
+group 'com.ibm.cics.spb.war'
+version '1.0-SNAPSHOT'
+
+sourceCompatibility = 1.8
+
+repositories {
+    jcenter()
+//    mavenCentral()
+}
+
+configurations {
+    war {}
+}
+
+dependencies {
+    testCompile group: 'junit', name: 'junit', version: '4.12'
+    providedCompile 'javax.servlet:javax.servlet-api:3.1.0'
+    testCompile 'junit:junit:4.12'
+}
+
+artifacts {
+    war tasks.war
+}
