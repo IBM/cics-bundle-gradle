@@ -26,3 +26,7 @@ multiprojtest/helloworldwar/\.classpath
 multiprojtest/helloworldwar/\.project
 
 multiprojtest/\.project
+
+\.idea/
+
+\.gradle/

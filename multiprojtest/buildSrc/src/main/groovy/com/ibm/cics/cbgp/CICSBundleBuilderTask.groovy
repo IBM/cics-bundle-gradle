@@ -1,9 +1,12 @@
 package com.ibm.cics.cbgp
 
 import org.gradle.api.DefaultTask
-import org.gradle.api.artifacts.Configuration
-import org.gradle.api.tasks.TaskAction
 import org.gradle.api.GradleException
+import org.gradle.api.artifacts.Configuration
+import org.gradle.api.internal.artifacts.dependencies.DefaultExternalModuleDependency
+import org.gradle.api.internal.artifacts.dependencies.DefaultProjectDependency
+import org.gradle.api.internal.file.copy.DefaultFileCopyDetails
+import org.gradle.api.tasks.TaskAction
 
 class CICSBundleBuilderTask extends DefaultTask {
 
@@ -11,6 +14,7 @@ class CICSBundleBuilderTask extends DefaultTask {
 
     @TaskAction
     def buildCICSBundle() {
+        print "Task buildCICSBundle (Gradle $project.gradle.gradleVersion) "
 
         // Find & process the configuration
         def foundConfig = false
@@ -18,28 +22,59 @@ class CICSBundleBuilderTask extends DefaultTask {
             if (it.name == CICS_BUNDLE_CONFIG_NAME) {
                 processCICSBundle(it)
                 foundConfig = true
-             }
+            }
         }
 
         if (!foundConfig) {
+            println()
             throw new GradleException("Define \'$CICS_BUNDLE_CONFIG_NAME\' configuration with CICS bundle dependencies")
         }
-
     }
 
-    def processCICSBundle( Configuration config) {
-        println("Processing config")
+    def processCICSBundle(Configuration config) {
+        println("processing \'$CICS_BUNDLE_CONFIG_NAME\' configuration")
+        def filesCopied = []
         project.copy {
             from config
             eachFile {
                 println(" Copying $it")
+                filesCopied << it
             }
             into "$project.buildDir/$project.name-$project.version"
         }
-        config.dependencies.each {
-            println(it)
-        }
+        checkDependenciesCopied(filesCopied, config)
     }
 
-
+    private void checkDependenciesCopied(List filesCopied, Configuration config) {
+        if (filesCopied.size() < config.dependencies.size()) {
+            config.dependencies.each { dep ->
+                def foundDependency = false
+                for (def copied : filesCopied) {
+                    if (copied instanceof DefaultFileCopyDetails) {
+                        def copiedFullPath = copied.file.toString()
+                        // Check here by dependency type
+                        if (dep instanceof DefaultProjectDependency) {
+                            if (copiedFullPath.contains(dep.dependencyProject.name)
+                                    && copiedFullPath.contains(dep.dependencyProject.version)
+                                    && copiedFullPath.contains(dep.dependencyProject.group)) {
+                                foundDependency = true;
+                                break;
+                            }
+                        } else if (dep instanceof DefaultExternalModuleDependency) {
+                            if (copiedFullPath.contains(dep.name)
+                                    && copiedFullPath.contains(dep.version)
+                                    && copiedFullPath.contains(dep.group)) {
+                                foundDependency = true;
+                                break;
+                            }
+                        } else throw new GradleException("Unexpected dependency type" + dep.class.toString() + "for dependency $dep")
+                    }
+                }
+                if (!foundDependency) {
+                    println(" Missing dependency: $dep")
+                }
+            }
+            throw new GradleException("Failed, missing dependencies from '$CICS_BUNDLE_CONFIG_NAME' configuration")
+        }
+    }
 }
