@@ -1,0 +1,4 @@
+rootProject.name = 'cics-bundle-gradle'
+include 'helloworldwar'
+include 'the-cics-bundle'
+

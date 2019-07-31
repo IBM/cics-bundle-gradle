@@ -1,0 +1,47 @@
+// tag::automatic-classpath[]
+plugins {
+    id 'groovy'
+    id 'java-gradle-plugin'
+}
+
+// end::automatic-classpath[]
+
+repositories {
+    mavenCentral()
+}
+
+
+// Write the plugin's classpath to a file to share with the tests
+task createClasspathManifest {
+    def outputDir = file("$buildDir/$name")
+
+    inputs.files sourceSets.main.runtimeClasspath
+    outputs.dir outputDir
+
+    doLast {
+        outputDir.mkdirs()
+        file("$outputDir/plugin-classpath.txt").text = sourceSets.main.runtimeClasspath.join("\n")
+    }
+}
+
+dependencies {
+    testCompile gradleTestKit()
+    testCompile 'junit:junit:4.12'
+    testImplementation('org.spockframework:spock-core:1.1-groovy-2.4') {
+        exclude module: 'groovy-all'
+        // Add the classpath file to the test runtime classpath
+        testRuntime files(createClasspathManifest)
+    }
+}
+
+
+//test {
+//    debug true
+//}
+//
+//tasks.withType(Test) {
+//    if (System.getProperty('DEBUG', 'false') == 'true') {
+//        jvmArgs '-Xdebug',
+//                '-Xrunjdwp:transport=dt_socket,server=y,suspend=y,address=51878'
+//    }
+//}

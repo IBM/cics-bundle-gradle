@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="com.ibm.cics.cbgp.TrialFunctionalTest" tests="1" skipped="0" failures="1" errors="0" timestamp="2019-07-31T11:43:26" hostname="steves-mbp-2.hursley.uk.ibm.com" time="4.12">
+  <properties/>
+  <testcase name="missing cicsBundle config prints error message" classname="com.ibm.cics.cbgp.TrialFunctionalTest" time="4.12">
+    <failure message="org.gradle.testkit.runner.UnexpectedBuildFailure: Unexpected build execution failure in /var/folders/1t/71j_fsj96fn7qvhmllp9vlw80000gn/T/junit9185802148133887971 with arguments [buildCICSBundle]&#10;&#10;Output:&#10;&#10;FAILURE: Build failed with an exception.&#10;&#10;* Where:&#10;Build file '/private/var/folders/1t/71j_fsj96fn7qvhmllp9vlw80000gn/T/junit9185802148133887971/build.gradle' line: 16&#10;&#10;* What went wrong:&#10;A problem occurred evaluating root project 'multiprojtest'.&#10;&gt; Project with path 'buildSrc' could not be found in root project 'multiprojtest'.&#10;&#10;* Try:&#10;Run with --stacktrace option to get the stack trace. Run with --info or --debug option to get more log output. Run with --scan to get full insights.&#10;&#10;* Get more help at https://help.gradle.org&#10;&#10;BUILD FAILED in 2s&#10;" type="org.gradle.testkit.runner.UnexpectedBuildFailure">org.gradle.testkit.runner.UnexpectedBuildFailure: Unexpected build execution failure in /var/folders/1t/71j_fsj96fn7qvhmllp9vlw80000gn/T/junit9185802148133887971 with arguments [buildCICSBundle]
+
+Output:
+
+FAILURE: Build failed with an exception.
+
+* Where:
+Build file '/private/var/folders/1t/71j_fsj96fn7qvhmllp9vlw80000gn/T/junit9185802148133887971/build.gradle' line: 16
+
+* What went wrong:
+A problem occurred evaluating root project 'multiprojtest'.
+&gt; Project with path 'buildSrc' could not be found in root project 'multiprojtest'.
+
+* Try:
+Run with --stacktrace option to get the stack trace. Run with --info or --debug option to get more log output. Run with --scan to get full insights.
+
+* Get more help at https://help.gradle.org
+
+BUILD FAILED in 2s
+
+	at org.gradle.testkit.runner.internal.DefaultGradleRunner$2.execute(DefaultGradleRunner.java:254)
+	at org.gradle.testkit.runner.internal.DefaultGradleRunner$2.execute(DefaultGradleRunner.java:251)
+	at org.gradle.testkit.runner.internal.DefaultGradleRunner.run(DefaultGradleRunner.java:322)
+	at org.gradle.testkit.runner.internal.DefaultGradleRunner.build(DefaultGradleRunner.java:251)
+	at org.gradle.testkit.runner.internal.DefaultGradleRunner$build$1.call(Unknown Source)
+	at org.codehaus.groovy.runtime.callsite.CallSiteArray.defaultCall(CallSiteArray.java:47)
+	at org.codehaus.groovy.runtime.callsite.AbstractCallSite.call(AbstractCallSite.java:115)
+	at org.codehaus.groovy.runtime.callsite.AbstractCallSite.call(AbstractCallSite.java:119)
+	at com.ibm.cics.cbgp.TrialFunctionalTest.missing cicsBundle config prints error message(TrialFunctionalTest.groovy:62)
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+	at java.lang.reflect.Method.invoke(Method.java:498)
+	at org.junit.runners.model.FrameworkMethod$1.runReflectiveCall(FrameworkMethod.java:50)
+	at org.junit.internal.runners.model.ReflectiveCallable.run(ReflectiveCallable.java:12)
+	at org.junit.runners.model.FrameworkMethod.invokeExplosively(FrameworkMethod.java:47)
+	at org.junit.internal.runners.statements.InvokeMethod.evaluate(InvokeMethod.java:17)
+	at org.junit.internal.runners.statements.RunBefores.evaluate(RunBefores.java:26)
+	at org.junit.rules.ExternalResource$1.evaluate(ExternalResource.java:48)
+	at org.junit.rules.RunRules.evaluate(RunRules.java:20)
+	at org.junit.runners.ParentRunner.runLeaf(ParentRunner.java:325)
+	at org.junit.runners.BlockJUnit4ClassRunner.runChild(BlockJUnit4ClassRunner.java:78)
+	at org.junit.runners.BlockJUnit4ClassRunner.runChild(BlockJUnit4ClassRunner.java:57)
+	at org.junit.runners.ParentRunner$3.run(ParentRunner.java:290)
+	at org.junit.runners.ParentRunner$1.schedule(ParentRunner.java:71)
+	at org.junit.runners.ParentRunner.runChildren(ParentRunner.java:288)
+	at org.junit.runners.ParentRunner.access$000(ParentRunner.java:58)
+	at org.junit.runners.ParentRunner$2.evaluate(ParentRunner.java:268)
+	at org.junit.runners.ParentRunner.run(ParentRunner.java:363)
+	at org.gradle.api.internal.tasks.testing.junit.JUnitTestClassExecutor.runTestClass(JUnitTestClassExecutor.java:110)
+	at org.gradle.api.internal.tasks.testing.junit.JUnitTestClassExecutor.execute(JUnitTestClassExecutor.java:58)
+	at org.gradle.api.internal.tasks.testing.junit.JUnitTestClassExecutor.execute(JUnitTestClassExecutor.java:38)
+	at org.gradle.api.internal.tasks.testing.junit.AbstractJUnitTestClassProcessor.processTestClass(AbstractJUnitTestClassProcessor.java:62)
+	at org.gradle.api.internal.tasks.testing.SuiteTestClassProcessor.processTestClass(SuiteTestClassProcessor.java:51)
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+	at java.lang.reflect.Method.invoke(Method.java:498)
+	at org.gradle.internal.dispatch.ReflectionDispatch.dispatch(ReflectionDispatch.java:35)
+	at org.gradle.internal.dispatch.ReflectionDispatch.dispatch(ReflectionDispatch.java:24)
+	at org.gradle.internal.dispatch.ContextClassLoaderDispatch.dispatch(ContextClassLoaderDispatch.java:32)
+	at org.gradle.internal.dispatch.ProxyDispatchAdapter$DispatchingInvocationHandler.invoke(ProxyDispatchAdapter.java:93)
+	at com.sun.proxy.$Proxy2.processTestClass(Unknown Source)
+	at org.gradle.api.internal.tasks.testing.worker.TestWorker.processTestClass(TestWorker.java:118)
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+	at java.lang.reflect.Method.invoke(Method.java:498)
+	at org.gradle.internal.dispatch.ReflectionDispatch.dispatch(ReflectionDispatch.java:35)
+	at org.gradle.internal.dispatch.ReflectionDispatch.dispatch(ReflectionDispatch.java:24)
+	at org.gradle.internal.remote.internal.hub.MessageHubBackedObjectConnection$DispatchWrapper.dispatch(MessageHubBackedObjectConnection.java:175)
+	at org.gradle.internal.remote.internal.hub.MessageHubBackedObjectConnection$DispatchWrapper.dispatch(MessageHubBackedObjectConnection.java:157)
+	at org.gradle.internal.remote.internal.hub.MessageHub$Handler.run(MessageHub.java:404)
+	at org.gradle.internal.concurrent.ExecutorPolicy$CatchAndRecordFailures.onExecute(ExecutorPolicy.java:63)
+	at org.gradle.internal.concurrent.ManagedExecutorImpl$1.run(ManagedExecutorImpl.java:46)
+	at java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1149)
+	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:624)
+	at org.gradle.internal.concurrent.ThreadFactoryImpl$ManagedThreadRunnable.run(ThreadFactoryImpl.java:55)
+	at java.lang.Thread.run(Thread.java:748)
+</failure>
+  </testcase>
+  <system-out><![CDATA[  Build file ----
+  1 : 
+  2 :             version '1.0.0-SNAPSHOT'
+  3 :             
+  4 : //            apply plugin: com.ibm.cics.cbgp.BundlePlugin
+  5 :             
+  6 :             repositories {
+  7 :                 jcenter()
+  8 :                 mavenCentral()
+  9 :             }
+  10 :             
+  11 :             configurations {
+  12 :                 cicsBundleX
+  13 :             }
+  14 :             
+  15 :             dependencies {
+  16 :                 project(path: 'buildSrc')
+  17 :                 classpath("com.ibm.cics.cbgp.BundlePlugin:1.0.0-SNAPSHOT")
+  18 :                 cicsBundleX(group: 'org.glassfish.main.admingui', name: 'war', version: '5.1.0', ext: 'war'  )
+  19 :             }
+  20 :         
+  -----
+]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>
