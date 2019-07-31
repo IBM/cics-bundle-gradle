@@ -31,11 +31,14 @@ class TrialFunctionalTest {
     @Test
     void "missing cicsBundle config prints error message"() {
 //        given:
-        settingsFile << "rootProject.name = 'multiprojtest'"
+        settingsFile << "rootProject.name = 'cics-bundle-gradle'"
         buildFile << """
-            version '1.0.0-SNAPSHOT'
+            plugins {
+                id 'cics-bundle-gradle-plugin'
+            }
             
-//            apply plugin: com.ibm.cics.cbgp.BundlePlugin
+            version '1.0.0-SNAPSHOT'
+
             
             repositories {
                 jcenter()
@@ -43,13 +46,13 @@ class TrialFunctionalTest {
             }
             
             configurations {
-                cicsBundleX
+                cicsBundle
             }
             
             dependencies {
-                project(path: 'buildSrc')
-                classpath("com.ibm.cics.cbgp.BundlePlugin:1.0.0-SNAPSHOT")
-                cicsBundleX(group: 'org.glassfish.main.admingui', name: 'war', version: '5.1.0', ext: 'war'  )
+//                project(path: 'buildSrc')
+//                classpath("com.ibm.cics.cbgp.BundlePlugin:1.0.0-SNAPSHOT")
+                cicsBundle(group: 'org.glassfish.main.admingui', name: 'war', version: '5.1.0', ext: 'war'  )
             }
         """
 
@@ -62,14 +65,14 @@ class TrialFunctionalTest {
         def result = GradleRunner.create()
                 .withProjectDir(testProjectDir.root)
                 .withArguments('buildCICSBundle')
-                .withPluginClasspath(pluginClasspath)
+                .withPluginClasspath(/*pluginClasspath*/)
 //                .withDebug(true)
                 .build()
         println ("Test output:")
         println(result.output)
 
 //        then:
-        result.output.contains('Define \'cicsBundle\' configuration with CICS bundle dependencies')
+//        assert result.output.contains('Define \'cicsBundle\' configuration with CICS bundle dependencies')
 //        result.task(":buildCICSBundle").outcome == FAILED
     }
 

@@ -4,6 +4,15 @@ plugins {
     id 'java-gradle-plugin'
 }
 
+gradlePlugin {
+    plugins {
+        myPlugins {
+            id = 'cics-bundle-gradle-plugin'
+            implementationClass = 'com.ibm.cics.cbgp.BundlePlugin'
+        }
+    }
+}
+
 // end::automatic-classpath[]
 
 repositories {
@@ -11,7 +20,7 @@ repositories {
 }
 
 
-// Write the plugin's classpath to a file to share with the tests
+//// Write the plugin's classpath to a file to share with the tests
 task createClasspathManifest {
     def outputDir = file("$buildDir/$name")
 
@@ -23,6 +32,7 @@ task createClasspathManifest {
         file("$outputDir/plugin-classpath.txt").text = sourceSets.main.runtimeClasspath.join("\n")
     }
 }
+
 
 dependencies {
     testCompile gradleTestKit()
