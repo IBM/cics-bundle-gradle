@@ -21,12 +21,7 @@ class TrialFunctionalTest {
         ExpandoMetaClass.disableGlobally()
         settingsFile = testProjectDir.newFile('settings.gradle')
         buildFile = testProjectDir.newFile('build.gradle')
-        def pluginClasspathResource = getClass().classLoader.findResource("plugin-classpath.txt")
-        if (pluginClasspathResource == null) {
-            throw new IllegalStateException("Did not find plugin classpath resource, run `testClasses` build task.")
-        }
-      pluginClasspath = pluginClasspathResource.readLines().collect {  new File(it) }
-    }
+     }
 
     @Test
     void "missing cicsBundle config prints error message"() {
