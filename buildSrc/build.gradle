@@ -1,0 +1,25 @@
+plugins {
+    id 'groovy'
+    id 'java-gradle-plugin'
+}
+
+gradlePlugin {
+    plugins {
+        myPlugins {
+            id = 'cics-bundle-gradle-plugin'
+            implementationClass = 'com.ibm.cics.cbgp.BundlePlugin'
+        }
+    }
+}
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    testCompile gradleTestKit()
+    testCompile 'junit:junit:4.12'
+    testImplementation('org.spockframework:spock-core:1.1-groovy-2.4') {
+        exclude module: 'groovy-all'
+    }
+}
