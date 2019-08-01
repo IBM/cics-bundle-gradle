@@ -1,5 +1,7 @@
 package com.ibm.cics.cbgp
 
+import org.gradle.api.GradleException
+import org.gradle.testkit.runner.BuildResult
 import org.gradle.testkit.runner.GradleRunner
 import org.gradle.testkit.runner.TaskOutcome
 import org.junit.Rule
@@ -48,17 +50,57 @@ class ChecksAndCopyTests extends Specification{
         def result = GradleRunner.create()
                 .withProjectDir(testProjectDir.root)
                 .withArguments('buildCICSBundle')
-                .withPluginClasspath(/*pluginClasspath*/)
-                .withDebug(true)
+                .withPluginClasspath()
                 .build()
-        println ("Test output:")
-        println(result.output)
+        printTestOutput(result)
 
         then:
         assert result.output.contains('org.glassfish.main.admingui')
         assert result.output.contains('war-5.1.0.war')
         assert(getFileInBuildOutputFolder('/war-5.1.0.war').exists())
         result.task(":buildCICSBundle").outcome == SUCCESS
+    }
+
+   def "Test incorrect configuration name"()  {
+        given:
+        settingsFile << "rootProject.name = 'cics-bundle-gradle'"
+        buildFile << """
+            plugins {
+                id 'cics-bundle-gradle-plugin'
+            }
+            
+            version '1.0.0-SNAPSHOT'
+            
+            repositories {
+                mavenCentral()
+            }
+            
+            configurations {
+                CICSBundle
+            }
+            
+            dependencies {
+                CICSBundle(group: 'org.glassfish.main.admingui', name: 'war', version: '5.1.0', ext: 'war'  )
+            }
+        """
+
+        when:
+        def result = GradleRunner.create()
+                .withProjectDir(testProjectDir.root)
+                .withArguments('buildCICSBundle')
+                .withPluginClasspath()
+                .buildAndFail()
+        printTestOutput(result)
+
+        then:
+        assert result.output.contains('Define \'cicsBundle\' configuration with CICS bundle dependencies')
+        result.task(":buildCICSBundle").outcome == FAILED
+    }
+
+    private void printTestOutput(BuildResult result) {
+        println("Test output: ----")
+        println(result.output)
+        println('-----')
     }
 
     private File getFileInBuildOutputFolder(String fileName) {
@@ -85,9 +127,4 @@ class ChecksAndCopyTests extends Specification{
         }
         println('  -----')
     }
-
-    private void savedAssertForNextTest() {
-//        assert result.output.contains('Define \'cicsBundle\' configuration with CICS bundle dependencies')
-    }
-
 }
