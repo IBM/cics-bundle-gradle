@@ -1,19 +1,33 @@
 package com.ibm.cics.cbgp
 
-import org.gradle.api.GradleException
+/*-
+ * #%L
+ * CICS Bundle Gradle Plugin
+ * %%
+ * Copyright (C) 2019 IBM Corp.
+ * %%
+ * This program and the accompanying materials are made
+ * available under the terms of the Eclipse Public License 2.0
+ * which is available at https://www.eclipse.org/legal/epl-2.0/
+ *
+ * SPDX-License-Identifier: EPL-2.0
+ * #L%
+ */
+
 import org.gradle.testkit.runner.BuildResult
 import org.gradle.testkit.runner.GradleRunner
-import org.gradle.testkit.runner.TaskOutcome
 import org.junit.Rule
 import org.junit.rules.TemporaryFolder
 import spock.lang.Specification
 
-import static org.gradle.testkit.runner.TaskOutcome.*
+import static org.gradle.testkit.runner.TaskOutcome.FAILED
+import static org.gradle.testkit.runner.TaskOutcome.SUCCESS
 
-class ChecksAndCopyTests extends Specification{
+class ChecksAndCopyTests extends Specification {
     List<File> pluginClasspath
 
-    @Rule public TemporaryFolder testProjectDir = new TemporaryFolder()
+    @Rule
+    public TemporaryFolder testProjectDir = new TemporaryFolder()
     File settingsFile
     File buildFile
 
@@ -21,7 +35,7 @@ class ChecksAndCopyTests extends Specification{
         ExpandoMetaClass.disableGlobally()
         settingsFile = testProjectDir.newFile('settings.gradle')
         buildFile = testProjectDir.newFile('build.gradle')
-     }
+    }
 
     def "Test maven central external module dependency"() {
         given:
@@ -57,11 +71,11 @@ class ChecksAndCopyTests extends Specification{
         then:
         assert result.output.contains('org.glassfish.main.admingui')
         assert result.output.contains('war-5.1.0.war')
-        assert(getFileInBuildOutputFolder('/war-5.1.0.war').exists())
+        assert (getFileInBuildOutputFolder('/war-5.1.0.war').exists())
         result.task(":buildCICSBundle").outcome == SUCCESS
     }
 
-   def "Test incorrect configuration name"()  {
+    def "Test incorrect configuration name"() {
         given:
         settingsFile << "rootProject.name = 'cics-bundle-gradle'"
         buildFile << """
@@ -119,7 +133,7 @@ class ChecksAndCopyTests extends Specification{
     }
 
     private void printTemporaryFileTree() {
-        def tempFolder = new File( buildFile.parent)
+        def tempFolder = new File(buildFile.parent)
 
         println("  Temp file tree: $tempFolder  ----")
         tempFolder.traverse {

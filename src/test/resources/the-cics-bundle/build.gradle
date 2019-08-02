@@ -1,6 +1,6 @@
-plugins {
-    id 'cics-bundle-gradle-plugin'
-}
+//plugins {
+//    id 'cics-bundle-gradle-plugin'
+//}
 
 version '1.0.0-SNAPSHOT'
 
