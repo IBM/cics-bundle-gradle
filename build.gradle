@@ -1,13 +1,40 @@
+/*-
+ * #%L
+ * CICS Bundle Gradle Plugin
+ * %%
+ * Copyright (C) 2019 IBM Corp.
+ * %%
+ * This program and the accompanying materials are made
+ * available under the terms of the Eclipse Public License 2.0
+ * which is available at https://www.eclipse.org/legal/epl-2.0/
+ * 
+ * SPDX-License-Identifier: EPL-2.0
+ * #L%
+ */
 plugins {
-//    id 'java'
-//    id 'java-library'
+    id 'groovy'
+    id 'java-gradle-plugin'
 }
 
-allprojects {
-    task hello {
-        doLast { task ->
-            println "I'm $task.project.name"
+gradlePlugin {
+    plugins {
+        myPlugins {
+            id = 'cics-bundle-gradle-plugin'
+            implementationClass = 'com.ibm.cics.cbgp.BundlePlugin'
         }
     }
 }
 
+repositories {
+    mavenCentral()
+}
+
+defaultTasks 'clean', 'build', 'check'
+
+dependencies {
+    testCompile gradleTestKit()
+    testCompile 'junit:junit:4.12'
+    testImplementation('org.spockframework:spock-core:1.1-groovy-2.4') {
+        exclude module: 'groovy-all'
+    }
+}
