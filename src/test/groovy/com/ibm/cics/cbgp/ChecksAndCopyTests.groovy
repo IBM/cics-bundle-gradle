@@ -1,5 +1,8 @@
 package com.ibm.cics.cbgp
 
+
+import org.gradle.testkit.runner.BuildResult
+
 /*-
  * #%L
  * CICS Bundle Gradle Plugin
@@ -14,7 +17,6 @@ package com.ibm.cics.cbgp
  * #L%
  */
 
-import org.gradle.testkit.runner.BuildResult
 import org.gradle.testkit.runner.GradleRunner
 import org.junit.Rule
 import org.junit.rules.TemporaryFolder
@@ -40,7 +42,7 @@ class ChecksAndCopyTests extends Specification {
     def "Test maven central external module dependency"() {
         given:
         settingsFile << "rootProject.name = 'cics-bundle-gradle'"
-        buildFile << """
+        buildFile << """\
             plugins {
                 id 'cics-bundle-gradle-plugin'
             }
@@ -66,7 +68,7 @@ class ChecksAndCopyTests extends Specification {
                 .withArguments('buildCICSBundle')
                 .withPluginClasspath()
                 .build()
-        printTestOutput(result)
+        printTestOutput(result,"Test maven central external module dependency")
 
         then:
         assert result.output.contains('org.glassfish.main.admingui')
@@ -78,7 +80,7 @@ class ChecksAndCopyTests extends Specification {
     def "Test incorrect configuration name"() {
         given:
         settingsFile << "rootProject.name = 'cics-bundle-gradle'"
-        buildFile << """
+        buildFile << """\
             plugins {
                 id 'cics-bundle-gradle-plugin'
             }
@@ -104,17 +106,75 @@ class ChecksAndCopyTests extends Specification {
                 .withArguments('buildCICSBundle')
                 .withPluginClasspath()
                 .buildAndFail()
-        printTestOutput(result)
+        printTestOutput(result,"Test incorrect configuration name")
 
         then:
         assert result.output.contains('Define \'cicsBundle\' configuration with CICS bundle dependencies')
         result.task(":buildCICSBundle").outcome == FAILED
     }
 
-    private void printTestOutput(BuildResult result) {
-        println("Test output: ----")
+    def "Test local project dependency"() {
+
+        def warProjectName = 'helloworldwar'
+
+        given:
+        settingsFile << """\
+            rootProject.name = 'cics-bundle-gradle'
+            include '$warProjectName'
+            """
+        buildFile << """\
+            plugins {
+                id 'cics-bundle-gradle-plugin'
+            }
+            
+            version '1.0.0-SNAPSHOT'
+            
+            repositories {
+                mavenCentral()
+            }
+            
+            configurations {
+                cicsBundle
+            }
+            
+            dependencies {
+                cicsBundle project(path: ':$warProjectName', configuration: 'war')
+            }
+        """
+
+        // Copy the helloworldwar project into the test build
+        def pluginClasspathResource = getClass().classLoader.findResource(warProjectName)
+        if (pluginClasspathResource == null) {
+            throw new IllegalStateException("Did not find $warProjectName resource.")
+        }
+
+        def root = new File(pluginClasspathResource.path).parent
+        new AntBuilder().copy(todir: (buildFile.parent + "/" + warProjectName).toString()) {
+            fileset(dir: (root + "/" + warProjectName).toString())
+        }
+
+        when:
+        def result = GradleRunner.create()
+                .withProjectDir(testProjectDir.root)
+                .withArguments('build','buildCICSBundle')  // Separate strings for each task!
+                .withPluginClasspath()
+                .build()
+        printTestOutput(result,"Test local project dependency")
+
+        then:
+        def builtWarName = "${warProjectName}-1.0-SNAPSHOT.war"
+        assert result.output.contains('Task :helloworldwar:build')
+        assert result.output.contains(builtWarName)
+        assert (getFileInBuildOutputFolder(builtWarName).exists())
+        result.task(":buildCICSBundle").outcome == SUCCESS
+    }
+
+    private void printTestOutput(BuildResult result, String testname) {
+        def title = "\n----- '$testname' output: -----"
+        println(title)
         println(result.output)
-        println('-----')
+        println('-' * title.length())
+        println()
     }
 
     private File getFileInBuildOutputFolder(String fileName) {
@@ -141,4 +201,5 @@ class ChecksAndCopyTests extends Specification {
         }
         println('  -----')
     }
+
 }
