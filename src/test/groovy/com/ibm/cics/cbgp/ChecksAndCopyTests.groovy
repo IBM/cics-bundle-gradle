@@ -1,7 +1,6 @@
 package com.ibm.cics.cbgp
 
 
-import org.gradle.testkit.runner.BuildResult
 
 /*-
  * #%L
@@ -17,6 +16,7 @@ import org.gradle.testkit.runner.BuildResult
  * #L%
  */
 
+import org.gradle.testkit.runner.BuildResult
 import org.gradle.testkit.runner.GradleRunner
 import org.junit.Rule
 import org.junit.rules.TemporaryFolder
