@@ -1,7 +1,5 @@
 package com.ibm.cics.cbgp
 
-
-
 /*-
  * #%L
  * CICS Bundle Gradle Plugin
@@ -37,6 +35,43 @@ class ChecksAndCopyTests extends Specification {
         ExpandoMetaClass.disableGlobally()
         settingsFile = testProjectDir.newFile('settings.gradle')
         buildFile = testProjectDir.newFile('build.gradle')
+    }
+
+    def "Test jcenter central external module dependency"() {
+        given:
+        settingsFile << "rootProject.name = 'cics-bundle-gradle'"
+        buildFile << """\
+            plugins {
+                id 'cics-bundle-gradle-plugin'
+            }
+            
+            version '1.0.0-SNAPSHOT'
+            
+            repositories {
+                jcenter()
+            }
+            
+            configurations {
+                cicsBundle
+            }
+            
+            dependencies {
+                cicsBundle('javax.servlet:javax.servlet-api:3.1.0@jar')
+            }
+        """
+
+        when:
+        def result = GradleRunner.create()
+                .withProjectDir(testProjectDir.root)
+                .withArguments('buildCICSBundle')
+                .withPluginClasspath()
+                .build()
+        printTestOutput(result,"Test jcenter central external module dependency")
+
+        then:
+        assert result.output.contains('javax.servlet-api-3.1.0.jar')
+        assert (getFileInBuildOutputFolder('/javax.servlet-api-3.1.0.jar').exists())
+        result.task(":buildCICSBundle").outcome == SUCCESS
     }
 
     def "Test maven central external module dependency"() {
