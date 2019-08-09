@@ -25,6 +25,7 @@ import org.gradle.api.tasks.TaskAction
 class CICSBundleBuilderTask extends DefaultTask {
 
     public static final String CICS_BUNDLE_CONFIG_NAME = "cicsBundle"
+    public static final List validDependencyFileExtensions = ['ear', 'jar', 'war']
 
     @TaskAction
     def buildCICSBundle() {
@@ -56,6 +57,7 @@ class CICSBundleBuilderTask extends DefaultTask {
             }
             into "$project.buildDir/$project.name-$project.version"
         }
+        checkCopiedFileExtensions(filesCopied)
         checkDependenciesCopied(filesCopied, config)
     }
 
@@ -91,4 +93,23 @@ class CICSBundleBuilderTask extends DefaultTask {
             throw new GradleException("Failed, missing dependencies from '$CICS_BUNDLE_CONFIG_NAME' configuration")
         }
     }
+
+    private void checkCopiedFileExtensions(List filesCopied) {
+        def allExtensionsOk = true
+        filesCopied.each() {
+            def name = it.name
+            def splits = name.split('\\.')
+            def extension = splits[splits.length - 1]
+            def extensionOK = (splits.size() >= 2 && validDependencyFileExtensions.contains(extension))
+            if (!extensionOK) {
+                println("Invalid file extension '$extension' for copied dependency '$it.path'")
+                allExtensionsOk = false
+            }
+        }
+        if (!allExtensionsOk) {
+            throw new GradleException("Unsupported file extensions for some dependencies")
+        }
+
+    }
+
 }
