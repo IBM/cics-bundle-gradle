@@ -37,7 +37,7 @@ class ChecksAndCopyTests extends Specification {
         buildFile = testProjectDir.newFile('build.gradle')
     }
 
-    def "Test jcenter central external module dependency"() {
+    def "Test jcenter jar dependency"() {
         given:
         settingsFile << "rootProject.name = 'cics-bundle-gradle'"
         buildFile << """\
@@ -66,7 +66,7 @@ class ChecksAndCopyTests extends Specification {
                 .withArguments('buildCICSBundle')
                 .withPluginClasspath()
                 .build()
-        printTestOutput(result,"Test jcenter central external module dependency")
+        printTestOutput(result,"Test jcenter jar dependency")
 
         then:
         assert result.output.contains('javax.servlet-api-3.1.0.jar')
@@ -74,7 +74,7 @@ class ChecksAndCopyTests extends Specification {
         result.task(":buildCICSBundle").outcome == SUCCESS
     }
 
-    def "Test maven central external module dependency"() {
+    def "Test maven war dependency"() {
         given:
         settingsFile << "rootProject.name = 'cics-bundle-gradle'"
         buildFile << """\
@@ -103,12 +103,50 @@ class ChecksAndCopyTests extends Specification {
                 .withArguments('buildCICSBundle')
                 .withPluginClasspath()
                 .build()
-        printTestOutput(result,"Test maven central external module dependency")
+        printTestOutput(result,"Test maven war dependency")
 
         then:
         assert result.output.contains('org.glassfish.main.admingui')
         assert result.output.contains('war-5.1.0.war')
         assert (getFileInBuildOutputFolder('/war-5.1.0.war').exists())
+        result.task(":buildCICSBundle").outcome == SUCCESS
+    }
+
+    def "Test maven ear dependency"() {
+        given:
+        settingsFile << "rootProject.name = 'cics-bundle-gradle'"
+        buildFile << """\
+            plugins {
+                id 'cics-bundle-gradle-plugin'
+            }
+            
+            version '1.0.0-SNAPSHOT'
+            
+            repositories {
+                mavenCentral()
+            }
+            
+            configurations {
+                cicsBundle
+            }
+            
+            dependencies {
+                cicsBundle(group: 'org.codehaus.cargo', name: 'simple-ear', version: '1.7.6', ext: 'ear'  )
+            }
+        """
+
+        when:
+        def result = GradleRunner.create()
+                .withProjectDir(testProjectDir.root)
+                .withArguments('buildCICSBundle')
+                .withPluginClasspath()
+                .build()
+        printTestOutput(result,"Test maven ear dependency")
+
+        then:
+        assert result.output.contains('org.codehaus.cargo')
+        assert result.output.contains('simple-ear-1.7.6.ear')
+        assert (getFileInBuildOutputFolder('/simple-ear-1.7.6.ear').exists())
         result.task(":buildCICSBundle").outcome == SUCCESS
     }
 
@@ -202,6 +240,43 @@ class ChecksAndCopyTests extends Specification {
         assert result.output.contains(builtWarName)
         assert (getFileInBuildOutputFolder(builtWarName).exists())
         result.task(":buildCICSBundle").outcome == SUCCESS
+    }
+
+    def "Test incorrect dependency extension"() {
+        given:
+        settingsFile << "rootProject.name = 'cics-bundle-gradle'"
+        buildFile << """\
+            plugins {
+                id 'cics-bundle-gradle-plugin'
+            }
+            
+            version '1.0.0-SNAPSHOT'
+            
+            repositories {
+                jcenter()
+            }
+            
+            configurations {
+                cicsBundle
+            }
+            
+            dependencies {
+                cicsBundle(group: 'org.apache.jmeter', name: 'apache-jmeter', version: '2.3.4-atlassian-1'  )
+            }
+        """
+
+        when:
+        def result = GradleRunner.create()
+                .withProjectDir(testProjectDir.root)
+                .withArguments('buildCICSBundle')
+                .withPluginClasspath()
+                .buildAndFail()
+        printTestOutput(result,"Test incorrect dependency extension")
+
+        then:
+        assert result.output.contains('Unsupported file extensions for some dependencies')
+        assert result.output.contains("Invalid file extension 'gz' for copied dependency 'apache-jmeter-2.3.4-atlassian-1.tar.gz'")
+        result.task(":buildCICSBundle").outcome == FAILED
     }
 
     private void printTestOutput(BuildResult result, String testname) {
