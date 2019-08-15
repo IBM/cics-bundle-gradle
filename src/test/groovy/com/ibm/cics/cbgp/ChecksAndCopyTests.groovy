@@ -16,6 +16,7 @@ package com.ibm.cics.cbgp
 
 import org.gradle.testkit.runner.BuildResult
 import org.gradle.testkit.runner.GradleRunner
+import org.gradle.testkit.runner.TaskOutcome
 import org.junit.Rule
 import org.junit.rules.TemporaryFolder
 import spock.lang.Specification
@@ -61,17 +62,10 @@ class ChecksAndCopyTests extends Specification {
         """
 
         when:
-        def result = GradleRunner.create()
-                .withProjectDir(testProjectDir.root)
-                .withArguments('buildCICSBundle')
-                .withPluginClasspath()
-                .build()
-        printTestOutput(result,"Test jcenter jar dependency")
+        def result = runGradle('Test jcenter jar dependency')
 
         then:
-        assert result.output.contains('javax.servlet-api-3.1.0.jar')
-        assert (getFileInBuildOutputFolder('/javax.servlet-api-3.1.0.jar').exists())
-        result.task(":buildCICSBundle").outcome == SUCCESS
+        checkResults(result, ['javax.servlet-api-3.1.0.jar'], ['/javax.servlet-api-3.1.0.jar'], SUCCESS)
     }
 
     def "Test maven war dependency"() {
@@ -98,18 +92,10 @@ class ChecksAndCopyTests extends Specification {
         """
 
         when:
-        def result = GradleRunner.create()
-                .withProjectDir(testProjectDir.root)
-                .withArguments('buildCICSBundle')
-                .withPluginClasspath()
-                .build()
-        printTestOutput(result,"Test maven war dependency")
+        def result = runGradle('Test maven war dependency')
 
         then:
-        assert result.output.contains('org.glassfish.main.admingui')
-        assert result.output.contains('war-5.1.0.war')
-        assert (getFileInBuildOutputFolder('/war-5.1.0.war').exists())
-        result.task(":buildCICSBundle").outcome == SUCCESS
+        checkResults(result, ['org.glassfish.main.admingui', 'war-5.1.0.war'], ['/war-5.1.0.war'], SUCCESS)
     }
 
     def "Test maven ear dependency"() {
@@ -136,18 +122,10 @@ class ChecksAndCopyTests extends Specification {
         """
 
         when:
-        def result = GradleRunner.create()
-                .withProjectDir(testProjectDir.root)
-                .withArguments('buildCICSBundle')
-                .withPluginClasspath()
-                .build()
-        printTestOutput(result,"Test maven ear dependency")
+        def result = runGradle('Test maven ear dependency')
 
         then:
-        assert result.output.contains('org.codehaus.cargo')
-        assert result.output.contains('simple-ear-1.7.6.ear')
-        assert (getFileInBuildOutputFolder('/simple-ear-1.7.6.ear').exists())
-        result.task(":buildCICSBundle").outcome == SUCCESS
+        checkResults(result, ['org.codehaus.cargo', 'simple-ear-1.7.6.ear'], ['/simple-ear-1.7.6.ear'], SUCCESS)
     }
 
     def "Test incorrect configuration name"() {
@@ -174,16 +152,10 @@ class ChecksAndCopyTests extends Specification {
         """
 
         when:
-        def result = GradleRunner.create()
-                .withProjectDir(testProjectDir.root)
-                .withArguments('buildCICSBundle')
-                .withPluginClasspath()
-                .buildAndFail()
-        printTestOutput(result,"Test incorrect configuration name")
+        def result = runGradle('Test incorrect configuration name', ['buildCICSBundle'], true)
 
         then:
-        assert result.output.contains('Define \'cicsBundle\' configuration with CICS bundle dependencies')
-        result.task(":buildCICSBundle").outcome == FAILED
+        checkResults(result, ['Define \'cicsBundle\' configuration with CICS bundle dependencies'], [], FAILED)
     }
 
     def "Test local project dependency"() {
@@ -227,19 +199,11 @@ class ChecksAndCopyTests extends Specification {
         }
 
         when:
-        def result = GradleRunner.create()
-                .withProjectDir(testProjectDir.root)
-                .withArguments('build','buildCICSBundle')  // Separate strings for each task!
-                .withPluginClasspath()
-                .build()
-        printTestOutput(result,"Test local project dependency")
+        def result = runGradle('Test local project dependency', ['build', 'buildCICSBundle'])
 
         then:
         def builtWarName = "${warProjectName}-1.0-SNAPSHOT.war"
-        assert result.output.contains('Task :helloworldwar:build')
-        assert result.output.contains(builtWarName)
-        assert (getFileInBuildOutputFolder(builtWarName).exists())
-        result.task(":buildCICSBundle").outcome == SUCCESS
+        checkResults(result, ['Task :helloworldwar:build', builtWarName], [builtWarName], SUCCESS)
     }
 
     def "Test incorrect dependency extension"() {
@@ -266,25 +230,42 @@ class ChecksAndCopyTests extends Specification {
         """
 
         when:
-        def result = GradleRunner.create()
-                .withProjectDir(testProjectDir.root)
-                .withArguments('buildCICSBundle')
-                .withPluginClasspath()
-                .buildAndFail()
-        printTestOutput(result,"Test incorrect dependency extension")
+        def result = runGradle('Test incorrect dependency extension', ['buildCICSBundle'], true)
 
         then:
-        assert result.output.contains('Unsupported file extensions for some dependencies')
-        assert result.output.contains("Invalid file extension 'gz' for copied dependency 'apache-jmeter-2.3.4-atlassian-1.tar.gz'")
-        result.task(":buildCICSBundle").outcome == FAILED
+        checkResults(result, ['Unsupported file extensions for some dependencies', "Invalid file extension 'gz' for copied dependency 'apache-jmeter-2.3.4-atlassian-1.tar.gz'"], [], FAILED)
     }
 
-    private void printTestOutput(BuildResult result, String testname) {
-        def title = "\n----- '$testname' output: -----"
+    // Run the gradle build with defaults and print the test output
+    def runGradle(String testName, List args = ['buildCICSBundle'], boolean failExpected = false) {
+        def result
+        if (!failExpected) {
+            result = GradleRunner.create().withProjectDir(testProjectDir.root).withArguments(args).withPluginClasspath().build()
+        } else {
+            result = GradleRunner.create().withProjectDir(testProjectDir.root).withArguments(args).withPluginClasspath().buildAndFail()
+        }
+        def title = "\n----- '$testName' output: -----"
         println(title)
         println(result.output)
         println('-' * title.length())
         println()
+        return result
+    }
+
+    def checkResults(BuildResult result, List resultStrings, List outputFiles, TaskOutcome outcome) {
+        resultStrings.each {
+            if (!result.output.contains(it)) {
+                println("Not found in build output: '$it'")
+                assert (false)
+            }
+        }
+        outputFiles.each {
+            if (!getFileInBuildOutputFolder(it).exists()) {
+                println("File not found in output folder: '$it'")
+                assert (false)
+            }
+        }
+        result.task(":buildCICSBundle").outcome == outcome
     }
 
     private File getFileInBuildOutputFolder(String fileName) {
@@ -292,16 +273,6 @@ class ChecksAndCopyTests extends Specification {
     }
 
     // Some useful functions as I can't get debug to work for Gradle Runner tests yet
-    private void printBuildFile() {
-        int lineNumber = 0
-        println('  Build file: ----')
-        buildFile.eachLine { line ->
-            lineNumber++
-            println "  $lineNumber : $line";
-        }
-        println('  -----')
-    }
-
     private void printTemporaryFileTree() {
         def tempFolder = new File(buildFile.parent)
 
