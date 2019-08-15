@@ -102,12 +102,12 @@ class CICSBundleBuilderTask extends DefaultTask {
             def extension = splits[splits.length - 1]
             def extensionOK = (splits.size() >= 2 && validDependencyFileExtensions.contains(extension))
             if (!extensionOK) {
-                println("Invalid file extension '$extension' for copied dependency '$it.path'")
+                println("Unsupported file extension '$extension' for copied dependency '$it.path'")
                 allExtensionsOk = false
             }
         }
         if (!allExtensionsOk) {
-            throw new GradleException("Unsupported file extensions for some dependencies")
+            throw new GradleException("Unsupported file extensions for some dependencies, see earlier messages.")
         }
 
     }

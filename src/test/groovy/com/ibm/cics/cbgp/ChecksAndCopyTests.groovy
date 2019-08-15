@@ -206,9 +206,33 @@ class ChecksAndCopyTests extends Specification {
         checkResults(result, ['Task :helloworldwar:build', builtWarName], [builtWarName], SUCCESS)
     }
 
+    /*
+    If this test fails with something like:
+    ----------------
+    Could not load compiled classes for build file '/private/var/folders/1t/71j_fsj96fn7qvhmllp9vlw80000gn/T/junit1543502614563089245/build.gradle' from cache
+    Expected class file /private/var/folders/1t/71j_fsj96fn7qvhmllp9vlw80000gn/T/.gradle-test-kit-myname/caches....
+    ----------------
+    Then find the .gradle-test-kit folder in the line above and delete it.
+
+    Added temporary cache directory in test folder to avoid this error
+     */
+
     def "Test incorrect dependency extension"() {
+
+        File localBuildCacheDirectory
+        localBuildCacheDirectory = testProjectDir.newFolder('local-cache')
+
         given:
-        settingsFile << "rootProject.name = 'cics-bundle-gradle'"
+        settingsFile << """\
+            rootProject.name = 'cics-bundle-gradle'
+            
+            buildCache {
+                local {
+                    directory '${localBuildCacheDirectory.toURI().toString()}'
+                }
+            }
+            """
+
         buildFile << """\
             plugins {
                 id 'cics-bundle-gradle-plugin'
@@ -233,7 +257,9 @@ class ChecksAndCopyTests extends Specification {
         def result = runGradle('Test incorrect dependency extension', ['buildCICSBundle'], true)
 
         then:
-        checkResults(result, ['Unsupported file extensions for some dependencies', "Invalid file extension 'gz' for copied dependency 'apache-jmeter-2.3.4-atlassian-1.tar.gz'"], [], FAILED)
+        checkResults(result, ['Unsupported file extensions for some dependencies, see earlier messages.',
+                              "Unsupported file extension 'gz' for copied dependency 'apache-jmeter-2.3.4-atlassian-1.tar.gz'"]
+                , [], FAILED)
     }
 
     // Run the gradle build with defaults and print the test output
