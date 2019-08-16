@@ -62,6 +62,11 @@ class CICSBundleBuilderTask extends DefaultTask {
     }
 
     private void checkDependenciesCopied(List filesCopied, Configuration config) {
+        if (config.dependencies.size() == 0) {
+            println("Warning, no external or project dependencies in 'cicsBundle' configuration")
+            return
+        }
+
         if (filesCopied.size() < config.dependencies.size()) {
             config.dependencies.each { dep ->
                 def foundDependency = false

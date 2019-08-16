@@ -262,6 +262,48 @@ class ChecksAndCopyTests extends Specification {
                 , [], FAILED)
     }
 
+   def "Test no cicsBundle dependencies warning"() {
+
+        File localBuildCacheDirectory
+        localBuildCacheDirectory = testProjectDir.newFolder('local-cache')
+
+        given:
+        settingsFile << """\
+            rootProject.name = 'cics-bundle-gradle'
+            
+            buildCache {
+                local {
+                    directory '${localBuildCacheDirectory.toURI().toString()}'
+                }
+            }
+            """
+
+        buildFile << """\
+            plugins {
+                id 'cics-bundle-gradle-plugin'
+            }
+            
+            version '1.0.0-SNAPSHOT'
+            
+            repositories {
+                jcenter()
+            }
+            
+            configurations {
+                cicsBundle
+            }
+            
+            dependencies {
+            }
+        """
+
+        when:
+        def result = runGradle('Test no cicsBundle dependencies warning', ['buildCICSBundle'], false)
+
+        then:
+        checkResults(result, ["Warning, no external or project dependencies in 'cicsBundle' configuration"], [], SUCCESS)
+    }
+
     // Run the gradle build with defaults and print the test output
     def runGradle(String testName, List args = ['buildCICSBundle'], boolean failExpected = false) {
         def result
