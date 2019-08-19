@@ -268,15 +268,7 @@ class ChecksAndCopyTests extends Specification {
         localBuildCacheDirectory = testProjectDir.newFolder('local-cache')
 
         given:
-        settingsFile << """\
-            rootProject.name = 'cics-bundle-gradle'
-            
-            buildCache {
-                local {
-                    directory '${localBuildCacheDirectory.toURI().toString()}'
-                }
-            }
-            """
+        settingsFile << "rootProject.name = 'cics-bundle-gradle'"
 
         buildFile << """\
             plugins {
