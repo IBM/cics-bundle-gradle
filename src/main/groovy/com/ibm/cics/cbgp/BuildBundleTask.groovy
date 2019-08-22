@@ -22,7 +22,7 @@ import org.gradle.api.internal.artifacts.dependencies.DefaultProjectDependency
 import org.gradle.api.internal.file.copy.DefaultFileCopyDetails
 import org.gradle.api.tasks.TaskAction
 
-class CICSBundleBuilderTask extends DefaultTask {
+class BuildBundleTask extends DefaultTask {
 
     public static final String CICS_BUNDLE_CONFIG_NAME = "cicsBundle"
     public static final List validDependencyFileExtensions = ['ear', 'jar', 'war']

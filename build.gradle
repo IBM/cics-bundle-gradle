@@ -27,11 +27,17 @@ gradlePlugin {
 
 repositories {
     mavenCentral()
+    maven {
+        // For cics-bundle-common // TODO update when published formally
+        url "https://oss.sonatype.org/content/repositories/snapshots"
+    }
 }
 
 defaultTasks 'clean', 'build', 'check'
 
 dependencies {
+    implementation 'com.ibm.cics:cics-bundle-common:0.0.1-SNAPSHOT@jar'
+
     testCompile gradleTestKit()
     testCompile 'junit:junit:4.12'
     testImplementation('org.spockframework:spock-core:1.1-groovy-2.4') {
