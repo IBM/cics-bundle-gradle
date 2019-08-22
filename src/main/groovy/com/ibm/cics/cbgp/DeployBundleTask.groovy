@@ -64,32 +64,32 @@ Example:
                 deployExtension.bunddef.length() +
                 deployExtension.csdgroup.length() +
                 deployExtension.serverid.length() == 0) {
-            println(MISSING_CONFIG)
+            logger.error(MISSING_CONFIG)
             blockValid = false
         } else {
             // Validate block items exist, no check on content
             if (deployExtension.defaultjvmserver.length() == 0) {
-                println(MISSING_JVMSERVER)
+                logger.error MISSING_JVMSERVER
                 blockValid = false
             }
             if (deployExtension.cicsplex.length() == 0) {
-                println(MISSING_CICSPLEX)
+                logger.error MISSING_CICSPLEX
                 blockValid = false
             }
             if (deployExtension.region.length() == 0) {
-                println(MISSING_REGION)
+                logger.error MISSING_REGION
                 blockValid = false
             }
             if (deployExtension.bunddef.length() == 0) {
-                println(MISSING_BUNDDEF)
+                logger.error MISSING_BUNDDEF
                 blockValid = false
             }
             if (deployExtension.csdgroup.length() == 0) {
-                println(MISSING_CSDGROUP)
+                logger.error MISSING_CSDGROUP
                 blockValid = false
             }
             if (deployExtension.serverid.length() == 0) {
-                println(MISSING_SERVERID)
+                logger.error MISSING_SERVERID
                 blockValid = false
             } else {
                 if (!validateServerDetails()) {

@@ -53,16 +53,16 @@ class DeployTests extends Specification {
             }
             
             configurations {
-                cicsBundle
+                ${BuildBundleTask.CONFIG_NAME}
             }
             
             dependencies {
-                cicsBundle('javax.servlet:javax.servlet-api:3.1.0@jar')
+                ${BuildBundleTask.CONFIG_NAME}('javax.servlet:javax.servlet-api:3.1.0@jar')
             }
         """
 
         when:
-        def result = runGradle('Test missing deploy extension block', ['deployCICSBundle'], true)
+        def result = runGradle('Test missing deploy extension block', [BundlePlugin.DEPLOY_TASK_NAME], true)
 
         then:
         checkResults(result, [DeployBundleTask.MISSING_CONFIG, DeployBundleTask.PLEASE_SPECIFY], [], FAILED)
@@ -83,19 +83,19 @@ class DeployTests extends Specification {
             }
             
             configurations {
-                cicsBundle
+                ${BuildBundleTask.CONFIG_NAME}
             }
             
-            deploy {
+            ${BundlePlugin.DEPLOY_EXTENSION_NAME} {
             }
             
             dependencies {
-                cicsBundle('javax.servlet:javax.servlet-api:3.1.0@jar')
+                ${BuildBundleTask.CONFIG_NAME}('javax.servlet:javax.servlet-api:3.1.0@jar')
             }
         """
 
         when:
-        def result = runGradle('Test empty deploy extension block', ['deployCICSBundle'], true)
+        def result = runGradle('Test empty deploy extension block', [BundlePlugin.DEPLOY_TASK_NAME], true)
 
         then:
         checkResults(result, [DeployBundleTask.MISSING_CONFIG, DeployBundleTask.PLEASE_SPECIFY], [], FAILED)
@@ -116,10 +116,10 @@ class DeployTests extends Specification {
             }
             
             configurations {
-                cicsBundle
+                ${BuildBundleTask.CONFIG_NAME}
             }
             
-            deploy {
+            ${BundlePlugin.DEPLOY_EXTENSION_NAME} {
                 cicsplex = 'MYPLEX'
                 region = 'MYEGION'
                 bunddef = 'MYDEF'
@@ -128,12 +128,12 @@ class DeployTests extends Specification {
             }
             
             dependencies {
-                cicsBundle('javax.servlet:javax.servlet-api:3.1.0@jar')
+                ${BuildBundleTask.CONFIG_NAME}('javax.servlet:javax.servlet-api:3.1.0@jar')
             }
         """
 
         when:
-        def result = runGradle('Test missing default jvm server', ['deployCICSBundle'], true)
+        def result = runGradle('Test missing default jvm server', [BundlePlugin.DEPLOY_TASK_NAME], true)
 
         then:
         checkResults(result, [DeployBundleTask.MISSING_JVMSERVER, DeployBundleTask.PLEASE_SPECIFY], [], FAILED)
@@ -154,10 +154,10 @@ class DeployTests extends Specification {
             }
             
             configurations {
-                cicsBundle
+                ${BuildBundleTask.CONFIG_NAME}
             }
             
-            deploy {
+            ${BundlePlugin.DEPLOY_EXTENSION_NAME} {
                 defaultjvmserver    = 'JVMSRVR'
                 region = 'MYEGION'
                 bunddef = 'MYDEF'
@@ -166,12 +166,12 @@ class DeployTests extends Specification {
             }
             
             dependencies {
-                cicsBundle('javax.servlet:javax.servlet-api:3.1.0@jar')
+                ${BuildBundleTask.CONFIG_NAME}('javax.servlet:javax.servlet-api:3.1.0@jar')
             }
         """
 
         when:
-        def result = runGradle('Test missing cicsplex', ['deployCICSBundle'], true)
+        def result = runGradle('Test missing cicsplex', [BundlePlugin.DEPLOY_TASK_NAME], true)
 
         then:
         checkResults(result, [DeployBundleTask.MISSING_CICSPLEX, DeployBundleTask.PLEASE_SPECIFY ], [], FAILED)
@@ -192,10 +192,10 @@ class DeployTests extends Specification {
             }
             
             configurations {
-                cicsBundle
+                ${BuildBundleTask.CONFIG_NAME}
             }
             
-            deploy {
+            ${BundlePlugin.DEPLOY_EXTENSION_NAME} {
                 defaultjvmserver    = 'JVMSRVR'
                 cicsplex            = 'MYPLEX'
                 bunddef = 'MYDEF'
@@ -204,12 +204,12 @@ class DeployTests extends Specification {
             }
             
             dependencies {
-                cicsBundle('javax.servlet:javax.servlet-api:3.1.0@jar')
+                ${BuildBundleTask.CONFIG_NAME}('javax.servlet:javax.servlet-api:3.1.0@jar')
             }
         """
 
         when:
-        def result = runGradle('Test missing region', ['deployCICSBundle'], true)
+        def result = runGradle('Test missing region', [BundlePlugin.DEPLOY_TASK_NAME], true)
 
         then:
         checkResults(result, [DeployBundleTask.MISSING_REGION, DeployBundleTask.PLEASE_SPECIFY], [], FAILED)
@@ -230,10 +230,10 @@ class DeployTests extends Specification {
             }
             
             configurations {
-                cicsBundle
+                ${BuildBundleTask.CONFIG_NAME}
             }
             
-            deploy {
+            ${BundlePlugin.DEPLOY_EXTENSION_NAME} {
                 defaultjvmserver    = 'JVMSRVR'
                 cicsplex            = 'MYPLEX'
                 region              = 'MYEGION'
@@ -242,12 +242,12 @@ class DeployTests extends Specification {
             }
             
             dependencies {
-                cicsBundle('javax.servlet:javax.servlet-api:3.1.0@jar')
+                ${BuildBundleTask.CONFIG_NAME}('javax.servlet:javax.servlet-api:3.1.0@jar')
             }
         """
 
         when:
-        def result = runGradle('Test missing bunddef', ['deployCICSBundle'], true)
+        def result = runGradle('Test missing bunddef', [BundlePlugin.DEPLOY_TASK_NAME], true)
 
         then:
         checkResults(result, [DeployBundleTask.MISSING_BUNDDEF, DeployBundleTask.PLEASE_SPECIFY], [], FAILED)
@@ -268,10 +268,10 @@ class DeployTests extends Specification {
             }
             
             configurations {
-                cicsBundle
+                ${BuildBundleTask.CONFIG_NAME}
             }
             
-            deploy {
+            ${BundlePlugin.DEPLOY_EXTENSION_NAME} {
                 defaultjvmserver    = 'JVMSRVR'
                 cicsplex            = 'MYPLEX'
                 region              = 'MYEGION'
@@ -280,12 +280,12 @@ class DeployTests extends Specification {
             }
             
             dependencies {
-                cicsBundle('javax.servlet:javax.servlet-api:3.1.0@jar')
+                ${BuildBundleTask.CONFIG_NAME}('javax.servlet:javax.servlet-api:3.1.0@jar')
             }
         """
 
         when:
-        def result = runGradle('Test missing csdgroup', ['deployCICSBundle'], true)
+        def result = runGradle('Test missing csdgroup', [BundlePlugin.DEPLOY_TASK_NAME], true)
 
         then:
         checkResults(result, [DeployBundleTask.MISSING_CSDGROUP, DeployBundleTask.PLEASE_SPECIFY], [], FAILED)
@@ -306,10 +306,10 @@ class DeployTests extends Specification {
             }
             
             configurations {
-                cicsBundle
+                ${BuildBundleTask.CONFIG_NAME}
             }
             
-            deploy {
+            ${BundlePlugin.DEPLOY_EXTENSION_NAME} {
                 defaultjvmserver    = 'JVMSRVR'
                 cicsplex            = 'MYPLEX'
                 region              = 'MYEGION'
@@ -318,12 +318,12 @@ class DeployTests extends Specification {
             }
             
             dependencies {
-                cicsBundle('javax.servlet:javax.servlet-api:3.1.0@jar')
+                ${BuildBundleTask.CONFIG_NAME}('javax.servlet:javax.servlet-api:3.1.0@jar')
             }
         """
 
         when:
-        def result = runGradle('Test missing serverid', ['deployCICSBundle'], true)
+        def result = runGradle('Test missing serverid', [BundlePlugin.DEPLOY_TASK_NAME], true)
 
         then:
         checkResults(result, [DeployBundleTask.MISSING_SERVERID, DeployBundleTask.PLEASE_SPECIFY], [], FAILED)
@@ -344,21 +344,21 @@ class DeployTests extends Specification {
             }
             
             configurations {
-                cicsBundle
+                ${BuildBundleTask.CONFIG_NAME}
             }
             
-            deploy {
+            ${BundlePlugin.DEPLOY_EXTENSION_NAME} {
                 cicsplex            = 'MYPLEX'
                 csdgroup            = 'MYGROUP'
             }
             
             dependencies {
-                cicsBundle('javax.servlet:javax.servlet-api:3.1.0@jar')
+                ${BuildBundleTask.CONFIG_NAME}('javax.servlet:javax.servlet-api:3.1.0@jar')
             }
         """
 
         when:
-        def result = runGradle('Test multiple items missing', ['deployCICSBundle'], true)
+        def result = runGradle('Test multiple items missing', [BundlePlugin.DEPLOY_TASK_NAME], true)
 
         then:
         checkResults(result, [
@@ -372,7 +372,7 @@ class DeployTests extends Specification {
 
 
     // Run the gradle build with defaults and print the test output
-    def runGradle(String testName, List args = ['deployCICSBundle'], boolean failExpected = false) {
+    def runGradle(String testName, List args = [BundlePlugin.DEPLOY_TASK_NAME], boolean failExpected = false) {
         def result
         if (!failExpected) {
             result = GradleRunner.create().withProjectDir(testProjectDir.root).withArguments(args).withPluginClasspath().build()
@@ -400,7 +400,7 @@ class DeployTests extends Specification {
                 assert (false)
             }
         }
-        result.task(":deployCICSBundle").outcome == outcome
+        result.task(":$BundlePlugin.DEPLOY_TASK_NAME").outcome == outcome
     }
 
     private File getFileInBuildOutputFolder(String fileName) {

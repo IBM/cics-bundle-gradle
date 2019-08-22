@@ -24,17 +24,21 @@ import org.gradle.api.tasks.TaskAction
 
 class BuildBundleTask extends DefaultTask {
 
-    public static final String CICS_BUNDLE_CONFIG_NAME = "cicsBundle"
-    public static final List validDependencyFileExtensions = ['ear', 'jar', 'war']
+    // Strings to share with test class
+    public static final String CONFIG_NAME = "cicsBundle"
+    public static final String MISSING_CONFIG = "Define \'$CONFIG_NAME\' configuration with CICS bundle dependencies"
+    public static final String UNSUPPORTED_EXTENSIONS_FOUND = 'Unsupported file extensions for some dependencies, see earlier messages.'
+
+    private static final List VALID_DEPENDENCY_FILE_EXTENSIONS = ['ear', 'jar', 'war']
 
     @TaskAction
     def buildCICSBundle() {
-        print "Task buildCICSBundle (Gradle $project.gradle.gradleVersion) "
+        logger.info "Task ${BundlePlugin.BUILD_TASK_NAME} (Gradle $project.gradle.gradleVersion) "
 
         // Find & process the configuration
         def foundConfig = false
         project.configurations.each {
-            if (it.name == CICS_BUNDLE_CONFIG_NAME) {
+            if (it.name == CONFIG_NAME) {
                 processCICSBundle(it)
                 foundConfig = true
             }
@@ -42,17 +46,17 @@ class BuildBundleTask extends DefaultTask {
 
         if (!foundConfig) {
             println()
-            throw new GradleException("Define \'$CICS_BUNDLE_CONFIG_NAME\' configuration with CICS bundle dependencies")
+            throw new GradleException(MISSING_CONFIG)
         }
     }
 
     def processCICSBundle(Configuration config) {
-        println("processing \'$CICS_BUNDLE_CONFIG_NAME\' configuration")
+        logger.info "processing \'$CONFIG_NAME\' configuration"
         def filesCopied = []
         project.copy {
             from config
             eachFile {
-                println(" Copying $it")
+                logger.lifecycle " Copying $it"
                 filesCopied << it
             }
             into "$project.buildDir/$project.name-$project.version"
@@ -63,7 +67,7 @@ class BuildBundleTask extends DefaultTask {
 
     private void checkDependenciesCopied(List filesCopied, Configuration config) {
         if (config.dependencies.size() == 0) {
-            println("Warning, no external or project dependencies in 'cicsBundle' configuration")
+            logger.warn "Warning, no external or project dependencies in 'cicsBundle' configuration"
             return
         }
 
@@ -92,10 +96,10 @@ class BuildBundleTask extends DefaultTask {
                     }
                 }
                 if (!foundDependency) {
-                    println(" Missing dependency: $dep")
+                    logger.error " Missing dependency: $dep"
                 }
             }
-            throw new GradleException("Failed, missing dependencies from '$CICS_BUNDLE_CONFIG_NAME' configuration")
+            throw new GradleException("Failed, missing dependencies from '$CONFIG_NAME' configuration")
         }
     }
 
@@ -105,14 +109,14 @@ class BuildBundleTask extends DefaultTask {
             def name = it.name
             def splits = name.split('\\.')
             def extension = splits[splits.length - 1]
-            def extensionOK = (splits.size() >= 2 && validDependencyFileExtensions.contains(extension))
+            def extensionOK = (splits.size() >= 2 && VALID_DEPENDENCY_FILE_EXTENSIONS.contains(extension))
             if (!extensionOK) {
-                println("Unsupported file extension '$extension' for copied dependency '$it.path'")
+                logger.error "Unsupported file extension '$extension' for copied dependency '$it.path'"
                 allExtensionsOk = false
             }
         }
         if (!allExtensionsOk) {
-            throw new GradleException("Unsupported file extensions for some dependencies, see earlier messages.")
+            throw new GradleException(UNSUPPORTED_EXTENSIONS_FOUND)
         }
 
     }

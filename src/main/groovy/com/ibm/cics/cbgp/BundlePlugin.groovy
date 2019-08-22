@@ -28,9 +28,14 @@ class DeployExtension {
 }
 
 class BundlePlugin implements Plugin<Project> {
+
+    public static final String DEPLOY_EXTENSION_NAME = 'deploy'
+    public static final String BUILD_TASK_NAME = 'buildCICSBundle'
+    public static final String DEPLOY_TASK_NAME = 'deployCICSBundle'
+
     void apply(Project target) {
-        target.extensions.create('deploy', DeployExtension)
-        target.tasks.register('buildCICSBundle', BuildBundleTask)
-        target.tasks.register('deployCICSBundle', DeployBundleTask)
+        target.extensions.create(DEPLOY_EXTENSION_NAME, DeployExtension)
+        target.tasks.register(BUILD_TASK_NAME, BuildBundleTask)
+        target.tasks.register(DEPLOY_TASK_NAME, DeployBundleTask)
     }
 }

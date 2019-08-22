@@ -53,11 +53,11 @@ class ChecksAndCopyTests extends Specification {
             }
             
             configurations {
-                cicsBundle
+                ${BuildBundleTask.CONFIG_NAME}
             }
             
             dependencies {
-                cicsBundle('javax.servlet:javax.servlet-api:3.1.0@jar')
+                ${BuildBundleTask.CONFIG_NAME}('javax.servlet:javax.servlet-api:3.1.0@jar')
             }
         """
 
@@ -83,11 +83,11 @@ class ChecksAndCopyTests extends Specification {
             }
             
             configurations {
-                cicsBundle
+                ${BuildBundleTask.CONFIG_NAME}
             }
             
             dependencies {
-                cicsBundle(group: 'org.glassfish.main.admingui', name: 'war', version: '5.1.0', ext: 'war'  )
+                ${BuildBundleTask.CONFIG_NAME}(group: 'org.glassfish.main.admingui', name: 'war', version: '5.1.0', ext: 'war'  )
             }
         """
 
@@ -113,11 +113,11 @@ class ChecksAndCopyTests extends Specification {
             }
             
             configurations {
-                cicsBundle
+                ${BuildBundleTask.CONFIG_NAME}
             }
             
             dependencies {
-                cicsBundle(group: 'org.codehaus.cargo', name: 'simple-ear', version: '1.7.6', ext: 'ear'  )
+                ${BuildBundleTask.CONFIG_NAME}(group: 'org.codehaus.cargo', name: 'simple-ear', version: '1.7.6', ext: 'ear'  )
             }
         """
 
@@ -143,19 +143,19 @@ class ChecksAndCopyTests extends Specification {
             }
             
             configurations {
-                CICSBundle
+                ${BuildBundleTask.CONFIG_NAME}X
             }
             
             dependencies {
-                CICSBundle(group: 'org.glassfish.main.admingui', name: 'war', version: '5.1.0', ext: 'war'  )
+                ${BuildBundleTask.CONFIG_NAME}X(group: 'org.glassfish.main.admingui', name: 'war', version: '5.1.0', ext: 'war'  )
             }
         """
 
         when:
-        def result = runGradle('Test incorrect configuration name', ['buildCICSBundle'], true)
+        def result = runGradle('Test incorrect configuration name', [BundlePlugin.BUILD_TASK_NAME], true)
 
         then:
-        checkResults(result, ['Define \'cicsBundle\' configuration with CICS bundle dependencies'], [], FAILED)
+        checkResults(result, [BuildBundleTask.MISSING_CONFIG], [], FAILED)
     }
 
     def "Test local project dependency"() {
@@ -179,11 +179,11 @@ class ChecksAndCopyTests extends Specification {
             }
             
             configurations {
-                cicsBundle
+                ${BuildBundleTask.CONFIG_NAME}
             }
             
             dependencies {
-                cicsBundle project(path: ':$warProjectName', configuration: 'war')
+                ${BuildBundleTask.CONFIG_NAME} project(path: ':$warProjectName', configuration: 'war')
             }
         """
 
@@ -199,25 +199,14 @@ class ChecksAndCopyTests extends Specification {
         }
 
         when:
-        def result = runGradle('Test local project dependency', ['build', 'buildCICSBundle'])
+        def result = runGradle('Test local project dependency', ['build', BundlePlugin.BUILD_TASK_NAME])
 
         then:
         def builtWarName = "${warProjectName}-1.0-SNAPSHOT.war"
         checkResults(result, ['Task :helloworldwar:build', builtWarName], [builtWarName], SUCCESS)
     }
 
-    /*
-    If this test fails with something like:
-    ----------------
-    Could not load compiled classes for build file '/private/var/folders/1t/71j_fsj96fn7qvhmllp9vlw80000gn/T/junit1543502614563089245/build.gradle' from cache
-    Expected class file /private/var/folders/1t/71j_fsj96fn7qvhmllp9vlw80000gn/T/.gradle-test-kit-myname/caches....
-    ----------------
-    Then find the .gradle-test-kit folder in the line above and delete it.
-
-    Added temporary cache directory in test folder to avoid this error
-     */
-
-    def "Test incorrect dependency extension"() {
+     def "Test incorrect dependency extension"() {
 
         File localBuildCacheDirectory
         localBuildCacheDirectory = testProjectDir.newFolder('local-cache')
@@ -245,19 +234,19 @@ class ChecksAndCopyTests extends Specification {
             }
             
             configurations {
-                cicsBundle
+                ${BuildBundleTask.CONFIG_NAME}
             }
             
             dependencies {
-                cicsBundle(group: 'org.apache.jmeter', name: 'apache-jmeter', version: '2.3.4-atlassian-1'  )
+                ${BuildBundleTask.CONFIG_NAME}(group: 'org.apache.jmeter', name: 'apache-jmeter', version: '2.3.4-atlassian-1'  )
             }
         """
 
         when:
-        def result = runGradle('Test incorrect dependency extension', ['buildCICSBundle'], true)
+        def result = runGradle('Test incorrect dependency extension', [BundlePlugin.BUILD_TASK_NAME], true)
 
         then:
-        checkResults(result, ['Unsupported file extensions for some dependencies, see earlier messages.',
+        checkResults(result, [BuildBundleTask.UNSUPPORTED_EXTENSIONS_FOUND,
                               "Unsupported file extension 'gz' for copied dependency 'apache-jmeter-2.3.4-atlassian-1.tar.gz'"]
                 , [], FAILED)
     }
@@ -282,7 +271,7 @@ class ChecksAndCopyTests extends Specification {
             }
             
             configurations {
-                cicsBundle
+                ${BuildBundleTask.CONFIG_NAME}
             }
             
             dependencies {
@@ -290,14 +279,14 @@ class ChecksAndCopyTests extends Specification {
         """
 
         when:
-        def result = runGradle('Test no cicsBundle dependencies warning', ['buildCICSBundle'], false)
+        def result = runGradle('Test no cicsBundle dependencies warning', [BundlePlugin.BUILD_TASK_NAME], false)
 
         then:
-        checkResults(result, ["Warning, no external or project dependencies in 'cicsBundle' configuration"], [], SUCCESS)
+        checkResults(result, ["Warning, no external or project dependencies in '${BuildBundleTask.CONFIG_NAME}' configuration"], [], SUCCESS)
     }
 
     // Run the gradle build with defaults and print the test output
-    def runGradle(String testName, List args = ['buildCICSBundle'], boolean failExpected = false) {
+    def runGradle(String testName, List args = [BundlePlugin.BUILD_TASK_NAME], boolean failExpected = false) {
         def result
         if (!failExpected) {
             result = GradleRunner.create().withProjectDir(testProjectDir.root).withArguments(args).withPluginClasspath().build()
@@ -325,7 +314,7 @@ class ChecksAndCopyTests extends Specification {
                 assert (false)
             }
         }
-        result.task(":buildCICSBundle").outcome == outcome
+        result.task(":$BundlePlugin.BUILD_TASK_NAME").outcome == outcome
     }
 
     private File getFileInBuildOutputFolder(String fileName) {
