@@ -101,44 +101,6 @@ class DeployTests extends Specification {
         checkResults(result, [DeployBundleTask.MISSING_CONFIG, DeployBundleTask.PLEASE_SPECIFY], [], FAILED)
     }
 
-    def "Test missing default jvm server"() {
-        given:
-        settingsFile << "rootProject.name = 'cics-bundle-gradle'"
-        buildFile << """\
-            plugins {
-                id 'cics-bundle-gradle-plugin'
-            }
-            
-            version '1.0.0-SNAPSHOT'
-            
-            repositories {
-                jcenter()
-            }
-            
-            configurations {
-                ${BuildBundleTask.CONFIG_NAME}
-            }
-            
-            ${BundlePlugin.DEPLOY_EXTENSION_NAME} {
-                cicsplex = 'MYPLEX'
-                region = 'MYEGION'
-                bunddef = 'MYDEF'
-                csdgroup = 'MYGROUP'
-                serverid = 'SPB // TODO define server definitions with user & password'
-            }
-            
-            dependencies {
-                ${BuildBundleTask.CONFIG_NAME}('javax.servlet:javax.servlet-api:3.1.0@jar')
-            }
-        """
-
-        when:
-        def result = runGradle('Test missing default jvm server', [BundlePlugin.DEPLOY_TASK_NAME], true)
-
-        then:
-        checkResults(result, [DeployBundleTask.MISSING_JVMSERVER, DeployBundleTask.PLEASE_SPECIFY], [], FAILED)
-    }
-
     def "Test missing cicsplex"() {
         given:
         settingsFile << "rootProject.name = 'cics-bundle-gradle'"
@@ -158,11 +120,12 @@ class DeployTests extends Specification {
             }
             
             ${BundlePlugin.DEPLOY_EXTENSION_NAME} {
-                defaultjvmserver    = 'JVMSRVR'
                 region = 'MYEGION'
                 bunddef = 'MYDEF'
                 csdgroup = 'MYGROUP'
-                serverid = 'SPB // TODO define server definitions with user & password'
+                url = 'someurl'
+                username = 'bob'
+                password = 'passw0rd'
             }
             
             dependencies {
@@ -196,11 +159,12 @@ class DeployTests extends Specification {
             }
             
             ${BundlePlugin.DEPLOY_EXTENSION_NAME} {
-                defaultjvmserver    = 'JVMSRVR'
                 cicsplex            = 'MYPLEX'
-                bunddef = 'MYDEF'
-                csdgroup = 'MYGROUP'
-                serverid = 'SPB // TODO define server definitions with user & password'
+                bunddef             = 'MYDEF'
+                csdgroup            = 'MYGROUP'
+                url                 = 'someurl'
+                username            = 'bob'
+                password            = 'passw0rd'
             }
             
             dependencies {
@@ -234,11 +198,12 @@ class DeployTests extends Specification {
             }
             
             ${BundlePlugin.DEPLOY_EXTENSION_NAME} {
-                defaultjvmserver    = 'JVMSRVR'
                 cicsplex            = 'MYPLEX'
                 region              = 'MYEGION'
-                csdgroup = 'MYGROUP'
-                serverid = 'SPB // TODO define server definitions with user & password'
+                csdgroup            = 'MYGROUP'
+                url                 = 'someurl'
+                username            = 'bob'
+                password            = 'passw0rd'
             }
             
             dependencies {
@@ -272,11 +237,12 @@ class DeployTests extends Specification {
             }
             
             ${BundlePlugin.DEPLOY_EXTENSION_NAME} {
-                defaultjvmserver    = 'JVMSRVR'
                 cicsplex            = 'MYPLEX'
                 region              = 'MYEGION'
                 bunddef             = 'MYDEF'
-                serverid = 'SPB // TODO define server definitions with user & password'
+                url                 = 'someurl'
+                username            = 'bob'
+                password            = 'passw0rd'
             }
             
             dependencies {
@@ -291,7 +257,7 @@ class DeployTests extends Specification {
         checkResults(result, [DeployBundleTask.MISSING_CSDGROUP, DeployBundleTask.PLEASE_SPECIFY], [], FAILED)
     }
 
-    def "Test missing serverid"() {
+    def "Test missing url"() {
         given:
         settingsFile << "rootProject.name = 'cics-bundle-gradle'"
         buildFile << """\
@@ -310,11 +276,12 @@ class DeployTests extends Specification {
             }
             
             ${BundlePlugin.DEPLOY_EXTENSION_NAME} {
-                defaultjvmserver    = 'JVMSRVR'
                 cicsplex            = 'MYPLEX'
                 region              = 'MYEGION'
                 bunddef             = 'MYDEF'
                 csdgroup            = 'MYGROUP'
+                username = 'bob'
+                password = 'passw0rd'
             }
             
             dependencies {
@@ -323,10 +290,88 @@ class DeployTests extends Specification {
         """
 
         when:
-        def result = runGradle('Test missing serverid', [BundlePlugin.DEPLOY_TASK_NAME], true)
+        def result = runGradle('Test missing url', [BundlePlugin.DEPLOY_TASK_NAME], true)
 
         then:
-        checkResults(result, [DeployBundleTask.MISSING_SERVERID, DeployBundleTask.PLEASE_SPECIFY], [], FAILED)
+        checkResults(result, [DeployBundleTask.MISSING_URL, DeployBundleTask.PLEASE_SPECIFY], [], FAILED)
+    }
+
+    def "Test missing username"() {
+        given:
+        settingsFile << "rootProject.name = 'cics-bundle-gradle'"
+        buildFile << """\
+            plugins {
+                id 'cics-bundle-gradle-plugin'
+            }
+            
+            version '1.0.0-SNAPSHOT'
+            
+            repositories {
+                jcenter()
+            }
+            
+            configurations {
+                ${BuildBundleTask.CONFIG_NAME}
+            }
+            
+            ${BundlePlugin.DEPLOY_EXTENSION_NAME} {
+                cicsplex            = 'MYPLEX'
+                region              = 'MYEGION'
+                bunddef             = 'MYDEF'
+                csdgroup            = 'MYGROUP'
+                url                 = 'someurl'
+                password            = 'passw0rd'
+            }
+            
+            dependencies {
+                ${BuildBundleTask.CONFIG_NAME}('javax.servlet:javax.servlet-api:3.1.0@jar')
+            }
+        """
+
+        when:
+        def result = runGradle('Test missing username', [BundlePlugin.DEPLOY_TASK_NAME], true)
+
+        then:
+        checkResults(result, [DeployBundleTask.MISSING_USERNAME, DeployBundleTask.PLEASE_SPECIFY], [], FAILED)
+    }
+
+    def "Test missing password"() {
+        given:
+        settingsFile << "rootProject.name = 'cics-bundle-gradle'"
+        buildFile << """\
+            plugins {
+                id 'cics-bundle-gradle-plugin'
+            }
+            
+            version '1.0.0-SNAPSHOT'
+            
+            repositories {
+                jcenter()
+            }
+            
+            configurations {
+                ${BuildBundleTask.CONFIG_NAME}
+            }
+            
+            ${BundlePlugin.DEPLOY_EXTENSION_NAME} {
+                cicsplex            = 'MYPLEX'
+                region              = 'MYEGION'
+                bunddef             = 'MYDEF'
+                csdgroup            = 'MYGROUP'
+                url                 = 'someurl'
+                username            = 'bob'
+            }
+            
+            dependencies {
+                ${BuildBundleTask.CONFIG_NAME}('javax.servlet:javax.servlet-api:3.1.0@jar')
+            }
+        """
+
+        when:
+        def result = runGradle('Test missing password', [BundlePlugin.DEPLOY_TASK_NAME], true)
+
+        then:
+        checkResults(result, [DeployBundleTask.MISSING_PASSWORD, DeployBundleTask.PLEASE_SPECIFY], [], FAILED)
     }
 
     def "Test multiple items missing"() {
@@ -350,6 +395,9 @@ class DeployTests extends Specification {
             ${BundlePlugin.DEPLOY_EXTENSION_NAME} {
                 cicsplex            = 'MYPLEX'
                 csdgroup            = 'MYGROUP'
+                url                 = 'someurl'
+                username            = 'bob'
+                password            = 'passw0rd'
             }
             
             dependencies {
@@ -362,10 +410,8 @@ class DeployTests extends Specification {
 
         then:
         checkResults(result, [
-                DeployBundleTask.MISSING_JVMSERVER,
                 DeployBundleTask.MISSING_REGION,
                 DeployBundleTask.MISSING_BUNDDEF,
-                DeployBundleTask.MISSING_SERVERID,
                 DeployBundleTask.PLEASE_SPECIFY
         ], [], FAILED)
     }

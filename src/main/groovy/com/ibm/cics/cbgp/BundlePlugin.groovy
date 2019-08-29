@@ -19,23 +19,24 @@ import org.gradle.api.Project
 
 // Extension block for deploy details
 class DeployExtension {
-    String defaultjvmserver = ''
     String cicsplex = ''
     String region = ''
     String bunddef = ''
     String csdgroup = ''
-    String serverid = ''
+    String url = ''
+    String username = ''
+    String password = ''
 }
 
 class BundlePlugin implements Plugin<Project> {
 
-    public static final String DEPLOY_EXTENSION_NAME = 'deploy'
+    public static final String DEPLOY_EXTENSION_NAME = 'deployCICSBundleDetails'
     public static final String BUILD_TASK_NAME = 'buildCICSBundle'
     public static final String DEPLOY_TASK_NAME = 'deployCICSBundle'
 
-    void apply(Project target) {
-        target.extensions.create(DEPLOY_EXTENSION_NAME, DeployExtension)
-        target.tasks.register(BUILD_TASK_NAME, BuildBundleTask)
-        target.tasks.register(DEPLOY_TASK_NAME, DeployBundleTask)
+    void apply(Project project) {
+        project.extensions.create(DEPLOY_EXTENSION_NAME, DeployExtension)
+        project.tasks.register(BUILD_TASK_NAME, BuildBundleTask)
+        project.tasks.register(DEPLOY_TASK_NAME, DeployBundleTask)
     }
 }

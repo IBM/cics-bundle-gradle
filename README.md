@@ -16,7 +16,10 @@ This project contains:
  1. Define a `cicsBundle` configuration in your build.gradle
  2. Add local and remote dependencies to your cicsBundle configuration
  3. Add the cics-bundle-gradle plugin to your build
- 4. Use the `buildCICSBundle` task in your build to create the bundle
+ 4. Add the deployCICSBundleDetails block for the deploy destination
+ 5. Use the `buildCICSBundle` task in your build to create the bundle
+ 6. Use the `deployCICSBundle` task in your build to deploy the bundle to the target cicsplex and region
+ 
 
  ```
  plugins {
@@ -39,6 +42,16 @@ This project contains:
      cicsBundle(group: 'org.glassfish.main.admingui', name: 'war', version: '5.1.0', ext: 'war'  )
      cicsBundle(group: 'javax.servlet', name: 'javax.servlet-api', version: '3.1.0', ext: 'jar')
  }
+ 
+deployCICSBundleDetails {
+   cicsplex            = 'MYPLEX'
+   region              = 'MYEGION'
+   bunddef             = 'MYDEF'
+   csdgroup            = 'MYGROUP'
+   url                 = 'myserver.domain.com'
+   username            = 'alicebob'
+   password            = 'coiffeur-kopeck-runabout-crime'
+
  ```
 
 

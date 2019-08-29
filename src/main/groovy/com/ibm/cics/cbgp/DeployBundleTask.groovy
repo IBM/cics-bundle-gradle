@@ -22,31 +22,35 @@ import org.gradle.api.tasks.TaskAction
 class DeployBundleTask extends DefaultTask {
 
     // Messages to share with test class
-    public static final String  MISSING_CONFIG = 'Missing or empty deploy configuration'
-    public static final String  MISSING_JVMSERVER = 'Specify default jvm server for deploy'
-    public static final String  MISSING_CICSPLEX = 'Specify cicsplex for deploy'
-    public static final String  MISSING_REGION = 'Specify region for deploy'
-    public static final String  MISSING_BUNDDEF = 'Specify bundle definition name for deploy'
-    public static final String  MISSING_CSDGROUP = 'Specify csd group for deploy'
-    public static final String  MISSING_SERVERID = 'Specify server id for deploy'
-    public static final String  PLEASE_SPECIFY = 'Please specify deploy configuration'
-    public static final String  DEPLOY_CONFIG_EXCEPTION = PLEASE_SPECIFY + """\
+    public static final String MISSING_CONFIG = 'Missing or empty deploy configuration'
+    public static final String MISSING_CICSPLEX = 'Specify cicsplex for deploy'
+    public static final String MISSING_REGION = 'Specify region for deploy'
+    public static final String MISSING_BUNDDEF = 'Specify bundle definition name for deploy'
+    public static final String MISSING_CSDGROUP = 'Specify csd group for deploy'
+    public static final String MISSING_URL = 'Specify url for deploy'
+    public static final String MISSING_USERNAME = 'Specify username for deploy'
+    public static final String MISSING_PASSWORD = 'Specify password for deploy'
+    public static final String PLEASE_SPECIFY = 'Please specify deploy configuration'
+
+    // TODO - This example will invoke the password police!
+    public static final String DEPLOY_CONFIG_EXCEPTION = PLEASE_SPECIFY + """\
 
 Example:
-     deploy {
-        defaultjvmserver    = 'JVMSRVR'
+     ${BundlePlugin.DEPLOY_EXTENSION_NAME} {
         cicsplex            = 'MYPLEX'
         region              = 'MYEGION'
         bunddef             = 'MYDEF'
         csdgroup            = 'MYGROUP'
-        serverid            = 'SPB'
+        url                 = 'myserver.domain.com'
+        username            = 'alicebob'
+        password            = 'coiffeur-kopeck-runabout-crime'
     } 
       
     All items must be completed    
 """
 
     @Input
-    def deployExtension = project.extensions.getByName('deploy')
+    def deployExtension = project.extensions.getByName(BundlePlugin.DEPLOY_EXTENSION_NAME)
 
     @TaskAction
     def deployCICSBundle() {
@@ -58,20 +62,14 @@ Example:
     private void validateDeployExtension() {
         def blockValid = true
 
-        if (deployExtension.defaultjvmserver.length() +
-                deployExtension.cicsplex.length() +
+        if (deployExtension.cicsplex.length() +
                 deployExtension.region.length() +
                 deployExtension.bunddef.length() +
-                deployExtension.csdgroup.length() +
-                deployExtension.serverid.length() == 0) {
+                deployExtension.csdgroup.length() == 0) {
             logger.error(MISSING_CONFIG)
             blockValid = false
         } else {
             // Validate block items exist, no check on content
-            if (deployExtension.defaultjvmserver.length() == 0) {
-                logger.error MISSING_JVMSERVER
-                blockValid = false
-            }
             if (deployExtension.cicsplex.length() == 0) {
                 logger.error MISSING_CICSPLEX
                 blockValid = false
@@ -88,13 +86,17 @@ Example:
                 logger.error MISSING_CSDGROUP
                 blockValid = false
             }
-            if (deployExtension.serverid.length() == 0) {
-                logger.error MISSING_SERVERID
+            if (deployExtension.url.length() == 0) {
+                logger.error MISSING_URL
                 blockValid = false
-            } else {
-                if (!validateServerDetails()) {
-                    blockValid = false
-                }
+            }
+            if (deployExtension.username.length() == 0) {
+                logger.error MISSING_USERNAME
+                blockValid = false
+            }
+            if (deployExtension.password.length() == 0) {
+                logger.error MISSING_PASSWORD
+                blockValid = false
             }
         }
 
@@ -104,9 +106,6 @@ Example:
         }
     }
 
-    private boolean validateServerDetails() {
-        return true   // TODO Validate server block when known.
-    }
 
 
 }
