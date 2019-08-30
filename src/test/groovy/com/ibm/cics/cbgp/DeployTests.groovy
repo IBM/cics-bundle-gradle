@@ -1,5 +1,7 @@
 package com.ibm.cics.cbgp
 
+import org.gradle.testkit.runner.BuildResult
+
 /*-
  * #%L
  * CICS Bundle Gradle Plugin
@@ -14,7 +16,6 @@ package com.ibm.cics.cbgp
  * #L%
  */
 
-import org.gradle.testkit.runner.BuildResult
 import org.gradle.testkit.runner.GradleRunner
 import org.gradle.testkit.runner.TaskOutcome
 import org.junit.Rule
@@ -22,7 +23,6 @@ import org.junit.rules.TemporaryFolder
 import spock.lang.Specification
 
 import static org.gradle.testkit.runner.TaskOutcome.FAILED
-import static org.gradle.testkit.runner.TaskOutcome.SUCCESS
 
 class DeployTests extends Specification {
     List<File> pluginClasspath
@@ -78,20 +78,9 @@ class DeployTests extends Specification {
             
             version '1.0.0-SNAPSHOT'
             
-            repositories {
-                jcenter()
-            }
-            
-            configurations {
-                ${BuildBundleTask.CONFIG_NAME}
-            }
-            
             ${BundlePlugin.DEPLOY_EXTENSION_NAME} {
             }
-            
-            dependencies {
-                ${BuildBundleTask.CONFIG_NAME}('javax.servlet:javax.servlet-api:3.1.0@jar')
-            }
+
         """
 
         when:
@@ -109,16 +98,6 @@ class DeployTests extends Specification {
                 id 'cics-bundle-gradle-plugin'
             }
             
-            version '1.0.0-SNAPSHOT'
-            
-            repositories {
-                jcenter()
-            }
-            
-            configurations {
-                ${BuildBundleTask.CONFIG_NAME}
-            }
-            
             ${BundlePlugin.DEPLOY_EXTENSION_NAME} {
                 region = 'MYEGION'
                 bunddef = 'MYDEF'
@@ -127,17 +106,13 @@ class DeployTests extends Specification {
                 username = 'bob'
                 password = 'passw0rd'
             }
-            
-            dependencies {
-                ${BuildBundleTask.CONFIG_NAME}('javax.servlet:javax.servlet-api:3.1.0@jar')
-            }
         """
 
         when:
         def result = runGradle('Test missing cicsplex', [BundlePlugin.DEPLOY_TASK_NAME], true)
 
         then:
-        checkResults(result, [DeployBundleTask.MISSING_CICSPLEX, DeployBundleTask.PLEASE_SPECIFY ], [], FAILED)
+        checkResults(result, [DeployBundleTask.MISSING_CICSPLEX, DeployBundleTask.PLEASE_SPECIFY], [], FAILED)
     }
 
     def "Test missing region"() {

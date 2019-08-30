@@ -21,7 +21,6 @@ import org.gradle.api.tasks.TaskAction
 
 class DeployBundleTask extends DefaultTask {
 
-    // Messages to share with test class
     public static final String MISSING_CONFIG = 'Missing or empty deploy configuration'
     public static final String MISSING_CICSPLEX = 'Specify cicsplex for deploy'
     public static final String MISSING_REGION = 'Specify region for deploy'
@@ -37,13 +36,13 @@ class DeployBundleTask extends DefaultTask {
 
 Example:
      ${BundlePlugin.DEPLOY_EXTENSION_NAME} {
-        cicsplex            = 'MYPLEX'
-        region              = 'MYEGION'
-        bunddef             = 'MYDEF'
-        csdgroup            = 'MYGROUP'
-        url                 = 'myserver.domain.com'
-        username            = 'alicebob'
-        password            = 'coiffeur-kopeck-runabout-crime'
+        cicsplex = 'MYPLEX'
+        region   = 'MYEGION'
+        bunddef  = 'MYDEF'
+        csdgroup = 'MYGROUP'
+        url      = 'myserver.site.domain.com'
+        username = 'alicebob'
+        password = 'coiffeur-kopeck-runabout-crime'
     } 
       
     All items must be completed    

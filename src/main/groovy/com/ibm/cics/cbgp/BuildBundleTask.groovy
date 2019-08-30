@@ -20,20 +20,35 @@ import org.gradle.api.artifacts.Configuration
 import org.gradle.api.internal.artifacts.dependencies.DefaultExternalModuleDependency
 import org.gradle.api.internal.artifacts.dependencies.DefaultProjectDependency
 import org.gradle.api.internal.file.copy.DefaultFileCopyDetails
+import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.TaskAction
 
 class BuildBundleTask extends DefaultTask {
 
-    // Strings to share with test class
+    public static final String MISSING_JVMSERVER = 'Specify defaultjvmserver for build'
+    public static final String PLEASE_SPECIFY = 'Please specify build configuration'
+    public static final String BUILD_CONFIG_EXCEPTION = PLEASE_SPECIFY + """\
+
+Example:
+     ${BundlePlugin.BUILD_EXTENSION_NAME} {
+       defaultjvmserver = 'EYUCMCIJ'
+    } 
+"""
     public static final String CONFIG_NAME = "cicsBundle"
     public static final String MISSING_CONFIG = "Define \'$CONFIG_NAME\' configuration with CICS bundle dependencies"
     public static final String UNSUPPORTED_EXTENSIONS_FOUND = 'Unsupported file extensions for some dependencies, see earlier messages.'
-
     private static final List VALID_DEPENDENCY_FILE_EXTENSIONS = ['ear', 'jar', 'war']
+
+    @Input
+    def buildExtension = project.extensions.getByName(BundlePlugin.BUILD_EXTENSION_NAME)
 
     @TaskAction
     def buildCICSBundle() {
         logger.info "Task ${BundlePlugin.BUILD_TASK_NAME} (Gradle $project.gradle.gradleVersion) "
+
+        if (!validateBuildExtension()) {
+            return;
+        }
 
         // Find & process the configuration
         def foundConfig = false
@@ -118,7 +133,21 @@ class BuildBundleTask extends DefaultTask {
         if (!allExtensionsOk) {
             throw new GradleException(UNSUPPORTED_EXTENSIONS_FOUND)
         }
+    }
 
+    private void validateBuildExtension() {
+        def blockValid = true
+
+        // Validate block items exist, no check on content
+        if (buildExtension.defaultjvmserver.length() == 0) {
+            logger.error MISSING_JVMSERVER
+            blockValid = false
+        }
+
+        // Throw exception if anything is wrong in the extension block
+        if (!blockValid) {
+            throw new GradleException(BUILD_CONFIG_EXCEPTION)
+        }
     }
 
 }
