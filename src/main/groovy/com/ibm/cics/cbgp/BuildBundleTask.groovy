@@ -47,7 +47,7 @@ Example:
         logger.info "Task ${BundlePlugin.BUILD_TASK_NAME} (Gradle $project.gradle.gradleVersion) "
 
         if (!validateBuildExtension()) {
-            return;
+            return
         }
 
         // Find & process the configuration
@@ -135,7 +135,7 @@ Example:
         }
     }
 
-    private void validateBuildExtension() {
+    def validateBuildExtension() {
         def blockValid = true
 
         // Validate block items exist, no check on content
@@ -148,6 +148,6 @@ Example:
         if (!blockValid) {
             throw new GradleException(BUILD_CONFIG_EXCEPTION)
         }
+        return true;
     }
-
 }
