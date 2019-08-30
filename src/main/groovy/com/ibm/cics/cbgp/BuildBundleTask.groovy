@@ -46,9 +46,7 @@ Example:
     def buildCICSBundle() {
         logger.info "Task ${BundlePlugin.BUILD_TASK_NAME} (Gradle $project.gradle.gradleVersion) "
 
-        if (!validateBuildExtension()) {
-            return
-        }
+        validateBuildExtension()
 
         // Find & process the configuration
         def foundConfig = false
@@ -135,7 +133,7 @@ Example:
         }
     }
 
-    def validateBuildExtension() {
+    private void validateBuildExtension() {
         def blockValid = true
 
         // Validate block items exist, no check on content
@@ -148,6 +146,5 @@ Example:
         if (!blockValid) {
             throw new GradleException(BUILD_CONFIG_EXCEPTION)
         }
-        return true;
     }
 }
