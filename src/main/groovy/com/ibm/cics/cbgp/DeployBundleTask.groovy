@@ -31,7 +31,6 @@ class DeployBundleTask extends DefaultTask {
     public static final String MISSING_PASSWORD = 'Specify password for deploy'
     public static final String PLEASE_SPECIFY = 'Please specify deploy configuration'
 
-    // TODO - This example will invoke the password police!
     public static final String DEPLOY_CONFIG_EXCEPTION = PLEASE_SPECIFY + """\
 
 Example:
@@ -41,11 +40,11 @@ Example:
         bunddef  = 'MYDEF'
         csdgroup = 'MYGROUP'
         url      = 'myserver.site.domain.com'
-        username = 'alicebob'
-        password = 'coiffeur-kopeck-runabout-crime'
+        username = '\$username'
+        password = '\$password'
     } 
       
-    All items must be completed    
+    All items must be completed.
 """
 
     @Input

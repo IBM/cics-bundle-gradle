@@ -78,8 +78,6 @@ This project contains:
              password = '$password'
          }
     ```
-    *Note:* This example includes username and password information from a `gradle.properties` file. 
- Other solutions for avoiding plain-text credentials exist.  
 
  2. Invoke the `deployCICSBundle` task in your build to deploy the bundle to the target cicsplex and region
  
