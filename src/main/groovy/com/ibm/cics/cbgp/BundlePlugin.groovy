@@ -17,25 +17,33 @@ package com.ibm.cics.cbgp
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 
-// Extension block for deploy details
-class DeployExtension {
+// Extension block for build config
+class BuildExtension {
     String defaultjvmserver = ''
+}
+
+// Extension block for deploy config
+class DeployExtension {
     String cicsplex = ''
     String region = ''
     String bunddef = ''
     String csdgroup = ''
-    String serverid = ''
+    String url = ''
+    String username = ''
+    String password = ''
 }
 
 class BundlePlugin implements Plugin<Project> {
 
-    public static final String DEPLOY_EXTENSION_NAME = 'deploy'
     public static final String BUILD_TASK_NAME = 'buildCICSBundle'
     public static final String DEPLOY_TASK_NAME = 'deployCICSBundle'
+    public static final String BUILD_EXTENSION_NAME = BUILD_TASK_NAME + 'Config'
+    public static final String DEPLOY_EXTENSION_NAME = DEPLOY_TASK_NAME + 'Config'
 
-    void apply(Project target) {
-        target.extensions.create(DEPLOY_EXTENSION_NAME, DeployExtension)
-        target.tasks.register(BUILD_TASK_NAME, BuildBundleTask)
-        target.tasks.register(DEPLOY_TASK_NAME, DeployBundleTask)
+    void apply(Project project) {
+        project.extensions.create(BUILD_EXTENSION_NAME, BuildExtension)
+        project.extensions.create(DEPLOY_EXTENSION_NAME, DeployExtension)
+        project.tasks.register(BUILD_TASK_NAME, BuildBundleTask)
+        project.tasks.register(DEPLOY_TASK_NAME, DeployBundleTask)
     }
 }
