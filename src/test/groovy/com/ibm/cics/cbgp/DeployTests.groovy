@@ -387,7 +387,7 @@ class DeployTests extends Specification {
         given:
         File propertiesFile = testProjectDir.newFile('gradle.properties')
         propertiesFile << """\
-            user_name=alice
+            my_username=alice
             password=secret
         """
 
@@ -408,8 +408,8 @@ class DeployTests extends Specification {
                 bunddef  = 'MYDEF'
                 csdgroup = 'MYGROUP'
                 url      = 'someurl'
-                username = user_name
-                password = project.properties['password']
+                username = my_username      // Define my_username in gradle.properties
+                password = project.properties['password']  // same name for variable and gradle.properties entry
             }
         """
 

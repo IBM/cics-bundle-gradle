@@ -40,8 +40,8 @@ Example:
         bunddef  = 'MYDEF'
         csdgroup = 'MYGROUP'
         url      = 'myserver.site.domain.com'
-        username = '\$username'
-        password = '\$password'
+        username = my_username      // Define my_username in gradle.properties
+        password = my_password      // Define my_password in gradle.properties      
     } 
       
     All items must be completed.
