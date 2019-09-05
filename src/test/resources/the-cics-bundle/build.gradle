@@ -9,10 +9,6 @@ repositories {
     mavenCentral()
 }
 
-configurations {
-    cicsBundle
-}
-
 dependencies {
     cicsBundle project(path: ':helloworldwar', configuration: 'war')
     cicsBundle('org.glassfish.main.admingui:war:5.1.0@war')

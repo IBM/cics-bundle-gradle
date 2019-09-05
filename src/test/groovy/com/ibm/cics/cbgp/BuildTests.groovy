@@ -51,10 +51,6 @@ class BuildTests extends Specification {
             repositories {
                 jcenter()
             }
-            
-            configurations {
-                ${BuildBundleTask.CONFIG_NAME}
-            }
 
             ${BundlePlugin.BUILD_EXTENSION_NAME} {
                 defaultjvmserver = 'EYUCMCIJ'
@@ -62,7 +58,7 @@ class BuildTests extends Specification {
 
             
             dependencies {
-                ${BuildBundleTask.CONFIG_NAME}('javax.servlet:javax.servlet-api:3.1.0@jar')
+                ${BundlePlugin.BUNDLE_DEPENDENCY_CONFIGURATION_NAME}('javax.servlet:javax.servlet-api:3.1.0@jar')
             }
         """
 
@@ -86,17 +82,13 @@ class BuildTests extends Specification {
             repositories {
                 mavenCentral()
             }
-            
-            configurations {
-                ${BuildBundleTask.CONFIG_NAME}
-            }
 
             ${BundlePlugin.BUILD_EXTENSION_NAME} {
                 defaultjvmserver = 'EYUCMCIJ'
             }
             
             dependencies {
-                ${BuildBundleTask.CONFIG_NAME}(group: 'org.glassfish.main.admingui', name: 'war', version: '5.1.0', ext: 'war'  )
+                ${BundlePlugin.BUNDLE_DEPENDENCY_CONFIGURATION_NAME}(group: 'org.glassfish.main.admingui', name: 'war', version: '5.1.0', ext: 'war'  )
             }
         """
 
@@ -120,17 +112,13 @@ class BuildTests extends Specification {
             repositories {
                 mavenCentral()
             }
-            
-            configurations {
-                ${BuildBundleTask.CONFIG_NAME}
-            }
  
             ${BundlePlugin.BUILD_EXTENSION_NAME} {
                 defaultjvmserver = 'EYUCMCIJ'
             }
            
             dependencies {
-                ${BuildBundleTask.CONFIG_NAME}(group: 'org.codehaus.cargo', name: 'simple-ear', version: '1.7.6', ext: 'ear'  )
+                ${BundlePlugin.BUNDLE_DEPENDENCY_CONFIGURATION_NAME}(group: 'org.codehaus.cargo', name: 'simple-ear', version: '1.7.6', ext: 'ear'  )
             }
         """
 
@@ -139,40 +127,6 @@ class BuildTests extends Specification {
 
         then:
         checkResults(result, ['org.codehaus.cargo', 'simple-ear-1.7.6.ear'], ['/simple-ear-1.7.6.ear'], SUCCESS)
-    }
-
-    def "Test incorrect configuration name"() {
-        given:
-        settingsFile << "rootProject.name = 'cics-bundle-gradle'"
-        buildFile << """\
-            plugins {
-                id 'cics-bundle-gradle-plugin'
-            }
-            
-            version '1.0.0-SNAPSHOT'
-            
-            repositories {
-                mavenCentral()
-            }
-            
-            configurations {
-                ${BuildBundleTask.CONFIG_NAME}X
-            }
-
-            ${BundlePlugin.BUILD_EXTENSION_NAME} {
-                defaultjvmserver = 'EYUCMCIJ'
-            }
-            
-            dependencies {
-                ${BuildBundleTask.CONFIG_NAME}X(group: 'org.glassfish.main.admingui', name: 'war', version: '5.1.0', ext: 'war'  )
-            }
-        """
-
-        when:
-        def result = runGradle('Test incorrect configuration name', [BundlePlugin.BUILD_TASK_NAME], true)
-
-        then:
-        checkResults(result, [BuildBundleTask.MISSING_CONFIG], [], FAILED)
     }
 
     def "Test local project dependency"() {
@@ -195,16 +149,12 @@ class BuildTests extends Specification {
                 mavenCentral()
             }
             
-            configurations {
-                ${BuildBundleTask.CONFIG_NAME}
-            }
-            
 
             ${BundlePlugin.BUILD_EXTENSION_NAME} {
                 defaultjvmserver = 'EYUCMCIJ'
             }
             dependencies {
-                ${BuildBundleTask.CONFIG_NAME} project(path: ':$warProjectName', configuration: 'war')
+                ${BundlePlugin.BUNDLE_DEPENDENCY_CONFIGURATION_NAME} project(path: ':$warProjectName', configuration: 'war')
             }
         """
 
@@ -253,17 +203,13 @@ class BuildTests extends Specification {
             repositories {
                 jcenter()
             }
-            
-            configurations {
-                ${BuildBundleTask.CONFIG_NAME}
-            }
 
             ${BundlePlugin.BUILD_EXTENSION_NAME} {
                 defaultjvmserver = 'EYUCMCIJ'
             }
             
             dependencies {
-                ${BuildBundleTask.CONFIG_NAME}(group: 'org.apache.jmeter', name: 'apache-jmeter', version: '2.3.4-atlassian-1'  )
+                ${BundlePlugin.BUNDLE_DEPENDENCY_CONFIGURATION_NAME}(group: 'org.apache.jmeter', name: 'apache-jmeter', version: '2.3.4-atlassian-1'  )
             }
         """
 
@@ -294,10 +240,6 @@ class BuildTests extends Specification {
             repositories {
                 jcenter()
             }
-            
-            configurations {
-                ${BuildBundleTask.CONFIG_NAME}
-            }
  
             ${BundlePlugin.BUILD_EXTENSION_NAME} {
                 defaultjvmserver = 'EYUCMCIJ'
@@ -311,7 +253,7 @@ class BuildTests extends Specification {
         def result = runGradle('Test no cicsBundle dependencies warning', [BundlePlugin.BUILD_TASK_NAME], false)
 
         then:
-        checkResults(result, ["Warning, no external or project dependencies in '${BuildBundleTask.CONFIG_NAME}' configuration"], [], SUCCESS)
+        checkResults(result, ["Warning, no external or project dependencies in '${BundlePlugin.BUNDLE_DEPENDENCY_CONFIGURATION_NAME}' configuration"], [], SUCCESS)
     }
 
     def "Test missing defaultjvmserver in block"() {
@@ -326,10 +268,6 @@ class BuildTests extends Specification {
             
             repositories {
                 jcenter()
-            }
-            
-            configurations {
-                ${BuildBundleTask.CONFIG_NAME}
             }
  
             ${BundlePlugin.BUILD_EXTENSION_NAME} {
@@ -359,10 +297,6 @@ class BuildTests extends Specification {
             
             repositories {
                 jcenter()
-            }
-            
-            configurations {
-                ${BuildBundleTask.CONFIG_NAME}
             }
            
             dependencies {
