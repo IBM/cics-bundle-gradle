@@ -74,8 +74,8 @@ This project contains:
              bunddef  = 'MYDEF'
              csdgroup = 'MYGROUP'
              url      = 'myserver.site.domain.com:1234'
-             username = '$user'
-             password = '$password'
+             username = my_username      // Define my_username in gradle.properties file
+             password = my_password      // Define my_password in gradle.properties file   
          }
     ```
 

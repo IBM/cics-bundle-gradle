@@ -1,6 +1,7 @@
 package com.ibm.cics.cbgp
 
 import org.gradle.testkit.runner.BuildResult
+import org.gradle.testkit.runner.GradleRunner
 
 /*-
  * #%L
@@ -16,13 +17,13 @@ import org.gradle.testkit.runner.BuildResult
  * #L%
  */
 
-import org.gradle.testkit.runner.GradleRunner
 import org.gradle.testkit.runner.TaskOutcome
 import org.junit.Rule
 import org.junit.rules.TemporaryFolder
 import spock.lang.Specification
 
 import static org.gradle.testkit.runner.TaskOutcome.FAILED
+import static org.gradle.testkit.runner.TaskOutcome.SUCCESS
 
 class DeployTests extends Specification {
     List<File> pluginClasspath
@@ -35,12 +36,12 @@ class DeployTests extends Specification {
     def setup() {
         ExpandoMetaClass.disableGlobally()
         settingsFile = testProjectDir.newFile('settings.gradle')
+        settingsFile << "rootProject.name = 'cics-bundle-gradle'"
         buildFile = testProjectDir.newFile('build.gradle')
     }
 
     def "Test missing deploy extension block"() {
         given:
-        settingsFile << "rootProject.name = 'cics-bundle-gradle'"
         buildFile << """\
             plugins {
                 id 'cics-bundle-gradle-plugin'
@@ -70,7 +71,6 @@ class DeployTests extends Specification {
 
     def "Test empty deploy extension block"() {
         given:
-        settingsFile << "rootProject.name = 'cics-bundle-gradle'"
         buildFile << """\
             plugins {
                 id 'cics-bundle-gradle-plugin'
@@ -92,7 +92,6 @@ class DeployTests extends Specification {
 
     def "Test missing cicsplex"() {
         given:
-        settingsFile << "rootProject.name = 'cics-bundle-gradle'"
         buildFile << """\
             plugins {
                 id 'cics-bundle-gradle-plugin'
@@ -117,7 +116,6 @@ class DeployTests extends Specification {
 
     def "Test missing region"() {
         given:
-        settingsFile << "rootProject.name = 'cics-bundle-gradle'"
         buildFile << """\
             plugins {
                 id 'cics-bundle-gradle-plugin'
@@ -156,7 +154,6 @@ class DeployTests extends Specification {
 
     def "Test missing bunddef"() {
         given:
-        settingsFile << "rootProject.name = 'cics-bundle-gradle'"
         buildFile << """\
             plugins {
                 id 'cics-bundle-gradle-plugin'
@@ -195,7 +192,6 @@ class DeployTests extends Specification {
 
     def "Test missing csdgroup"() {
         given:
-        settingsFile << "rootProject.name = 'cics-bundle-gradle'"
         buildFile << """\
             plugins {
                 id 'cics-bundle-gradle-plugin'
@@ -234,7 +230,6 @@ class DeployTests extends Specification {
 
     def "Test missing url"() {
         given:
-        settingsFile << "rootProject.name = 'cics-bundle-gradle'"
         buildFile << """\
             plugins {
                 id 'cics-bundle-gradle-plugin'
@@ -273,7 +268,6 @@ class DeployTests extends Specification {
 
     def "Test missing username"() {
         given:
-        settingsFile << "rootProject.name = 'cics-bundle-gradle'"
         buildFile << """\
             plugins {
                 id 'cics-bundle-gradle-plugin'
@@ -312,7 +306,6 @@ class DeployTests extends Specification {
 
     def "Test missing password"() {
         given:
-        settingsFile << "rootProject.name = 'cics-bundle-gradle'"
         buildFile << """\
             plugins {
                 id 'cics-bundle-gradle-plugin'
@@ -351,7 +344,6 @@ class DeployTests extends Specification {
 
     def "Test multiple items missing"() {
         given:
-        settingsFile << "rootProject.name = 'cics-bundle-gradle'"
         buildFile << """\
             plugins {
                 id 'cics-bundle-gradle-plugin'
@@ -391,6 +383,42 @@ class DeployTests extends Specification {
         ], [], FAILED)
     }
 
+    def "Test substitute username and password"() {
+        given:
+        File propertiesFile = testProjectDir.newFile('gradle.properties')
+        propertiesFile << """\
+            my_username=alice
+            password=secret
+        """
+
+        buildFile << """\
+            plugins {
+                id 'cics-bundle-gradle-plugin'
+            }
+            
+            version '1.0.0-SNAPSHOT'
+            
+            repositories {
+                jcenter()
+            }
+            
+            ${BundlePlugin.DEPLOY_EXTENSION_NAME} {
+                region   = 'MYEGION'
+                cicsplex = 'MYPLEX'
+                bunddef  = 'MYDEF'
+                csdgroup = 'MYGROUP'
+                url      = 'someurl'
+                username = my_username      // Define my_username in gradle.properties
+                password = project.properties['password']  // same name for variable and gradle.properties entry
+            }
+        """
+
+        when:
+        def result = runGradle('Test substitute username and password', [BundlePlugin.DEPLOY_TASK_NAME])
+
+        then:
+        checkResults(result, [], [], SUCCESS)
+    }
 
     // Run the gradle build with defaults and print the test output
     def runGradle(String testName, List args = [BundlePlugin.DEPLOY_TASK_NAME], boolean failExpected = false) {
