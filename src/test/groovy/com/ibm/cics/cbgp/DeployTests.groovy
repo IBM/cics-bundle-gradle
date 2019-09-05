@@ -1,6 +1,7 @@
 package com.ibm.cics.cbgp
 
 import org.gradle.testkit.runner.BuildResult
+import org.gradle.testkit.runner.GradleRunner
 
 /*-
  * #%L
@@ -16,7 +17,6 @@ import org.gradle.testkit.runner.BuildResult
  * #L%
  */
 
-import org.gradle.testkit.runner.GradleRunner
 import org.gradle.testkit.runner.TaskOutcome
 import org.junit.Rule
 import org.junit.rules.TemporaryFolder
@@ -32,14 +32,12 @@ class DeployTests extends Specification {
     public TemporaryFolder testProjectDir = new TemporaryFolder()
     File settingsFile
     File buildFile
-    File propertiesFile
 
     def setup() {
         ExpandoMetaClass.disableGlobally()
         settingsFile = testProjectDir.newFile('settings.gradle')
         settingsFile << "rootProject.name = 'cics-bundle-gradle'"
         buildFile = testProjectDir.newFile('build.gradle')
-        propertiesFile = testProjectDir.newFile('gradle.properties')
     }
 
     def "Test missing deploy extension block"() {
@@ -387,9 +385,10 @@ class DeployTests extends Specification {
 
     def "Test substitute username and password"() {
         given:
+        File propertiesFile = testProjectDir.newFile('gradle.properties')
         propertiesFile << """\
-            systemProp.username=alice
-            ORG_GRADLE_PROJECT_password=passw0rd
+            user_name=alice
+            password=secret
         """
 
         buildFile << """\
@@ -403,22 +402,14 @@ class DeployTests extends Specification {
                 jcenter()
             }
             
-            configurations {
-                ${BuildBundleTask.CONFIG_NAME}
-            }
-            
             ${BundlePlugin.DEPLOY_EXTENSION_NAME} {
-                region              = 'MYEGION'
-                cicsplex            = 'MYPLEX'
-                bunddef             = 'MYDEF'
-                csdgroup            = 'MYGROUP'
-                url                 = 'someurl'
-                username            = '\$username'
-                password            = '\$password'
-            }
-            
-            dependencies {
-                ${BuildBundleTask.CONFIG_NAME}('javax.servlet:javax.servlet-api:3.1.0@jar')
+                region   = 'MYEGION'
+                cicsplex = 'MYPLEX'
+                bunddef  = 'MYDEF'
+                csdgroup = 'MYGROUP'
+                url      = 'someurl'
+                username = user_name
+                password = project.properties['password']
             }
         """
 

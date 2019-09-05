@@ -57,7 +57,6 @@ Example:
         validateDeployExtension()
     }
 
-    // TODO Add code to resolve gradle properties if values start with $
     private void validateDeployExtension() {
         def blockValid = true
 
@@ -99,23 +98,9 @@ Example:
             }
         }
 
-        String username = deployExtension.username
-        if (username.startsWith('$')) {
-            if (project.hasProperty('username')) {
-                username = project.property('username')
-            } else {
-                logger.error("'username' property not defined")
-            }
-        }
-        println("Username: $username")
-        println("Password: ${deployExtension.password}")
-
         // Throw exception if anything is wrong in the extension block
         if (!blockValid) {
             throw new GradleException(DEPLOY_CONFIG_EXCEPTION)
         }
     }
-
-
-
 }
