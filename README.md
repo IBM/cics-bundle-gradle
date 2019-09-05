@@ -24,7 +24,7 @@ This project contains:
          id 'cics-bundle-gradle-plugin'
      }
     ```
-2. Add the `mavenCentral` repository to your build.gradle, so Gradle can find the plugin 
+1. Add the `mavenCentral` repository to your build.gradle, so Gradle can find the plugin 
     ```gradle
      repositories {
          mavenCentral()
@@ -32,14 +32,7 @@ This project contains:
     ```
 
 ## To build a CICS bundle
-1. Define a `cicsBundle` configuration in your build.gradle to scope the EAR, WAR and OSGi dependencies
- to be included in the bundle
-    ```gradle
-     configurations {
-         cicsBundle
-     }
-    ```
- 2. Add local and remote dependencies to your `cicsBundle` configuration in the `dependencies` block, by prepending them 
+1. Add local and remote dependencies to the `cicsBundle` configuration in the `dependencies` block, by prepending them 
  with the `cicsBundle` build configuration name.
      ```gradle
      dependencies {
@@ -51,22 +44,22 @@ This project contains:
          cicsBundle(group: 'javax.servlet', name: 'javax.servlet-api', version: '3.1.0', ext: 'jar')
      }
      ```
- 3. Add the buildCICSBundleConfig block to define the default JVM server
+1. Add the buildCICSBundleConfig block to define the default JVM server
      ```gradle
         buildCICSBundleConfig {
            defaultjvmserver = 'EYUCMCIJ'
         } 
      ```
- 4. Define the version information for the bundle
+1. Define the version information for the bundle
      ```gradle
        version '1.0.0-SNAPSHOT'
      ```
- 5. Invoke the `buildCICSBundle` task in your build.
+1. Invoke the `buildCICSBundle` task in your build.
 
  
  ## To deploy a CICS bundle
  
- 1. Add the deployCICSBundleConfig block for the deploy destination
+1. Add the deployCICSBundleConfig block for the deploy destination
       ```gradle
          deployCICSBundleConfig {
              cicsplex = 'MYPLEX'
@@ -79,7 +72,7 @@ This project contains:
          }
     ```
 
- 2. Invoke the `deployCICSBundle` task in your build to deploy the bundle to the target cicsplex and region
+1. Invoke the `deployCICSBundle` task in your build to deploy the bundle to the target cicsplex and region
  
 
 ## Contributing

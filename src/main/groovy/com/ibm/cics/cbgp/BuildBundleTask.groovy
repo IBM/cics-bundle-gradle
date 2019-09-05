@@ -17,10 +17,12 @@ package com.ibm.cics.cbgp
 import org.gradle.api.DefaultTask
 import org.gradle.api.GradleException
 import org.gradle.api.artifacts.Configuration
+import org.gradle.api.file.DirectoryProperty
 import org.gradle.api.internal.artifacts.dependencies.DefaultExternalModuleDependency
 import org.gradle.api.internal.artifacts.dependencies.DefaultProjectDependency
 import org.gradle.api.internal.file.copy.DefaultFileCopyDetails
 import org.gradle.api.tasks.Input
+import org.gradle.api.tasks.OutputDirectory
 import org.gradle.api.tasks.TaskAction
 
 class BuildBundleTask extends DefaultTask {
@@ -34,8 +36,7 @@ Example:
        defaultjvmserver = 'EYUCMCIJ'
     } 
 """
-    public static final String CONFIG_NAME = "cicsBundle"
-    public static final String MISSING_CONFIG = "Define \'$CONFIG_NAME\' configuration with CICS bundle dependencies"
+    public static final String MISSING_CONFIG = "Define '$BundlePlugin.BUNDLE_DEPENDENCY_CONFIGURATION_NAME' configuration with CICS bundle dependencies"
     public static final String UNSUPPORTED_EXTENSIONS_FOUND = 'Unsupported file extensions for some dependencies, see earlier messages.'
     private static final List VALID_DEPENDENCY_FILE_EXTENSIONS = ['ear', 'jar', 'war']
 
@@ -51,7 +52,7 @@ Example:
         // Find & process the configuration
         def foundConfig = false
         project.configurations.each {
-            if (it.name == CONFIG_NAME) {
+            if (it.name == BundlePlugin.BUNDLE_DEPENDENCY_CONFIGURATION_NAME) {
                 processCICSBundle(it)
                 foundConfig = true
             }
@@ -64,7 +65,7 @@ Example:
     }
 
     def processCICSBundle(Configuration config) {
-        logger.info "processing \'$CONFIG_NAME\' configuration"
+        logger.info "processing '$BundlePlugin.BUNDLE_DEPENDENCY_CONFIGURATION_NAME' configuration"
         def filesCopied = []
         project.copy {
             from config
@@ -80,7 +81,7 @@ Example:
 
     private void checkDependenciesCopied(List filesCopied, Configuration config) {
         if (config.dependencies.size() == 0) {
-            logger.warn "Warning, no external or project dependencies in 'cicsBundle' configuration"
+            logger.warn "Warning, no external or project dependencies in '$BundlePlugin.BUNDLE_DEPENDENCY_CONFIGURATION_NAME' configuration"
             return
         }
 
@@ -112,7 +113,7 @@ Example:
                     logger.error " Missing dependency: $dep"
                 }
             }
-            throw new GradleException("Failed, missing dependencies from '$CONFIG_NAME' configuration")
+            throw new GradleException("Failed, missing dependencies from '$BundlePlugin.BUNDLE_DEPENDENCY_CONFIGURATION_NAME' configuration")
         }
     }
 

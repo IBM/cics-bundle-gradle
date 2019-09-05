@@ -53,12 +53,8 @@ class DeployTests extends Specification {
                 jcenter()
             }
             
-            configurations {
-                ${BuildBundleTask.CONFIG_NAME}
-            }
-            
             dependencies {
-                ${BuildBundleTask.CONFIG_NAME}('javax.servlet:javax.servlet-api:3.1.0@jar')
+                ${BundlePlugin.BUNDLE_DEPENDENCY_CONFIGURATION_NAME}('javax.servlet:javax.servlet-api:3.1.0@jar')
             }
         """
 
@@ -127,10 +123,6 @@ class DeployTests extends Specification {
                 jcenter()
             }
             
-            configurations {
-                ${BuildBundleTask.CONFIG_NAME}
-            }
-            
             ${BundlePlugin.DEPLOY_EXTENSION_NAME} {
                 cicsplex            = 'MYPLEX'
                 bunddef             = 'MYDEF'
@@ -141,7 +133,7 @@ class DeployTests extends Specification {
             }
             
             dependencies {
-                ${BuildBundleTask.CONFIG_NAME}('javax.servlet:javax.servlet-api:3.1.0@jar')
+                ${BundlePlugin.BUNDLE_DEPENDENCY_CONFIGURATION_NAME}('javax.servlet:javax.servlet-api:3.1.0@jar')
             }
         """
 
@@ -165,10 +157,6 @@ class DeployTests extends Specification {
                 jcenter()
             }
             
-            configurations {
-                ${BuildBundleTask.CONFIG_NAME}
-            }
-            
             ${BundlePlugin.DEPLOY_EXTENSION_NAME} {
                 cicsplex            = 'MYPLEX'
                 region              = 'MYEGION'
@@ -179,7 +167,7 @@ class DeployTests extends Specification {
             }
             
             dependencies {
-                ${BuildBundleTask.CONFIG_NAME}('javax.servlet:javax.servlet-api:3.1.0@jar')
+                ${BundlePlugin.BUNDLE_DEPENDENCY_CONFIGURATION_NAME}('javax.servlet:javax.servlet-api:3.1.0@jar')
             }
         """
 
@@ -203,10 +191,6 @@ class DeployTests extends Specification {
                 jcenter()
             }
             
-            configurations {
-                ${BuildBundleTask.CONFIG_NAME}
-            }
-            
             ${BundlePlugin.DEPLOY_EXTENSION_NAME} {
                 cicsplex            = 'MYPLEX'
                 region              = 'MYEGION'
@@ -217,7 +201,7 @@ class DeployTests extends Specification {
             }
             
             dependencies {
-                ${BuildBundleTask.CONFIG_NAME}('javax.servlet:javax.servlet-api:3.1.0@jar')
+                ${BundlePlugin.BUNDLE_DEPENDENCY_CONFIGURATION_NAME}('javax.servlet:javax.servlet-api:3.1.0@jar')
             }
         """
 
@@ -241,10 +225,6 @@ class DeployTests extends Specification {
                 jcenter()
             }
             
-            configurations {
-                ${BuildBundleTask.CONFIG_NAME}
-            }
-            
             ${BundlePlugin.DEPLOY_EXTENSION_NAME} {
                 cicsplex            = 'MYPLEX'
                 region              = 'MYEGION'
@@ -255,7 +235,7 @@ class DeployTests extends Specification {
             }
             
             dependencies {
-                ${BuildBundleTask.CONFIG_NAME}('javax.servlet:javax.servlet-api:3.1.0@jar')
+                ${BundlePlugin.BUNDLE_DEPENDENCY_CONFIGURATION_NAME}('javax.servlet:javax.servlet-api:3.1.0@jar')
             }
         """
 
@@ -279,10 +259,6 @@ class DeployTests extends Specification {
                 jcenter()
             }
             
-            configurations {
-                ${BuildBundleTask.CONFIG_NAME}
-            }
-            
             ${BundlePlugin.DEPLOY_EXTENSION_NAME} {
                 cicsplex            = 'MYPLEX'
                 region              = 'MYEGION'
@@ -293,7 +269,7 @@ class DeployTests extends Specification {
             }
             
             dependencies {
-                ${BuildBundleTask.CONFIG_NAME}('javax.servlet:javax.servlet-api:3.1.0@jar')
+                ${BundlePlugin.BUNDLE_DEPENDENCY_CONFIGURATION_NAME}('javax.servlet:javax.servlet-api:3.1.0@jar')
             }
         """
 
@@ -317,10 +293,6 @@ class DeployTests extends Specification {
                 jcenter()
             }
             
-            configurations {
-                ${BuildBundleTask.CONFIG_NAME}
-            }
-            
             ${BundlePlugin.DEPLOY_EXTENSION_NAME} {
                 cicsplex            = 'MYPLEX'
                 region              = 'MYEGION'
@@ -331,7 +303,7 @@ class DeployTests extends Specification {
             }
             
             dependencies {
-                ${BuildBundleTask.CONFIG_NAME}('javax.servlet:javax.servlet-api:3.1.0@jar')
+                ${BundlePlugin.BUNDLE_DEPENDENCY_CONFIGURATION_NAME}('javax.servlet:javax.servlet-api:3.1.0@jar')
             }
         """
 
@@ -355,10 +327,6 @@ class DeployTests extends Specification {
                 jcenter()
             }
             
-            configurations {
-                ${BuildBundleTask.CONFIG_NAME}
-            }
-            
             ${BundlePlugin.DEPLOY_EXTENSION_NAME} {
                 cicsplex            = 'MYPLEX'
                 csdgroup            = 'MYGROUP'
@@ -368,7 +336,7 @@ class DeployTests extends Specification {
             }
             
             dependencies {
-                ${BuildBundleTask.CONFIG_NAME}('javax.servlet:javax.servlet-api:3.1.0@jar')
+                ${BundlePlugin.BUNDLE_DEPENDENCY_CONFIGURATION_NAME}('javax.servlet:javax.servlet-api:3.1.0@jar')
             }
         """
 
