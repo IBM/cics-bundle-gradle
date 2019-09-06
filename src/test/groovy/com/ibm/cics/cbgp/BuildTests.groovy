@@ -21,6 +21,8 @@ import org.junit.Rule
 import org.junit.rules.TemporaryFolder
 import spock.lang.Specification
 
+import java.lang.management.ManagementFactory
+
 import static org.gradle.testkit.runner.TaskOutcome.FAILED
 import static org.gradle.testkit.runner.TaskOutcome.SUCCESS
 
@@ -31,6 +33,9 @@ class BuildTests extends Specification {
     public TemporaryFolder testProjectDir = new TemporaryFolder()
     File settingsFile
     File buildFile
+
+    boolean isDebug = ManagementFactory.getRuntimeMXBean().
+            getInputArguments().toString().indexOf("-agentlib:jdwp") > 0;
 
     def setup() {
         ExpandoMetaClass.disableGlobally()
@@ -315,9 +320,21 @@ class BuildTests extends Specification {
     def runGradle(String testName, List args = [BundlePlugin.BUILD_TASK_NAME], boolean failExpected = false) {
         def result
         if (!failExpected) {
-            result = GradleRunner.create().withProjectDir(testProjectDir.root).withArguments(args).withPluginClasspath().build()
+            result = GradleRunner
+                    .create()
+                    .withProjectDir(testProjectDir.root)
+                    .withArguments(args)
+                    .withPluginClasspath()
+                    .withDebug(isDebug)
+                    .build()
         } else {
-            result = GradleRunner.create().withProjectDir(testProjectDir.root).withArguments(args).withPluginClasspath().buildAndFail()
+            result = GradleRunner
+                    .create()
+                    .withProjectDir(testProjectDir.root)
+                    .withArguments(args)
+                    .withPluginClasspath()
+                    .withDebug(isDebug)
+                    .buildAndFail()
         }
         def title = "\n----- '$testName' output: -----"
         println(title)
