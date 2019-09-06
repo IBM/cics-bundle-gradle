@@ -40,14 +40,16 @@ Example:
     public static final String UNSUPPORTED_EXTENSIONS_FOUND = 'Unsupported file extensions for some dependencies, see earlier messages.'
     private static final List VALID_DEPENDENCY_FILE_EXTENSIONS = ['ear', 'jar', 'war']
 
-    @Input
-    def buildExtension = project.extensions.getByName(BundlePlugin.BUILD_EXTENSION_NAME)
+    @OutputDirectory
+    final DirectoryProperty outputDirectory = project.objects.directoryProperty()
 
     @TaskAction
     def buildCICSBundle() {
         logger.info "Task ${BundlePlugin.BUILD_TASK_NAME} (Gradle $project.gradle.gradleVersion) "
 
-        validateBuildExtension()
+        def buildExtension = project.extensions.getByName(BundlePlugin.BUILD_EXTENSION_NAME)
+
+        validateBuildExtension(buildExtension)
 
         // Find & process the configuration
         def foundConfig = false
@@ -73,7 +75,7 @@ Example:
                 logger.lifecycle " Copying $it"
                 filesCopied << it
             }
-            into "$project.buildDir/$project.name-$project.version"
+            into outputDirectory
         }
         checkCopiedFileExtensions(filesCopied)
         checkDependenciesCopied(filesCopied, config)
@@ -134,7 +136,7 @@ Example:
         }
     }
 
-    private void validateBuildExtension() {
+    private void validateBuildExtension(buildExtension) {
         def blockValid = true
 
         // Validate block items exist, no check on content

@@ -319,6 +319,7 @@ class BuildTests extends Specification {
     // Run the gradle build with defaults and print the test output
     def runGradle(String testName, List args = [BundlePlugin.BUILD_TASK_NAME], boolean failExpected = false) {
         def result
+        args.add("--stacktrace")
         if (!failExpected) {
             result = GradleRunner
                     .create()
