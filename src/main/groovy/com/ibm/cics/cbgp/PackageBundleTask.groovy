@@ -23,7 +23,7 @@ import org.gradle.api.tasks.bundling.Zip
 
 class PackageBundleTask extends Zip {
 
-    public static final String BUNDLE_EXTENSION = "zip"
+    public static final String BUNDLE_EXTENSION = "cbz"
 
     @InputDirectory
     final DirectoryProperty inputDirectory = project.objects.directoryProperty()

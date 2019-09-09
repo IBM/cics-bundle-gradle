@@ -340,7 +340,7 @@ class BuildTests extends Specification {
         checkResults(result, ['> Task :buildCICSBundle', '> Task :packageCICSBundle NO-SOURCE'], [], SUCCESS)
     }
 
-    def "Test packageCICSBundle produces zip in default location"() {
+    def "Test packageCICSBundle produces cbz (zip) in default location"() {
         given:
         settingsFile << "rootProject.name = 'cics-bundle-gradle'"
         buildFile << """\
@@ -368,7 +368,7 @@ class BuildTests extends Specification {
         def result = runGradle(['packageCICSBundle'], false)
 
         then:
-        checkResults(result, ['> Task :buildCICSBundle\n', '> Task :packageCICSBundle\n'], ['distributions/cics-bundle-gradle-1.0.0-SNAPSHOT.zip'], SUCCESS)
+        checkResults(result, ['> Task :buildCICSBundle\n', '> Task :packageCICSBundle\n'], ['distributions/cics-bundle-gradle-1.0.0-SNAPSHOT.cbz'], SUCCESS)
     }
 
     // Run the gradle build with defaults and print the test output
