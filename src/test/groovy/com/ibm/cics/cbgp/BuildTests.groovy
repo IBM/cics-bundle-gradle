@@ -68,10 +68,10 @@ class BuildTests extends Specification {
         """
 
         when:
-        def result = runGradle('Test jcenter jar dependency')
+        def result = runGradle()
 
         then:
-        checkResults(result, ['javax.servlet-api-3.1.0.jar'], ['/javax.servlet-api-3.1.0.jar'], SUCCESS)
+        checkResults(result, ['javax.servlet-api-3.1.0.jar'], ['cics-bundle-gradle-1.0.0-SNAPSHOT/javax.servlet-api-3.1.0.jar'], SUCCESS)
     }
 
     def "Test maven war dependency"() {
@@ -98,10 +98,10 @@ class BuildTests extends Specification {
         """
 
         when:
-        def result = runGradle('Test maven war dependency')
+        def result = runGradle()
 
         then:
-        checkResults(result, ['org.glassfish.main.admingui', 'war-5.1.0.war'], ['/war-5.1.0.war'], SUCCESS)
+        checkResults(result, ['org.glassfish.main.admingui', 'war-5.1.0.war'], ['cics-bundle-gradle-1.0.0-SNAPSHOT/war-5.1.0.war'], SUCCESS)
     }
 
     def "Test maven ear dependency"() {
@@ -128,10 +128,10 @@ class BuildTests extends Specification {
         """
 
         when:
-        def result = runGradle('Test maven ear dependency')
+        def result = runGradle()
 
         then:
-        checkResults(result, ['org.codehaus.cargo', 'simple-ear-1.7.6.ear'], ['/simple-ear-1.7.6.ear'], SUCCESS)
+        checkResults(result, ['org.codehaus.cargo', 'simple-ear-1.7.6.ear'], ['cics-bundle-gradle-1.0.0-SNAPSHOT/simple-ear-1.7.6.ear'], SUCCESS)
     }
 
     def "Test local project dependency"() {
@@ -175,11 +175,12 @@ class BuildTests extends Specification {
         }
 
         when:
-        def result = runGradle('Test local project dependency', ['build', BundlePlugin.BUILD_TASK_NAME])
+        def result = runGradle(['build', BundlePlugin.BUILD_TASK_NAME])
 
         then:
         def builtWarName = "${warProjectName}-1.0-SNAPSHOT.war"
-        checkResults(result, ['Task :helloworldwar:build', builtWarName], [builtWarName], SUCCESS)
+        def builtWarLocation = "cics-bundle-gradle-1.0.0-SNAPSHOT/$builtWarName"
+        checkResults(result, ['Task :helloworldwar:build', builtWarName], [builtWarLocation], SUCCESS)
     }
 
     def "Test incorrect dependency extension"() {
@@ -219,7 +220,7 @@ class BuildTests extends Specification {
         """
 
         when:
-        def result = runGradle('Test incorrect dependency extension', [BundlePlugin.BUILD_TASK_NAME], true)
+        def result = runGradle([BundlePlugin.BUILD_TASK_NAME], true)
 
         then:
         checkResults(result, [BuildBundleTask.UNSUPPORTED_EXTENSIONS_FOUND,
@@ -255,7 +256,7 @@ class BuildTests extends Specification {
         """
 
         when:
-        def result = runGradle('Test no cicsBundle dependencies warning', [BundlePlugin.BUILD_TASK_NAME], false)
+        def result = runGradle([BundlePlugin.BUILD_TASK_NAME], false)
 
         then:
         checkResults(result, ["Warning, no external or project dependencies in '${BundlePlugin.BUNDLE_DEPENDENCY_CONFIGURATION_NAME}' configuration"], [], SUCCESS)
@@ -284,7 +285,7 @@ class BuildTests extends Specification {
         """
 
         when:
-        def result = runGradle('Test missing defaultjvmserver in block', [BundlePlugin.BUILD_TASK_NAME], true)
+        def result = runGradle([BundlePlugin.BUILD_TASK_NAME], true)
 
         then:
         checkResults(result, [BuildBundleTask.MISSING_JVMSERVER, BuildBundleTask.PLEASE_SPECIFY], [], FAILED)
@@ -310,15 +311,70 @@ class BuildTests extends Specification {
         """
 
         when:
-        def result = runGradle('Test missing config block', [BundlePlugin.BUILD_TASK_NAME], true)
+        def result = runGradle([BundlePlugin.BUILD_TASK_NAME], true)
 
         then:
         checkResults(result, [BuildBundleTask.MISSING_JVMSERVER, BuildBundleTask.PLEASE_SPECIFY], [], FAILED)
     }
 
+    def "Test build -> packageCICSBundle -> buildCICSbundle task dependency"() {
+        given:
+        settingsFile << "rootProject.name = 'cics-bundle-gradle'"
+        buildFile << """\
+            plugins {
+                id 'cics-bundle-gradle-plugin'
+            }
+
+            version '1.0.0-SNAPSHOT'
+
+            ${BundlePlugin.BUILD_EXTENSION_NAME} {
+                defaultjvmserver = 'EYUCMCIJ'
+            }
+
+        """
+
+        when:
+        def result = runGradle(['build'], false)
+
+        then:
+        checkResults(result, ['> Task :buildCICSBundle', '> Task :packageCICSBundle NO-SOURCE'], [], SUCCESS)
+    }
+
+    def "Test packageCICSBundle produces zip in default location"() {
+        given:
+        settingsFile << "rootProject.name = 'cics-bundle-gradle'"
+        buildFile << """\
+            plugins {
+                id 'cics-bundle-gradle-plugin'
+            }
+
+            version '1.0.0-SNAPSHOT'
+            
+            repositories {
+                mavenCentral()
+            }
+
+            ${BundlePlugin.BUILD_EXTENSION_NAME} {
+                defaultjvmserver = 'EYUCMCIJ'
+            }
+           
+            dependencies {
+                ${BundlePlugin.BUNDLE_DEPENDENCY_CONFIGURATION_NAME} 'org.codehaus.cargo:simple-ear:1.7.6@ear'
+            }
+
+        """
+
+        when:
+        def result = runGradle(['packageCICSBundle'], false)
+
+        then:
+        checkResults(result, ['> Task :buildCICSBundle\n', '> Task :packageCICSBundle\n'], ['distributions/cics-bundle-gradle-1.0.0-SNAPSHOT.zip'], SUCCESS)
+    }
+
     // Run the gradle build with defaults and print the test output
-    def runGradle(String testName, List args = [BundlePlugin.BUILD_TASK_NAME], boolean failExpected = false) {
+    def runGradle(List args = [BundlePlugin.BUILD_TASK_NAME], boolean failExpected = false) {
         def result
+        args.add("--stacktrace")
         if (!failExpected) {
             result = GradleRunner
                     .create()
@@ -336,7 +392,7 @@ class BuildTests extends Specification {
                     .withDebug(isDebug)
                     .buildAndFail()
         }
-        def title = "\n----- '$testName' output: -----"
+        def title = "\n----- '$specificationContext.currentIteration.name' output: -----"
         println(title)
         println(result.output)
         println('-' * title.length())
@@ -346,22 +402,16 @@ class BuildTests extends Specification {
 
     def checkResults(BuildResult result, List resultStrings, List outputFiles, TaskOutcome outcome) {
         resultStrings.each {
-            if (!result.output.contains(it)) {
-                println("Not found in build output: '$it'")
-                assert (false)
-            }
+            assert result.output.contains(it)
         }
         outputFiles.each {
-            if (!getFileInBuildOutputFolder(it).exists()) {
-                println("File not found in output folder: '$it'")
-                assert (false)
-            }
+            assert getFileInBuildOutputFolder(it).exists()
         }
         result.task(":$BundlePlugin.BUILD_TASK_NAME").outcome == outcome
     }
 
     private File getFileInBuildOutputFolder(String fileName) {
-        return new File(buildFile.parent + '/build/cics-bundle-gradle-1.0.0-SNAPSHOT/' + fileName)
+        return new File(buildFile.parent + '/build/' + fileName)
     }
 
     // Some useful functions as I can't get debug to work for Gradle Runner tests yet
