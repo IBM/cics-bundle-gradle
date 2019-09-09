@@ -38,7 +38,10 @@ Example:
 """
     public static final String MISSING_CONFIG = "Define '$BundlePlugin.BUNDLE_DEPENDENCY_CONFIGURATION_NAME' configuration with CICS bundle dependencies"
     public static final String UNSUPPORTED_EXTENSIONS_FOUND = 'Unsupported file extensions for some dependencies, see earlier messages.'
-    private static final List VALID_DEPENDENCY_FILE_EXTENSIONS = ['ear', 'jar', 'war']
+    private static final String EAR = 'ear'
+    private static final String JAR = 'jar'
+    private static final String WAR = 'war'
+    private static final List VALID_DEPENDENCY_FILE_EXTENSIONS = [EAR, JAR, WAR]
 
     @OutputDirectory
     final DirectoryProperty outputDirectory = project.objects.directoryProperty()
@@ -52,11 +55,10 @@ Example:
         validateBuildExtension(buildExtension)
 
         // Find & process the configuration
-        def foundConfig = false
-        project.configurations.each {
+        def foundConfig = project.configurations.find {
             if (it.name == BundlePlugin.BUNDLE_DEPENDENCY_CONFIGURATION_NAME) {
                 processCICSBundle(it)
-                foundConfig = true
+                return true
             }
         }
 
