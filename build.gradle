@@ -14,7 +14,11 @@
 plugins {
     id 'groovy'
     id 'java-gradle-plugin'
+    id 'maven-publish'
 }
+
+group 'com.ibm.cics'
+version '0.0.1-SNAPSHOT'
 
 gradlePlugin {
     plugins {
@@ -31,9 +35,10 @@ repositories {
         // For cics-bundle-common // TODO update when published formally
         url "https://oss.sonatype.org/content/repositories/snapshots"
     }
+    mavenLocal()
 }
 
-defaultTasks 'clean', 'build', 'check'
+defaultTasks 'clean', 'build', 'check', 'publishToMavenLocal'
 
 dependencies {
     implementation 'com.ibm.cics:cics-bundle-common:0.0.1-SNAPSHOT@jar'
