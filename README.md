@@ -7,7 +7,7 @@ This project contains:
  deploys them to CICS.
  
 ## Pre-requisites 
- The plugin requires Gradle version 5.4.1 features and will not work correctly on earlier versions of Gradle.
+ The plugin requires Gradle version 5.1 features and will not work correctly on earlier versions of Gradle.
  
 ## Gradle Tasks
  The `cics-bundle-gradle-plugin` contributes the following gradle tasks.

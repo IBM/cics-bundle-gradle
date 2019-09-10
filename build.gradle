@@ -38,7 +38,7 @@ repositories {
     mavenLocal()
 }
 
-defaultTasks 'clean', 'build', 'check', 'publishToMavenLocal'
+defaultTasks 'clean', 'build', 'publishToMavenLocal'
 
 dependencies {
     module 'com.ibm.cics:cics-bundle-common:0.0.1-SNAPSHOT@jar'
