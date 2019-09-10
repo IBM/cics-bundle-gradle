@@ -4,8 +4,12 @@ A collection of Gradle plugins and utilities that can be used to build CICS bund
 
 This project contains:
   `cics-bundle-gradle-plugin`, a Gradle plugin that builds CICS bundles, includes selected Java-based dependencies and 
- deploys them to CICS 
-
+ deploys them to CICS.
+ 
+## Pre-requisites 
+ The plugin requires Gradle version 5.4.1 features and will not work correctly on earlier versions of Gradle.
+ 
+## Gradle Tasks
  The `cics-bundle-gradle-plugin` contributes the following gradle tasks.
   
 ### `buildCICSBundle`
@@ -18,13 +22,13 @@ This project contains:
  define the bundle in CICS, install and enable it.
  
 ## To use the `cics-bundle-gradle-plugin` 
-1. Add the plugin id to your build.gradle
+1. Add the plugin id to your build.gradle.
     ```gradle
      plugins {
          id 'cics-bundle-gradle-plugin'
      }
     ```
-1. Add the `mavenCentral` repository to your build.gradle, so Gradle can find the plugin 
+1. Add the `mavenCentral` repository to your build.gradle, so Gradle can find the plugin. 
     ```gradle
      repositories {
          mavenCentral()
@@ -33,7 +37,7 @@ This project contains:
 
 ## To build a CICS bundle
 1. Add local and remote dependencies to the `cicsBundle` configuration in the `dependencies` block, by prepending them 
- with the `cicsBundle` build configuration name.
+ with the `cicsBundle` build configuration name that the plugin provides.
      ```gradle
      dependencies {
           // A project within the build
@@ -44,13 +48,13 @@ This project contains:
          cicsBundle(group: 'javax.servlet', name: 'javax.servlet-api', version: '3.1.0', ext: 'jar')
      }
      ```
-1. Add the buildCICSBundleConfig block to define the default JVM server
+1. Add the buildCICSBundleConfig block to define the default JVM server.
      ```gradle
         buildCICSBundleConfig {
            defaultjvmserver = 'EYUCMCIJ'
         } 
      ```
-1. Define the version information for the bundle
+1. Define the version information for the bundle.
      ```gradle
        version '1.0.0-SNAPSHOT'
      ```
@@ -59,7 +63,7 @@ This project contains:
  
  ## To deploy a CICS bundle
  
-1. Add the deployCICSBundleConfig block for the deploy destination
+1. Add the deployCICSBundleConfig block for the deploy destination.
       ```gradle
          deployCICSBundleConfig {
              cicsplex = 'MYPLEX'
@@ -72,7 +76,7 @@ This project contains:
          }
     ```
 
-1. Invoke the `deployCICSBundle` task in your build to deploy the bundle to the target cicsplex and region
+1. Invoke the `deployCICSBundle` task in your build to deploy the bundle to the target cicsplex and region.
  
 
 ## Contributing
