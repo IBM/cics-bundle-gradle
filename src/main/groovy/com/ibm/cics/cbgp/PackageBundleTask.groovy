@@ -29,7 +29,7 @@ class PackageBundleTask extends Zip {
     final DirectoryProperty inputDirectory = project.objects.directoryProperty()
 
     public PackageBundleTask() {
-        getArchiveExtension().set(BUNDLE_EXTENSION);
+        setExtension(BUNDLE_EXTENSION);
         setMetadataCharset("UTF-8");
     }
 

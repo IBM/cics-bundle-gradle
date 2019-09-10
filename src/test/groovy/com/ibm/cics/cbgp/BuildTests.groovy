@@ -72,7 +72,7 @@ class BuildTests extends Specification {
 
         then:
         checkResults(result,
-                ['javax.servlet-api-3.1.0.jar', 'Task buildCICSBundle (Gradle 5.1)'],
+                ['javax.servlet-api-3.1.0.jar', 'Task buildCICSBundle (Gradle 5.0)'],
                 ['cics-bundle-gradle-1.0.0-SNAPSHOT/javax.servlet-api-3.1.0.jar']
                 , SUCCESS
         )
