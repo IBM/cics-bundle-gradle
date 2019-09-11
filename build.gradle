@@ -38,11 +38,8 @@ repositories {
     mavenLocal()
 }
 
-defaultTasks 'clean', 'build', 'publishToMavenLocal'
-
 dependencies {
-    module 'com.ibm.cics:cics-bundle-common:0.0.1-SNAPSHOT@jar'
-
+    'com.ibm.cics:cics-bundle-common:0.0.1-SNAPSHOT@jar'
     testCompile 'junit:junit:4.12'
     testImplementation('org.spockframework:spock-core:1.1-groovy-2.4') {
         exclude module: 'groovy-all'

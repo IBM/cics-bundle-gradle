@@ -372,7 +372,7 @@ class BuildTests extends Specification {
         def result = runGradle(['packageCICSBundle'], false)
 
         then:
-        checkResults(result, ['> Task :buildCICSBundle\n', '> Task :packageCICSBundle\n'], ['distributions/cics-bundle-gradle-1.0.0-SNAPSHOT.cbz'], SUCCESS)
+        checkResults(result, ['> Task :buildCICSBundle\n', '> Task :packageCICSBundle\n'], ['distributions/cics-bundle-gradle-1.0.0-SNAPSHOT.zip'], SUCCESS)
     }
 
     // Run the gradle build with defaults and print the test output
