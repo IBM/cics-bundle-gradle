@@ -38,6 +38,8 @@ repositories {
     mavenLocal()
 }
 
+defaultTasks 'build'
+
 dependencies {
     'com.ibm.cics:cics-bundle-common:0.0.1-SNAPSHOT@jar'
     testCompile 'junit:junit:4.12'
