@@ -35,7 +35,6 @@ repositories {
         // For cics-bundle-common // TODO update when published formally
         url "https://oss.sonatype.org/content/repositories/snapshots"
     }
-    mavenLocal()
 }
 
 defaultTasks 'build'
