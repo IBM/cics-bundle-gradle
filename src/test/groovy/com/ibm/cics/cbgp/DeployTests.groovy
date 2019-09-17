@@ -2,6 +2,7 @@ package com.ibm.cics.cbgp
 
 import org.gradle.testkit.runner.BuildResult
 import org.gradle.testkit.runner.GradleRunner
+import org.gradle.testkit.runner.TaskOutcome
 
 /*-
  * #%L
@@ -17,7 +18,6 @@ import org.gradle.testkit.runner.GradleRunner
  * #L%
  */
 
-import org.gradle.testkit.runner.TaskOutcome
 import org.junit.Rule
 import org.junit.rules.TemporaryFolder
 import spock.lang.Specification
@@ -26,23 +26,22 @@ import static org.gradle.testkit.runner.TaskOutcome.FAILED
 import static org.gradle.testkit.runner.TaskOutcome.SUCCESS
 
 class DeployTests extends Specification {
-    List<File> pluginClasspath
 
-    @Rule
-    public TemporaryFolder testProjectDir = new TemporaryFolder()
-    File settingsFile
-    File buildFile
+	@Rule
+	public TemporaryFolder testProjectDir = new TemporaryFolder()
+	File settingsFile
+	File buildFile
 
-    def setup() {
-        ExpandoMetaClass.disableGlobally()
-        settingsFile = testProjectDir.newFile('settings.gradle')
-        settingsFile << "rootProject.name = 'cics-bundle-gradle'"
-        buildFile = testProjectDir.newFile('build.gradle')
-    }
+	def setup() {
+		ExpandoMetaClass.disableGlobally()
+		settingsFile = testProjectDir.newFile('settings.gradle')
+		settingsFile << "rootProject.name = 'cics-bundle-gradle'"
+		buildFile = testProjectDir.newFile('build.gradle')
+	}
 
-    def "Test missing deploy extension block"() {
-        given:
-        buildFile << """\
+	def "Test missing deploy extension block"() {
+		given:
+		buildFile << """\
             plugins {
                 id 'cics-bundle-gradle-plugin'
             }
@@ -58,16 +57,16 @@ class DeployTests extends Specification {
             }
         """
 
-        when:
-        def result = runGradle('Test missing deploy extension block', [BundlePlugin.DEPLOY_TASK_NAME], true)
+		when:
+		def result = runGradle('Test missing deploy extension block', [BundlePlugin.DEPLOY_TASK_NAME], true)
 
-        then:
-        checkResults(result, [DeployBundleTask.MISSING_CONFIG, DeployBundleTask.PLEASE_SPECIFY], [], FAILED)
-    }
+		then:
+		checkResults(result, [DeployBundleTask.MISSING_CONFIG, DeployBundleTask.PLEASE_SPECIFY], [], FAILED)
+	}
 
-    def "Test empty deploy extension block"() {
-        given:
-        buildFile << """\
+	def "Test empty deploy extension block"() {
+		given:
+		buildFile << """\
             plugins {
                 id 'cics-bundle-gradle-plugin'
             }
@@ -79,16 +78,16 @@ class DeployTests extends Specification {
 
         """
 
-        when:
-        def result = runGradle('Test empty deploy extension block', [BundlePlugin.DEPLOY_TASK_NAME], true)
+		when:
+		def result = runGradle('Test empty deploy extension block', [BundlePlugin.DEPLOY_TASK_NAME], true)
 
-        then:
-        checkResults(result, [DeployBundleTask.MISSING_CONFIG, DeployBundleTask.PLEASE_SPECIFY], [], FAILED)
-    }
+		then:
+		checkResults(result, [DeployBundleTask.MISSING_CONFIG, DeployBundleTask.PLEASE_SPECIFY], [], FAILED)
+	}
 
-    def "Test missing cicsplex"() {
-        given:
-        buildFile << """\
+	def "Test missing cicsplex"() {
+		given:
+		buildFile << """\
             plugins {
                 id 'cics-bundle-gradle-plugin'
             }
@@ -103,16 +102,16 @@ class DeployTests extends Specification {
             }
         """
 
-        when:
-        def result = runGradle('Test missing cicsplex', [BundlePlugin.DEPLOY_TASK_NAME], true)
+		when:
+		def result = runGradle('Test missing cicsplex', [BundlePlugin.DEPLOY_TASK_NAME], true)
 
-        then:
-        checkResults(result, [DeployBundleTask.MISSING_CICSPLEX, DeployBundleTask.PLEASE_SPECIFY], [], FAILED)
-    }
+		then:
+		checkResults(result, [DeployBundleTask.MISSING_CICSPLEX, DeployBundleTask.PLEASE_SPECIFY], [], FAILED)
+	}
 
-    def "Test missing region"() {
-        given:
-        buildFile << """\
+	def "Test missing region"() {
+		given:
+		buildFile << """\
             plugins {
                 id 'cics-bundle-gradle-plugin'
             }
@@ -137,16 +136,16 @@ class DeployTests extends Specification {
             }
         """
 
-        when:
-        def result = runGradle('Test missing region', [BundlePlugin.DEPLOY_TASK_NAME], true)
+		when:
+		def result = runGradle('Test missing region', [BundlePlugin.DEPLOY_TASK_NAME], true)
 
-        then:
-        checkResults(result, [DeployBundleTask.MISSING_REGION, DeployBundleTask.PLEASE_SPECIFY], [], FAILED)
-    }
+		then:
+		checkResults(result, [DeployBundleTask.MISSING_REGION, DeployBundleTask.PLEASE_SPECIFY], [], FAILED)
+	}
 
-    def "Test missing bunddef"() {
-        given:
-        buildFile << """\
+	def "Test missing bunddef"() {
+		given:
+		buildFile << """\
             plugins {
                 id 'cics-bundle-gradle-plugin'
             }
@@ -171,16 +170,16 @@ class DeployTests extends Specification {
             }
         """
 
-        when:
-        def result = runGradle('Test missing bunddef', [BundlePlugin.DEPLOY_TASK_NAME], true)
+		when:
+		def result = runGradle('Test missing bunddef', [BundlePlugin.DEPLOY_TASK_NAME], true)
 
-        then:
-        checkResults(result, [DeployBundleTask.MISSING_BUNDDEF, DeployBundleTask.PLEASE_SPECIFY], [], FAILED)
-    }
+		then:
+		checkResults(result, [DeployBundleTask.MISSING_BUNDDEF, DeployBundleTask.PLEASE_SPECIFY], [], FAILED)
+	}
 
-    def "Test missing csdgroup"() {
-        given:
-        buildFile << """\
+	def "Test missing csdgroup"() {
+		given:
+		buildFile << """\
             plugins {
                 id 'cics-bundle-gradle-plugin'
             }
@@ -205,16 +204,16 @@ class DeployTests extends Specification {
             }
         """
 
-        when:
-        def result = runGradle('Test missing csdgroup', [BundlePlugin.DEPLOY_TASK_NAME], true)
+		when:
+		def result = runGradle('Test missing csdgroup', [BundlePlugin.DEPLOY_TASK_NAME], true)
 
-        then:
-        checkResults(result, [DeployBundleTask.MISSING_CSDGROUP, DeployBundleTask.PLEASE_SPECIFY], [], FAILED)
-    }
+		then:
+		checkResults(result, [DeployBundleTask.MISSING_CSDGROUP, DeployBundleTask.PLEASE_SPECIFY], [], FAILED)
+	}
 
-    def "Test missing url"() {
-        given:
-        buildFile << """\
+	def "Test missing url"() {
+		given:
+		buildFile << """\
             plugins {
                 id 'cics-bundle-gradle-plugin'
             }
@@ -239,16 +238,16 @@ class DeployTests extends Specification {
             }
         """
 
-        when:
-        def result = runGradle('Test missing url', [BundlePlugin.DEPLOY_TASK_NAME], true)
+		when:
+		def result = runGradle('Test missing url', [BundlePlugin.DEPLOY_TASK_NAME], true)
 
-        then:
-        checkResults(result, [DeployBundleTask.MISSING_URL, DeployBundleTask.PLEASE_SPECIFY], [], FAILED)
-    }
+		then:
+		checkResults(result, [DeployBundleTask.MISSING_URL, DeployBundleTask.PLEASE_SPECIFY], [], FAILED)
+	}
 
-    def "Test missing username"() {
-        given:
-        buildFile << """\
+	def "Test missing username"() {
+		given:
+		buildFile << """\
             plugins {
                 id 'cics-bundle-gradle-plugin'
             }
@@ -273,16 +272,16 @@ class DeployTests extends Specification {
             }
         """
 
-        when:
-        def result = runGradle('Test missing username', [BundlePlugin.DEPLOY_TASK_NAME], true)
+		when:
+		def result = runGradle('Test missing username', [BundlePlugin.DEPLOY_TASK_NAME], true)
 
-        then:
-        checkResults(result, [DeployBundleTask.MISSING_USERNAME, DeployBundleTask.PLEASE_SPECIFY], [], FAILED)
-    }
+		then:
+		checkResults(result, [DeployBundleTask.MISSING_USERNAME, DeployBundleTask.PLEASE_SPECIFY], [], FAILED)
+	}
 
-    def "Test missing password"() {
-        given:
-        buildFile << """\
+	def "Test missing password"() {
+		given:
+		buildFile << """\
             plugins {
                 id 'cics-bundle-gradle-plugin'
             }
@@ -307,16 +306,16 @@ class DeployTests extends Specification {
             }
         """
 
-        when:
-        def result = runGradle('Test missing password', [BundlePlugin.DEPLOY_TASK_NAME], true)
+		when:
+		def result = runGradle('Test missing password', [BundlePlugin.DEPLOY_TASK_NAME], true)
 
-        then:
-        checkResults(result, [DeployBundleTask.MISSING_PASSWORD, DeployBundleTask.PLEASE_SPECIFY], [], FAILED)
-    }
+		then:
+		checkResults(result, [DeployBundleTask.MISSING_PASSWORD, DeployBundleTask.PLEASE_SPECIFY], [], FAILED)
+	}
 
-    def "Test multiple items missing"() {
-        given:
-        buildFile << """\
+	def "Test multiple items missing"() {
+		given:
+		buildFile << """\
             plugins {
                 id 'cics-bundle-gradle-plugin'
             }
@@ -340,26 +339,26 @@ class DeployTests extends Specification {
             }
         """
 
-        when:
-        def result = runGradle('Test multiple items missing', [BundlePlugin.DEPLOY_TASK_NAME], true)
+		when:
+		def result = runGradle('Test multiple items missing', [BundlePlugin.DEPLOY_TASK_NAME], true)
 
-        then:
-        checkResults(result, [
-                DeployBundleTask.MISSING_REGION,
-                DeployBundleTask.MISSING_BUNDDEF,
-                DeployBundleTask.PLEASE_SPECIFY
-        ], [], FAILED)
-    }
+		then:
+		checkResults(result, [
+				DeployBundleTask.MISSING_REGION,
+				DeployBundleTask.MISSING_BUNDDEF,
+				DeployBundleTask.PLEASE_SPECIFY
+		], [], FAILED)
+	}
 
-    def "Test substitute username and password"() {
-        given:
-        File propertiesFile = testProjectDir.newFile('gradle.properties')
-        propertiesFile << """\
+	def "Test substitute username and password"() {
+		given:
+		File propertiesFile = testProjectDir.newFile('gradle.properties')
+		propertiesFile << """\
             my_username=alice
             password=secret
         """
 
-        buildFile << """\
+		buildFile << """\
             plugins {
                 id 'cics-bundle-gradle-plugin'
             }
@@ -381,58 +380,58 @@ class DeployTests extends Specification {
             }
         """
 
-        when:
-        def result = runGradle('Test substitute username and password', [BundlePlugin.DEPLOY_TASK_NAME])
+		when:
+		def result = runGradle('Test substitute username and password', [BundlePlugin.DEPLOY_TASK_NAME])
 
-        then:
-        checkResults(result, [], [], SUCCESS)
-    }
+		then:
+		checkResults(result, [], [], SUCCESS)
+	}
 
-    // Run the gradle build with defaults and print the test output
-    def runGradle(String testName, List args = [BundlePlugin.DEPLOY_TASK_NAME], boolean failExpected = false) {
-        def result
-        if (!failExpected) {
-            result = GradleRunner.create().withProjectDir(testProjectDir.root).withArguments(args).withPluginClasspath().build()
-        } else {
-            result = GradleRunner.create().withProjectDir(testProjectDir.root).withArguments(args).withPluginClasspath().buildAndFail()
-        }
-        def title = "\n----- '$testName' output: -----"
-        println(title)
-        println(result.output)
-        println('-' * title.length())
-        println()
-        return result
-    }
+	// Run the gradle build with defaults and print the test output
+	def runGradle(String testName, List args = [BundlePlugin.DEPLOY_TASK_NAME], boolean failExpected = false) {
+		def result
+		if (!failExpected) {
+			result = GradleRunner.create().withProjectDir(testProjectDir.root).withArguments(args).withPluginClasspath().build()
+		} else {
+			result = GradleRunner.create().withProjectDir(testProjectDir.root).withArguments(args).withPluginClasspath().buildAndFail()
+		}
+		def title = "\n----- '$testName' output: -----"
+		println(title)
+		println(result.output)
+		println('-' * title.length())
+		println()
+		return result
+	}
 
-    def checkResults(BuildResult result, List resultStrings, List outputFiles, TaskOutcome outcome) {
-        resultStrings.each {
-            if (!result.output.contains(it)) {
-                println("Not found in build output: '$it'")
-                assert (false)
-            }
-        }
-        outputFiles.each {
-            if (!getFileInBuildOutputFolder(it).exists()) {
-                println("File not found in output folder: '$it'")
-                assert (false)
-            }
-        }
-        result.task(":$BundlePlugin.DEPLOY_TASK_NAME").outcome == outcome
-    }
+	def checkResults(BuildResult result, List resultStrings, List outputFiles, TaskOutcome outcome) {
+		resultStrings.each {
+			if (!result.output.contains(it)) {
+				println("Not found in build output: '$it'")
+				assert (false)
+			}
+		}
+		outputFiles.each {
+			if (!getFileInBuildOutputFolder(it).exists()) {
+				println("File not found in output folder: '$it'")
+				assert (false)
+			}
+		}
+		result.task(":$BundlePlugin.DEPLOY_TASK_NAME").outcome == outcome
+	}
 
-    private File getFileInBuildOutputFolder(String fileName) {
-        return new File(buildFile.parent + '/build/cics-bundle-gradle-1.0.0-SNAPSHOT/' + fileName)
-    }
+	private File getFileInBuildOutputFolder(String fileName) {
+		return new File(buildFile.parent + '/build/cics-bundle-gradle-1.0.0-SNAPSHOT/' + fileName)
+	}
 
-    // Some useful functions as I can't get debug to work for Gradle Runner tests yet
-    private void printTemporaryFileTree() {
-        def tempFolder = new File(buildFile.parent)
+	// Some useful functions as I can't get debug to work for Gradle Runner tests yet
+	private void printTemporaryFileTree() {
+		def tempFolder = new File(buildFile.parent)
 
-        println("  Temp file tree: $tempFolder  ----")
-        tempFolder.traverse {
-            println('   ' + it.path)
-        }
-        println('  -----')
-    }
+		println("  Temp file tree: $tempFolder  ----")
+		tempFolder.traverse {
+			println('   ' + it.path)
+		}
+		println('  -----')
+	}
 
 }
