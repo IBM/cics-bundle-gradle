@@ -14,7 +14,11 @@
 plugins {
     id 'groovy'
     id 'java-gradle-plugin'
+    id 'maven-publish'
 }
+
+group 'com.ibm.cics'
+version '0.0.1-SNAPSHOT'
 
 gradlePlugin {
     plugins {
@@ -33,11 +37,10 @@ repositories {
     }
 }
 
-defaultTasks 'clean', 'build', 'check'
+defaultTasks 'build'
 
 dependencies {
     implementation 'com.ibm.cics:cics-bundle-common:0.0.1-SNAPSHOT@jar'
-
     testCompile 'junit:junit:4.12'
     testImplementation('org.spockframework:spock-core:1.1-groovy-2.4') {
         exclude module: 'groovy-all'

@@ -71,7 +71,11 @@ class BuildTests extends Specification {
         def result = runGradle()
 
         then:
-        checkResults(result, ['javax.servlet-api-3.1.0.jar'], ['cics-bundle-gradle-1.0.0-SNAPSHOT/javax.servlet-api-3.1.0.jar'], SUCCESS)
+        checkResults(result,
+                ['javax.servlet-api-3.1.0.jar', 'Task buildCICSBundle (Gradle 5.0)'],
+                ['cics-bundle-gradle-1.0.0-SNAPSHOT/javax.servlet-api-3.1.0.jar']
+                , SUCCESS
+        )
     }
 
     def "Test maven war dependency"() {
@@ -340,7 +344,7 @@ class BuildTests extends Specification {
         checkResults(result, ['> Task :buildCICSBundle', '> Task :packageCICSBundle NO-SOURCE'], [], SUCCESS)
     }
 
-    def "Test packageCICSBundle produces zip in default location"() {
+    def "Test packageCICSBundle produces cbz (zip) in default location"() {
         given:
         settingsFile << "rootProject.name = 'cics-bundle-gradle'"
         buildFile << """\
@@ -375,6 +379,7 @@ class BuildTests extends Specification {
     def runGradle(List args = [BundlePlugin.BUILD_TASK_NAME], boolean failExpected = false) {
         def result
         args.add("--stacktrace")
+        args.add("--info")
         if (!failExpected) {
             result = GradleRunner
                     .create()
