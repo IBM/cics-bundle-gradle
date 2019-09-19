@@ -26,22 +26,6 @@ import org.gradle.api.tasks.TaskProvider
 
 import javax.inject.Inject
 
-// Extension block for build config
-class BuildExtension {
-    String defaultjvmserver = ''
-}
-
-// Extension block for deploy config
-class DeployExtension {
-    String cicsplex = ''
-    String region = ''
-    String bunddef = ''
-    String csdgroup = ''
-    String url = ''
-    String username = ''
-    String password = ''
-}
-
 class BundlePlugin implements Plugin<Project> {
 
     public static final String BUILD_TASK_NAME = 'buildCICSBundle'
