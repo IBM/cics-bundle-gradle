@@ -1,18 +1,20 @@
-package com.ibm.cics.cbgp
-
-/*-
- * #%L
- * CICS Bundle Gradle Plugin
- * %%
- * Copyright (C) 2019 IBM Corp.
- * %%
- * This program and the accompanying materials are made
- * available under the terms of the Eclipse Public License 2.0
- * which is available at https://www.eclipse.org/legal/epl-2.0/
+/*
+ * -
+ *  * #%L
+ *  * CICS Bundle Gradle Plugin
+ *  * %%
+ *  * Copyright (C) 2019 IBM Corp.
+ *  * %%
+ *  * This program and the accompanying materials are made
+ *  * available under the terms of the Eclipse Public License 2.0
+ *  * which is available at https://www.eclipse.org/legal/epl-2.0/
+ *  *
+ *  * SPDX-License-Identifier: EPL-2.0
+ *  * #L%
  *
- * SPDX-License-Identifier: EPL-2.0
- * #L%
  */
+
+package com.ibm.cics.cbgp
 
 import org.gradle.api.Plugin
 import org.gradle.api.Project
@@ -25,22 +27,6 @@ import org.gradle.api.plugins.BasePlugin
 import org.gradle.api.tasks.TaskProvider
 
 import javax.inject.Inject
-
-// Extension block for build config
-class BuildExtension {
-    String defaultjvmserver = ''
-}
-
-// Extension block for deploy config
-class DeployExtension {
-    String cicsplex = ''
-    String region = ''
-    String bunddef = ''
-    String csdgroup = ''
-    String url = ''
-    String username = ''
-    String password = ''
-}
 
 class BundlePlugin implements Plugin<Project> {
 
