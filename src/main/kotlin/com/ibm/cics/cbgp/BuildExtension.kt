@@ -1,4 +1,4 @@
-/*-
+/*
  * #%L
  * CICS Bundle Gradle Plugin
  * %%
@@ -11,7 +11,6 @@
  * SPDX-License-Identifier: EPL-2.0
  * #L%
  */
-
 package com.ibm.cics.cbgp
 
 open class BuildExtension {

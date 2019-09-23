@@ -1,4 +1,4 @@
-/*-
+/*
  * #%L
  * CICS Bundle Gradle Plugin
  * %%
@@ -11,7 +11,6 @@
  * SPDX-License-Identifier: EPL-2.0
  * #L%
  */
-
 package com.ibm.cics.cbgp
 
 import org.gradle.testkit.runner.BuildResult
@@ -141,10 +140,20 @@ class BuildTests extends Specification {
 
 		def warProjectName = 'helloworldwar'
 
+		File localBuildCacheDirectory
+		localBuildCacheDirectory = testProjectDir.newFolder('local-cache')
+
 		given:
 		settingsFile << """\
             rootProject.name = 'cics-bundle-gradle'
             include '$warProjectName'
+            
+            buildCache {
+                local {
+                    directory '${localBuildCacheDirectory.toURI().toString()}'
+                }
+            }
+
             """
 		buildFile << """\
             plugins {

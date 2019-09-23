@@ -1,4 +1,4 @@
-/*-
+/*
  * #%L
  * CICS Bundle Gradle Plugin
  * %%

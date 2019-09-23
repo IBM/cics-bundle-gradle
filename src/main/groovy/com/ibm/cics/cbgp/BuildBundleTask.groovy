@@ -1,4 +1,4 @@
-/*-
+/*
  * #%L
  * CICS Bundle Gradle Plugin
  * %%
@@ -11,7 +11,6 @@
  * SPDX-License-Identifier: EPL-2.0
  * #L%
  */
-
 package com.ibm.cics.cbgp
 
 import com.ibm.cics.bundle.parts.BundlePublisher
@@ -65,7 +64,6 @@ Example:
 		}
 	}
 
-//	@SuppressWarnings("GrUnresolvedAccess")
 	def processCICSBundle(Configuration config) {
 
 		logger.info "processing '$BundlePlugin.BUNDLE_DEPENDENCY_CONFIGURATION_NAME' configuration"
@@ -88,12 +86,6 @@ Example:
 
 		checkResolvedFileExtensions(resolvedDependencies)
 		BundlePublisher bundlePublisher = initBundlePublisher()
-
-//		try {
-//			bundlePublisher.publishResources()
-//		} catch (BundlePublisher.PublishException e) {
-//			throw new GradleException(e.getMessage(), e)
-//		}
 	}
 
 	private void checkResolvedFileExtensions(List resolvedDependencies) {
