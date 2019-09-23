@@ -1,8 +1,4 @@
-package com.ibm.cics.cbgp
-
-import org.gradle.api.DefaultTask
-
-/*-
+/*
  * #%L
  * CICS Bundle Gradle Plugin
  * %%
@@ -15,26 +11,28 @@ import org.gradle.api.DefaultTask
  * SPDX-License-Identifier: EPL-2.0
  * #L%
  */
+package com.ibm.cics.cbgp
 
 import org.gradle.api.file.DirectoryProperty
+
 import org.gradle.api.tasks.InputDirectory
 import org.gradle.api.tasks.TaskAction
 import org.gradle.api.tasks.bundling.Zip
 
 class PackageBundleTask extends Zip {
 
-    public static final String BUNDLE_EXTENSION = "zip"
+	public static final String BUNDLE_EXTENSION = "zip"
 
-    @InputDirectory
-    final DirectoryProperty inputDirectory = project.objects.directoryProperty()
+	@InputDirectory
+	final DirectoryProperty inputDirectory = project.objects.directoryProperty()
 
-    public PackageBundleTask() {
-        setExtension(BUNDLE_EXTENSION);
-        setMetadataCharset("UTF-8");
-    }
+	PackageBundleTask() {
+		setExtension(BUNDLE_EXTENSION)
+		setMetadataCharset("UTF-8")
+	}
 
-    @TaskAction
-    def packageCICSBundle() {
+	@TaskAction
+	def packageCICSBundle() {
 
-    }
+	}
 }
