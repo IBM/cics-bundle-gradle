@@ -19,20 +19,21 @@ import org.gradle.api.tasks.InputDirectory
 import org.gradle.api.tasks.TaskAction
 import org.gradle.api.tasks.bundling.Zip
 
-class PackageBundleTask extends Zip {
-
-	public static final String BUNDLE_EXTENSION = "zip"
+open class PackageBundleTask : Zip() {
+	companion object {
+		const val BUNDLE_EXTENSION = "zip"
+	}
 
 	@InputDirectory
-	final DirectoryProperty inputDirectory = project.objects.directoryProperty()
+	var inputDirectory: DirectoryProperty = project.objects.directoryProperty()
 
-	PackageBundleTask() {
-		setExtension(BUNDLE_EXTENSION)
-		setMetadataCharset("UTF-8")
+	init {
+		extension = BUNDLE_EXTENSION
+		metadataCharset = "UTF-8"
 	}
 
 	@TaskAction
-	def packageCICSBundle() {
+	fun packageCICSBundle() {
 
 	}
 }

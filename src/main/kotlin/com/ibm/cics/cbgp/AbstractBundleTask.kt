@@ -24,10 +24,14 @@ import java.nio.file.Files
 import java.nio.file.Path
 import java.util.stream.Collectors
 
-abstract class AbstractBundleTask extends DefaultTask {
+open class AbstractBundleTask : DefaultTask() {
 
-	protected BundlePublisher initBundlePublisher() throws GradleException {
+	/*
+	 * @throws GradleException
+	 */
+	protected fun initBundlePublisher(): BundlePublisher {
 		// TODO
+		return null as BundlePublisher
 	}
 
 
