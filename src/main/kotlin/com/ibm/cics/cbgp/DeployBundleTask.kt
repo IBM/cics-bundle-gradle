@@ -45,7 +45,7 @@ open class DeployBundleTask : AbstractBundleTask() {
 				} 
 				  
 				All items must be completed.
-			"""
+			""".trimIndent()
 	}
 
 	@Input
