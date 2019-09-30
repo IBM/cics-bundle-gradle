@@ -17,21 +17,42 @@ import com.ibm.cics.bundle.parts.BundlePublisher
 import org.gradle.api.DefaultTask
 import org.gradle.api.GradleException
 import org.gradle.api.file.DirectoryProperty
-import org.gradle.api.tasks.OutputDirectory
+import org.gradle.api.tasks.Input
 import org.gradle.util.VersionNumber
 
-import java.nio.file.Files
-import java.nio.file.Path
-import java.util.stream.Collectors
-
 open class AbstractBundleTask : DefaultTask() {
+	companion object {
+		const val BAD_VERSION_NUMBER = "Bad project version number"
+	}
 
-	/*
-	 * @throws GradleException
-	 */
-	protected fun initBundlePublisher(): BundlePublisher {
+	@Input
+	var defaultJvmserver = ""
+
+	protected fun initBundlePublisher(outputDirectory: DirectoryProperty): BundlePublisher {
+		val outputDirAsFile = outputDirectory.asFile.get()
+		val versionNumber = getProjectVersionNumber()
+		val bundlePublisher = BundlePublisher(
+				outputDirAsFile.toPath(),
+				project.name,
+				versionNumber.major,
+				versionNumber.minor,
+				versionNumber.micro,
+				versionNumber.patch
+		)
 		// TODO
-		return null as BundlePublisher
+
+		return bundlePublisher
+	}
+
+	private fun getProjectVersionNumber(): VersionNumber {
+		val pv = project.version
+		if (pv is String) {
+			val versionNumber = VersionNumber.parse(pv.toString())
+			if (versionNumber != VersionNumber.UNKNOWN) {
+				return versionNumber
+			}
+		}
+		throw GradleException(BAD_VERSION_NUMBER)
 	}
 
 

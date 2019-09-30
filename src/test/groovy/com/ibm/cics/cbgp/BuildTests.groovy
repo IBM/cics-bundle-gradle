@@ -74,6 +74,7 @@ class BuildTests extends Specification {
 				['cics-bundle-gradle-1.0.0-SNAPSHOT/javax.servlet-api-3.1.0.jar']
 				, SUCCESS
 		)
+		printTemporaryFileTree()
 	}
 
 	def "Test maven war dependency"() {
@@ -268,7 +269,7 @@ class BuildTests extends Specification {
 		def result = runGradle([BundlePlugin.BUILD_TASK_NAME], false)
 
 		then:
-		checkResults(result, ["Warning, no external or project dependencies in '${BundlePlugin.BUNDLE_DEPENDENCY_CONFIGURATION_NAME}' configuration"], [], SUCCESS)
+		checkResults(result, [BuildBundleTask.NO_DEPENDENCIES_WARNING], [], SUCCESS)
 	}
 
 	def "Test missing defaultjvmserver in block"() {
@@ -411,6 +412,7 @@ class BuildTests extends Specification {
 		return result
 	}
 
+	// TODO Add tests for cics.xml contents
 	def checkResults(BuildResult result, List resultStrings, List outputFiles, TaskOutcome outcome) {
 		resultStrings.each {
 			assert result.output.contains(it)
@@ -427,14 +429,40 @@ class BuildTests extends Specification {
 	}
 
 	// Some useful functions as I can't get debug to work for Gradle Runner tests yet
+
+	/*
+	  Print out the file tree after the test excluding hidden files.
+	  Print out cics.xml if found
+	 */
 	private void printTemporaryFileTree() {
 		def tempFolder = new File(buildFile.parent)
+		def cicsxmlName = ""
 
-		println("  Temp file tree: $tempFolder  ----")
+		def title = "\n----- '$specificationContext.currentIteration.name' Output file tree: $tempFolder -----"
+		println(title)
+		int prefixSize = tempFolder.toString().size() + 1
 		tempFolder.traverse {
-			println('   ' + it.path)
+			def pathString = it.path.toString()
+			if (!pathString.contains("/.")) {
+				println('   ' + pathString.substring(prefixSize))
+			}
+			if (pathString.endsWith("cics.xml")) {
+				cicsxmlName = pathString
+			}
 		}
-		println('  -----')
+		if (!cicsxmlName.isEmpty()) {
+			println("\ncics.xml contains\n-----------------")
+			def lnum = 1
+			new File(cicsxmlName).eachLine {
+				line ->
+					def prtnum = String.format( "%03d", lnum )
+					println "   $prtnum: $line"
+					lnum++
+			}
+			println("end of cics.xml\n")
+		}
+		println('-' * title.length())
+		println()
 	}
 
 }

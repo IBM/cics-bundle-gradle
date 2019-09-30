@@ -13,9 +13,15 @@
  */
 package com.ibm.cics.cbgp
 
+import com.ibm.cics.bundle.parts.BundlePublisher
+import com.ibm.cics.bundle.parts.BundlePublisher.PublishException
 import org.gradle.api.GradleException
 import org.gradle.api.artifacts.Configuration
+import org.gradle.api.artifacts.Dependency
+import org.gradle.api.artifacts.ResolvedConfiguration
 import org.gradle.api.file.DirectoryProperty
+import org.gradle.api.internal.artifacts.dependencies.DefaultExternalModuleDependency
+import org.gradle.api.internal.artifacts.dependencies.DefaultProjectDependency
 import org.gradle.api.tasks.OutputDirectory
 import org.gradle.api.tasks.TaskAction
 import java.io.File
@@ -23,25 +29,27 @@ import java.io.File
 open class BuildBundleTask : AbstractBundleTask() {
 
 	companion object {
+
+		const val FAILED_DEPENDENCY_RESOLUTION = "Failed to resolve cicsBundle dependencies"
+		const val MISSING_CONFIG = "Define '${BundlePlugin.BUNDLE_DEPENDENCY_CONFIGURATION_NAME}' configuration with CICS bundle dependencies"
 		const val MISSING_JVMSERVER = "Specify defaultjvmserver for build"
+		const val NO_DEPENDENCIES_WARNING = "Warning, no external or project dependencies in '${BundlePlugin.BUNDLE_DEPENDENCY_CONFIGURATION_NAME}' configuration"
 		const val PLEASE_SPECIFY = "Please specify build configuration"
+		const val UNSUPPORTED_EXTENSIONS_FOUND = "Unsupported file extensions for some dependencies, see earlier messages."
+
 		val BUILD_CONFIG_EXCEPTION =
-			PLEASE_SPECIFY + """\
+				PLEASE_SPECIFY + """\
 
 			Example:
 				 ${BundlePlugin.BUILD_EXTENSION_NAME} {
 				   defaultjvmserver = 'EYUCMCIJ'
 				} 
 			""".trimIndent()
-		val MISSING_CONFIG = "Define '${BundlePlugin.BUNDLE_DEPENDENCY_CONFIGURATION_NAME}' configuration with CICS bundle dependencies"
-		const val UNSUPPORTED_EXTENSIONS_FOUND = "Unsupported file extensions for some dependencies, see earlier messages."
 		val VALID_DEPENDENCY_FILE_EXTENSIONS = listOf("ear", "jar", "war")
 	}
 
 	@OutputDirectory
 	val outputDirectory: DirectoryProperty = project.objects.directoryProperty()
-
-	private val resolvedDependencies: MutableList<File> = mutableListOf()
 
 	@TaskAction
 	fun buildCICSBundle() {
@@ -49,6 +57,7 @@ open class BuildBundleTask : AbstractBundleTask() {
 
 		val buildExtension = project.extensions.getByName(BundlePlugin.BUILD_EXTENSION_NAME) as BuildExtension
 		validateBuildExtension(buildExtension)
+		this.defaultJvmserver = buildExtension.defaultjvmserver
 
 		// Find & process the configuration
 		val foundConfig = project.configurations.find {
@@ -67,42 +76,87 @@ open class BuildBundleTask : AbstractBundleTask() {
 
 	private fun processCICSBundle(config: Configuration) {
 		logger.info("processing '${BundlePlugin.BUNDLE_DEPENDENCY_CONFIGURATION_NAME}' configuration")
+		val bundlePublisher = initBundlePublisher(outputDirectory)
+		processDependencies(config, bundlePublisher)
+
+		// TODO Process CICS Bundle parts etc.
+
+		try {
+			bundlePublisher.publishResources()
+		} catch (e: PublishException) {
+			throw GradleException(e.message, e)
+		}
+
+	}
+
+	private fun processDependencies(config: Configuration, bundlePublisher: BundlePublisher) {
+		val resolved = validateResolvedFiles(config)
+		if (resolved != null) {
+			addResolvedFilesToBundle(config, resolved, bundlePublisher)
+		}
+	}
+
+	private fun validateResolvedFiles(config: Configuration): ResolvedConfiguration? {
 		val resolved = config.resolvedConfiguration
 		if (resolved.hasError()) {
-			throw GradleException("Failed to resolve cicsBundle dependencies")
+			throw GradleException(FAILED_DEPENDENCY_RESOLUTION)
 		}
 
 		if (resolved.files.isEmpty()) {
-			logger.warn("Warning, no external or project dependencies in '${BundlePlugin.BUNDLE_DEPENDENCY_CONFIGURATION_NAME}' configuration")
-			return
+			logger.warn(NO_DEPENDENCIES_WARNING)
+			return null
 		}
 
-		resolved.files.forEach {
-			logger.lifecycle("Resolved file: $it")
-			resolvedDependencies.add(it)
-		}
-
-		checkResolvedFileExtensions()
-	}
-
-	private fun checkResolvedFileExtensions() {
 		var allExtensionsOk = true
-		resolvedDependencies.forEach {
-			val name = it.name
-			val dotpos = name.lastIndexOf('.')
-			if (dotpos > -1) {
-				val extension = name.substring(dotpos + 1)
-				if (!VALID_DEPENDENCY_FILE_EXTENSIONS.contains(extension)) {
-					logger.error("Unsupported file extension '$extension' for dependency '$name'")
-					allExtensionsOk = false
-				}
-			} else {
+		resolved.files.forEach {
+			if (it.extension.isNullOrEmpty()) {
 				logger.error("No file extension found for dependency '${it.name}'")
+				allExtensionsOk = false
+			} else if (!VALID_DEPENDENCY_FILE_EXTENSIONS.contains(it.extension)) {
+				logger.error("Unsupported file extension '${it.extension}' for dependency '${it.name}'")
 				allExtensionsOk = false
 			}
 		}
+
 		if (!allExtensionsOk) {
 			throw GradleException(UNSUPPORTED_EXTENSIONS_FOUND)
+		}
+		return resolved
+	}
+
+	private fun addResolvedFilesToBundle(config: Configuration, resolved: ResolvedConfiguration, bundlePublisher: BundlePublisher) {
+
+		val resolvedFiles = resolved.files.toTypedArray()
+		val dependencies = config.dependencies.toTypedArray()
+
+		for (i in resolvedFiles.indices) {
+			val file = resolvedFiles[i]
+			val name = getNameForDependency(dependencies[i])
+			logger.lifecycle("Resolved '$name' to file: '$file'")
+			when (file.extension) {
+				"jar" -> addjar(file, name, bundlePublisher)
+			}
+		}
+		return
+	}
+
+	private fun addjar(file: File, name: String, bundlePublisher: BundlePublisher) {
+		val binding = OsgibundlePartBinding()
+		binding.name = name
+		try {
+			bundlePublisher.addResource(binding.toBundlePart(file, this))
+		} catch (e: PublishException) {
+			throw GradleException("Error adding bundle resource for artifact `$name` : ${e.message} ")
+		}
+	}
+
+	private fun getNameForDependency(dep: Dependency): String {
+		if (dep is DefaultExternalModuleDependency) {
+			return dep.name
+		} else if (dep is DefaultProjectDependency) {
+			return dep.dependencyProject.name
+		} else {
+			throw GradleException("Unexpected dependency type " + dep::class.java.toString() + " for dependency \$dep")
 		}
 	}
 
