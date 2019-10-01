@@ -84,7 +84,7 @@ open class BuildBundleTask : AbstractBundleTask() {
 		try {
 			bundlePublisher.publishResources()
 		} catch (e: PublishException) {
-			throw GradleException(e.message, e)
+			throw GradleException(e.message as String, e)
 		}
 
 	}

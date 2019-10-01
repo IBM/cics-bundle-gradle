@@ -18,8 +18,6 @@ import static org.gradle.testkit.runner.TaskOutcome.SUCCESS
 
 class BuildTests extends AbstractTest {
 
-	// TODO Add checks for cics.xml contents
-
 	def setup() {
 		commonSetup(BundlePlugin.BUILD_TASK_NAME)
 	}
@@ -58,6 +56,9 @@ class BuildTests extends AbstractTest {
 				, SUCCESS
 		)
 
+		checkManifest([ 'id="cics-bundle-gradle">',
+		                '<define name="javax.servlet-api_3.1.0" path="javax.servlet-api_3.1.0.osgibundle" type="http://www.ibm.com/xmlns/prod/cics/bundle/OSGIBUNDLE"/>'
+		])
 	}
 
 	def "Test maven war dependency"() {
@@ -91,6 +92,10 @@ class BuildTests extends AbstractTest {
 				['org.glassfish.main.admingui', 'war-5.1.0.war'],
 				['cics-bundle-gradle-1.0.0-SNAPSHOT/war.warbundle'],
 				SUCCESS)
+
+		checkManifest([ 'id="cics-bundle-gradle">',
+		                '<define name="war" path="war.warbundle" type="http://www.ibm.com/xmlns/prod/cics/bundle/WARBUNDLE"/>'
+		])
 	}
 
 	def "Test maven ear dependency"() {
@@ -124,6 +129,10 @@ class BuildTests extends AbstractTest {
 				['org.codehaus.cargo', 'simple-ear-1.7.6.ear'],
 				['cics-bundle-gradle-1.0.0-SNAPSHOT/simple-ear.earbundle']
 				, SUCCESS)
+
+		checkManifest([ 'id="cics-bundle-gradle">',
+		                '<define name="simple-ear" path="simple-ear.earbundle" type="http://www.ibm.com/xmlns/prod/cics/bundle/EARBUNDLE"/>'
+		])
 	}
 
 	def "Test local project dependency"() {
@@ -184,6 +193,10 @@ class BuildTests extends AbstractTest {
 				['Task :helloworldwar:build', "${warProjectName}-1.0-SNAPSHOT.war"],
 				["cics-bundle-gradle-1.0.0-SNAPSHOT/helloworldwar.warbundle"],
 				SUCCESS)
+
+		checkManifest([ 'id="cics-bundle-gradle">',
+		                '<define name="helloworldwar" path="helloworldwar.warbundle" type="http://www.ibm.com/xmlns/prod/cics/bundle/WARBUNDLE"/>'
+		])
 	}
 
 	def "Test incorrect dependency extension"() {

@@ -18,6 +18,8 @@ import static org.gradle.testkit.runner.TaskOutcome.SUCCESS
 
 class DeployTests extends AbstractTest {
 
+	// TODO Add deploy success tests once deploy task is performing deploy action.
+
 	def setup() {
 		commonSetup(BundlePlugin.DEPLOY_TASK_NAME)
 		settingsFile << "rootProject.name = 'cics-bundle-gradle'"

@@ -25,21 +25,24 @@ import java.lang.management.ManagementFactory
 abstract class AbstractTest extends Specification {
 
 
-	// Print out the file tree after the test excluding hidden files.
-	// Print out cics.xml if found
 	@Rule
 	public TemporaryFolder testProjectDir = new TemporaryFolder()
 	protected File settingsFile
 	protected File buildFile
 	protected boolean isDebug = ManagementFactory.getRuntimeMXBean().getInputArguments().toString().indexOf("-agentlib:jdwp") > 0
 
-	def defaultTask
+	private defaultTask
 
 	def commonSetup(String defaultTask) {
 		this.defaultTask = defaultTask
 		ExpandoMetaClass.disableGlobally()
 		settingsFile = testProjectDir.newFile('settings.gradle')
 		buildFile = testProjectDir.newFile('build.gradle')
+	}
+
+	def cleanup() {
+		def tempFolder = new File(buildFile.parent)
+		assert tempFolder.deleteDir(): "Failed to clean-up test folder '$tempFolder'"
 	}
 
 	protected def runGradleAndFail() {
@@ -80,7 +83,7 @@ abstract class AbstractTest extends Specification {
 		println()
 	}
 
-	def checkResults(BuildResult result, List resultStrings, List outputFiles, TaskOutcome outcome) {
+	protected def checkResults(BuildResult result, List resultStrings, List outputFiles, TaskOutcome outcome) {
 		printTemporaryFileTree()
 		resultStrings.each {
 			assert result.output.contains(it): "Missing output string '$it'"
@@ -91,9 +94,25 @@ abstract class AbstractTest extends Specification {
 		result.task(":$defaultTask").outcome == outcome
 	}
 
+	protected def checkManifest(List manifestStrings) {
+		def manifestFile = getFileInBuildOutputFolder('cics-bundle-gradle-1.0.0-SNAPSHOT/META-INF/cics.xml')
+		assert manifestFile.exists(): "Unable to find cics.xml"
+		def lines = manifestFile.readLines()
+		manifestStrings.each { searchString ->
+			def found = lines.find { line ->
+				if (line.contains(searchString)) {
+					return true
+				}
+			}
+			if (!found) assert false: "cics.xml is missing : '$searchString'"
+		}
+	}
+
+	// Print out the file tree after the test excluding hidden files.
+	// Print out cics.xml if found
 	protected void printTemporaryFileTree() {
 		def tempFolder = new File(buildFile.parent)
-		def cicsxmlName = ""
+		def manifestFilename = ""
 
 		def title = "\n----- '$specificationContext.currentIteration.name' Output file tree: $tempFolder -----"
 		println(title)
@@ -104,13 +123,14 @@ abstract class AbstractTest extends Specification {
 				println('   ' + pathString.substring(prefixSize))
 			}
 			if (pathString.endsWith("cics.xml")) {
-				cicsxmlName = pathString
+				manifestFilename = pathString
 			}
 		}
-		if (!cicsxmlName.isEmpty()) {
+
+		if (!manifestFilename.isEmpty()) {
 			println("\ncics.xml contains\n-----------------")
 			def lnum = 1
-			new File(cicsxmlName).eachLine {
+			new File(manifestFilename).eachLine {
 				line ->
 					def prtnum = String.format("%03d", lnum)
 					println "   $prtnum: $line"
@@ -125,4 +145,5 @@ abstract class AbstractTest extends Specification {
 	protected File getFileInBuildOutputFolder(String fileName) {
 		return new File(buildFile.parent + '/build/' + fileName)
 	}
+
 }
