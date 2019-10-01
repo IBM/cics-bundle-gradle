@@ -129,19 +129,44 @@ open class BuildBundleTask : AbstractBundleTask() {
 		val resolvedFiles = resolved.files.toTypedArray()
 		val dependencies = config.dependencies.toTypedArray()
 
+		// TODO - Depends on dependencies and resolved files being in the same order.
 		for (i in resolvedFiles.indices) {
 			val file = resolvedFiles[i]
 			val name = getNameForDependency(dependencies[i])
 			logger.lifecycle("Resolved '$name' to file: '$file'")
+			// Already checked all extensions will be one of these
 			when (file.extension) {
-				"jar" -> addjar(file, name, bundlePublisher)
+				"ear" -> addEar(file, name, bundlePublisher)
+				"jar" -> addJar(file, name, bundlePublisher)
+				"war" -> addWar(file, name, bundlePublisher)
 			}
 		}
 		return
 	}
 
-	private fun addjar(file: File, name: String, bundlePublisher: BundlePublisher) {
+	// TODO AddEar, addJar, addWar can be one method as only the binding differs (at the moment).
+	private fun addEar(file: File, name: String, bundlePublisher: BundlePublisher) {
+		val binding = EarbundlePartBinding()
+		binding.name = name
+		try {
+			bundlePublisher.addResource(binding.toBundlePart(file, this))
+		} catch (e: PublishException) {
+			throw GradleException("Error adding bundle resource for artifact `$name` : ${e.message} ")
+		}
+	}
+
+	private fun addJar(file: File, name: String, bundlePublisher: BundlePublisher) {
 		val binding = OsgibundlePartBinding()
+		binding.name = name
+		try {
+			bundlePublisher.addResource(binding.toBundlePart(file, this))
+		} catch (e: PublishException) {
+			throw GradleException("Error adding bundle resource for artifact `$name` : ${e.message} ")
+		}
+	}
+
+	private fun addWar(file: File, name: String, bundlePublisher: BundlePublisher) {
+		val binding = WarbundlePartBinding()
 		binding.name = name
 		try {
 			bundlePublisher.addResource(binding.toBundlePart(file, this))
