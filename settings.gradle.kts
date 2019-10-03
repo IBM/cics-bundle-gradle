@@ -11,6 +11,6 @@
  * SPDX-License-Identifier: EPL-2.0
  * #L%
  */
-rootProject.name = 'cics-bundle-gradle'
+rootProject.name = "cics-bundle-gradle"
 
 
