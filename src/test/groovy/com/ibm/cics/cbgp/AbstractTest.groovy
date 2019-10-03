@@ -61,6 +61,7 @@ abstract class AbstractTest extends Specification {
 					.withArguments(args)
 					.withPluginClasspath()
 					.withDebug(isDebug)
+					.withGradleVersion("5.0")
 					.build()
 		} else {
 			result = GradleRunner
@@ -69,6 +70,7 @@ abstract class AbstractTest extends Specification {
 					.withArguments(args)
 					.withPluginClasspath()
 					.withDebug(isDebug)
+					.withGradleVersion("5.0")
 					.buildAndFail()
 		}
 		printRunOutput(result)
