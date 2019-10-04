@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<policy:policy xmlns:policy="http://www.ibm.com/xmlns/prod/cics/managedplatform/policy" policySchemaRelease="0" policySchemaVersion="4">
+  <description></description>
+  <userTag></userTag>
+  <rule group="SYSTEM" type="fileOpen">
+    <name>ENABLE1</name>
+    <description></description>
+    <fileOpenCondition>
+      <contextFilter>
+        <TRANSACTION_ID filterOperator="OFF" filterValue=""/>
+        <USER_ID filterOperator="OFF" filterValue=""/>
+      </contextFilter>
+      <fileOpenFilter>
+        <FILE filterFieldLength="8" filterOperator="SW" filterValue="XX1" keyword="FILE"/>
+        <FROM_OPENSTATUS filterFieldLength="16" filterOperator="EQ" filterValue="OPEN" keyword="FROM_OPENSTATUS"/>
+        <TO_OPENSTATUS filterFieldLength="16" filterOperator="OFF" filterValue="OPEN" keyword="TO_OPENSTATUS"/>
+      </fileOpenFilter>
+    </fileOpenCondition>
+    <action>
+      <message/>
+    </action>
+  </rule>
+</policy:policy>

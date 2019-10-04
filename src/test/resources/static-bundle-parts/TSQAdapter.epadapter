@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<ns2:EPAdapter CICSEPSchemaVersion="2" CICSEPSchemaRelease="0" xsi:schemaLocation="http://www.ibm.com/xmlns/prod/cics/eventprocessing/eventbinding CicsEPAdapter.xsd " xmlns:ns2="http://www.ibm.com/xmlns/prod/cics/eventprocessing/eventbinding" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+    <description>Demo TSQ Adapter</description>
+    <eventDispatcherSpecification>
+        <eventDispatcher>
+            <eventDispatcherPolicy>
+                <dispatchPriority>normal</dispatchPriority>
+                <eventsTransactional>false</eventsTransactional>
+                <adapterUserid useContextUserid="false"></adapterUserid>
+                <adapterTranId></adapterTranId>
+            </eventDispatcherPolicy>
+            <eventDispatcherAdapter>
+                <cicsTSQueueAdapter>
+                    <queueName>DEMOQUE1</queueName>
+                    <sysid></sysid>
+                    <useAuxTempStorage>false</useAuxTempStorage>
+                    <format>CBER</format>
+                </cicsTSQueueAdapter>
+            </eventDispatcherAdapter>
+        </eventDispatcher>
+    </eventDispatcherSpecification>
+</ns2:EPAdapter>

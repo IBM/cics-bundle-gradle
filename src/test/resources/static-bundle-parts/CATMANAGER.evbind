@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<ns2:eventBinding CICSEPSchemaVersion="1" CICSEPSchemaRelease="0" xsi:schemaLocation="http://www.ibm.com/xmlns/prod/cics/eventprocessing/eventbinding CicsEventBinding.xsd " xmlns:ns2="http://www.ibm.com/xmlns/prod/cics/eventprocessing/eventbinding" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+    <description>Several catalog items have been out of stock before being re-ordered causing missed sales opportunities. Generate an event when an item is about to go out of stock</description>
+    <userTag>ebref001</userTag>
+    <eventSpecification>
+        <name>Catalog_stock_status_check</name>
+        <description>The stock level is low and there is no re-order in place.</description>
+        <eventInformation>
+            <eventInformationItem name="Program_name" dataType="text" dataPrecision="0" length="8" description="Program Name"/>
+            <eventInformationItem name="Item_ref" dataType="numeric" dataPrecision="0" length="4" description="Item reference number"/>
+            <eventInformationItem name="Item_description" dataType="text" dataPrecision="0" length="40" description="Item description in catalog"/>
+            <eventInformationItem name="in_stock" dataType="numeric" dataPrecision="0" length="4" description="Current  number of items in stock"/>
+            <eventInformationItem name="on_order" dataType="numeric" dataPrecision="0" length="3" description="Number of items on order"/>
+        </eventInformation>
+    </eventSpecification>
+    <eventCaptureSpecification>
+        <name>Check_stock_status_on_rewrite</name>
+        <eventIdentifier>Catalog_stock_status_check</eventIdentifier>
+        <description>The number in stock and number on order are available in the FROM parameter of the REWRITE command</description>
+        <filter>
+            <contextFilter>
+                <transactionId filterOperator="EQ" filterValue="EGUI"/>
+                <currentProgram filterOperator="EQ" filterValue="DFH0XVDS"/>
+                <userId filterOperator="OFF" filterValue=""/>
+                <CommandResp filterOperator="EQ" filterValue="OK"/>
+                <EIBAID filterOperator="OFF" value="DFHENTER"/>
+                <EIBCPOSN filterOperator="OFF" filterValue="1"/>
+            </contextFilter>
+            <locationFilter filterType="CICS_API">
+                <rewriteCommand verb="REWRITE" adVerb="" isPre="false">
+                    <FILE keyword="FILE" filterOperator="EQ" filterValue="EXMPCAT"/>
+                </rewriteCommand>
+            </locationFilter>
+            <dataFilter>
+                <filterItem>
+                    <dataFilter source="FROM" container="" offset="53" length="4" dataType="CHAR" dataPrecision="0" languageVariableName="WS-IN-STOCK" languageStructureName="" languageStructureFilename="" filterOperator="LT" filterValue="0024"/>
+                </filterItem>
+                <filterItem>
+                    <dataFilter source="FROM" container="" offset="57" length="3" dataType="CHAR" dataPrecision="0" languageVariableName="WS-ON-ORDER" languageStructureName="" languageStructureFilename="" filterOperator="EQ" filterValue="000"/>
+                </filterItem>
+            </dataFilter>
+        </filter>
+        <dataCapture>
+            <captureItem>
+                <contextCaptureItem source="PROGRAM" eventItemName="Program_name" formatlength="8" formatdataType="text"/>
+            </captureItem>
+            <captureItem>
+                <dataCaptureItem source="FROM" container="" offset="0" captureLength="4" captureDataType="CHAR" captureDataPrecision="0" languageVariableName="" languageStructureName="" languageStructureFilename="" eventItemName="Item_ref" formatlength="4" formatdataType="text" formatPrecision="0"/>
+            </captureItem>
+            <captureItem>
+                <dataCaptureItem source="FROM" container="" offset="4" captureLength="40" captureDataType="CHAR" captureDataPrecision="0" languageVariableName="" languageStructureName="" languageStructureFilename="" eventItemName="Item_description" formatlength="40" formatdataType="text" formatPrecision="0"/>
+            </captureItem>
+            <captureItem>
+                <dataCaptureItem source="FROM" container="" offset="53" captureLength="4" captureDataType="CHAR" captureDataPrecision="0" languageVariableName="" languageStructureName="" languageStructureFilename="" eventItemName="in_stock" formatlength="4" formatdataType="text" formatPrecision="0"/>
+            </captureItem>
+            <captureItem>
+                <dataCaptureItem source="FROM" container="" offset="57" captureLength="3" captureDataType="CHAR" captureDataPrecision="0" languageVariableName="" languageStructureName="" languageStructureFilename="" eventItemName="on_order" formatlength="3" formatdataType="text" formatPrecision="0"/>
+            </captureItem>
+        </dataCapture>
+    </eventCaptureSpecification>
+    <eventDispatcherSpecification>
+        <eventDispatcher>
+            <eventDispatcherPolicy>
+                <dispatchPriority>normal</dispatchPriority>
+                <eventsTransactional>false</eventsTransactional>
+                <adapterUserid useContextUserid="false"></adapterUserid>
+                <adapterTranId></adapterTranId>
+            </eventDispatcherPolicy>
+            <eventDispatcherAdapter>
+                <cicsTSQueueAdapter>
+                    <queueName>CATMAN</queueName>
+                    <sysid></sysid>
+                    <useAuxTempStorage>false</useAuxTempStorage>
+                    <format>CFE</format>
+                </cicsTSQueueAdapter>
+            </eventDispatcherAdapter>
+        </eventDispatcher>
+    </eventDispatcherSpecification>
+</ns2:eventBinding>

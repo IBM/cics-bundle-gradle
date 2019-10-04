@@ -25,6 +25,9 @@ import org.gradle.api.internal.artifacts.dependencies.DefaultProjectDependency
 import org.gradle.api.tasks.OutputDirectory
 import org.gradle.api.tasks.TaskAction
 import java.io.File
+import java.io.IOException
+import java.nio.file.Files
+import java.nio.file.Path
 
 open class BuildBundleTask : AbstractBundleTask() {
 
@@ -78,15 +81,12 @@ open class BuildBundleTask : AbstractBundleTask() {
 		logger.info("processing '${BundlePlugin.BUNDLE_DEPENDENCY_CONFIGURATION_NAME}' configuration")
 		val bundlePublisher = initBundlePublisher(outputDirectory)
 		processDependencies(config, bundlePublisher)
-
-		// TODO Process CICS Bundle parts etc.
-
+		addStaticResourcesToBundle(bundlePublisher)
 		try {
 			bundlePublisher.publishResources()
 		} catch (e: PublishException) {
 			throw GradleException(e.message as String, e)
 		}
-
 	}
 
 	private fun processDependencies(config: Configuration, bundlePublisher: BundlePublisher) {
@@ -181,7 +181,7 @@ open class BuildBundleTask : AbstractBundleTask() {
 		} else if (dep is DefaultProjectDependency) {
 			return dep.dependencyProject.name
 		} else {
-			throw GradleException("Unexpected dependency type " + dep::class.java.toString() + " for dependency \$dep")
+			throw GradleException("Unexpected dependency type ${dep::class.java} for dependency \$dep")
 		}
 	}
 
@@ -200,5 +200,35 @@ open class BuildBundleTask : AbstractBundleTask() {
 		}
 	}
 
+	private fun addStaticResourcesToBundle(bundlePublisher: BundlePublisher) {
+		val projectPath: Path = outputDirectory.asFile.get().toPath().parent.parent
+		val bundlePartSource: Path = projectPath.resolve("src/main/resources")
 
+		if (Files.exists(bundlePartSource)) {
+			logger.lifecycle("Gathering bundle parts from ${projectPath.relativize(bundlePartSource)}")
+			if (Files.isDirectory(bundlePartSource)) {
+				try {
+					File(bundlePartSource.toString())
+							.walk(FileWalkDirection.TOP_DOWN)
+							.filter { it.isFile }
+							.forEach {
+								try {
+									logger.lifecycle("Adding static resource '${it.name}'")
+									bundlePublisher.addStaticResource(bundlePartSource.relativize(it.toPath())) {
+										Files.newInputStream(it.toPath())
+									}
+								} catch (e: PublishException) {
+									throw GradleException("Failure adding static resource '${it.name}' : ${e.message}", e)
+								}
+							}
+				} catch (e: IOException) {
+					throw GradleException("Failure adding static resources", e)
+				}
+			} else {
+				throw GradleException("Static bundle resources directory '$bundlePartSource' is not a directory")
+			}
+		} else {
+			logger.info("No resources folder '${projectPath.relativize(bundlePartSource)}' to search for bundle parts")
+		}
+	}
 }

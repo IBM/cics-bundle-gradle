@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<ns2:EPAdapterSet CICSEPSchemaVersion="3" CICSEPSchemaRelease="0" xsi:schemaLocation="http://www.ibm.com/xmlns/prod/cics/eventprocessing/eventbinding CicsEPAdapterSet.xsd " xmlns:ns2="http://www.ibm.com/xmlns/prod/cics/eventprocessing/eventbinding" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+    <description></description>
+    <eventAdapterName>TDQAdapter</eventAdapterName>
+    <eventAdapterName>TSQAdapter</eventAdapterName>
+</ns2:EPAdapterSet>

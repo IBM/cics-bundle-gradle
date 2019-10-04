@@ -13,6 +13,8 @@
  */
 package com.ibm.cics.cbgp
 
+import java.nio.file.Files
+
 import static org.gradle.testkit.runner.TaskOutcome.FAILED
 import static org.gradle.testkit.runner.TaskOutcome.SUCCESS
 
@@ -40,7 +42,6 @@ class BuildTests extends AbstractTest {
                 defaultjvmserver = 'EYUCMCIJ'
             }
 
-            
             dependencies {
                 ${BundlePlugin.BUNDLE_DEPENDENCY_CONFIGURATION_NAME}('javax.servlet:javax.servlet-api:3.1.0@jar')
             }
@@ -51,13 +52,13 @@ class BuildTests extends AbstractTest {
 
 		then:
 		checkResults(result,
-				['javax.servlet-api-3.1.0.jar', 'Task buildCICSBundle (Gradle 5.0)'],
+				['javax.servlet-api-3.1.0.jar', 'Task buildCICSBundle (Gradle 5.0)',"No resources folder 'src/main/resources' to search for bundle parts"],
 				['cics-bundle-gradle-1.0.0-SNAPSHOT/javax.servlet-api_3.1.0.osgibundle']
 				, SUCCESS
 		)
 
-		checkManifest([ 'id="cics-bundle-gradle">',
-		                '<define name="javax.servlet-api_3.1.0" path="javax.servlet-api_3.1.0.osgibundle" type="http://www.ibm.com/xmlns/prod/cics/bundle/OSGIBUNDLE"/>'
+		checkManifest(['id="cics-bundle-gradle">',
+		               '<define name="javax.servlet-api_3.1.0" path="javax.servlet-api_3.1.0.osgibundle" type="http://www.ibm.com/xmlns/prod/cics/bundle/OSGIBUNDLE"/>'
 		])
 	}
 
@@ -93,8 +94,8 @@ class BuildTests extends AbstractTest {
 				['cics-bundle-gradle-1.0.0-SNAPSHOT/war.warbundle'],
 				SUCCESS)
 
-		checkManifest([ 'id="cics-bundle-gradle">',
-		                '<define name="war" path="war.warbundle" type="http://www.ibm.com/xmlns/prod/cics/bundle/WARBUNDLE"/>'
+		checkManifest(['id="cics-bundle-gradle">',
+		               '<define name="war" path="war.warbundle" type="http://www.ibm.com/xmlns/prod/cics/bundle/WARBUNDLE"/>'
 		])
 	}
 
@@ -130,8 +131,8 @@ class BuildTests extends AbstractTest {
 				['cics-bundle-gradle-1.0.0-SNAPSHOT/simple-ear.earbundle']
 				, SUCCESS)
 
-		checkManifest([ 'id="cics-bundle-gradle">',
-		                '<define name="simple-ear" path="simple-ear.earbundle" type="http://www.ibm.com/xmlns/prod/cics/bundle/EARBUNDLE"/>'
+		checkManifest(['id="cics-bundle-gradle">',
+		               '<define name="simple-ear" path="simple-ear.earbundle" type="http://www.ibm.com/xmlns/prod/cics/bundle/EARBUNDLE"/>'
 		])
 	}
 
@@ -152,7 +153,6 @@ class BuildTests extends AbstractTest {
                     directory '${localBuildCacheDirectory.toURI().toString()}'
                 }
             }
-
             """
 		buildFile << """\
             plugins {
@@ -164,7 +164,6 @@ class BuildTests extends AbstractTest {
             repositories {
                 mavenCentral()
             }
-            
 
             ${BundlePlugin.BUILD_EXTENSION_NAME} {
                 defaultjvmserver = 'EYUCMCIJ'
@@ -194,8 +193,8 @@ class BuildTests extends AbstractTest {
 				["cics-bundle-gradle-1.0.0-SNAPSHOT/helloworldwar.warbundle"],
 				SUCCESS)
 
-		checkManifest([ 'id="cics-bundle-gradle">',
-		                '<define name="helloworldwar" path="helloworldwar.warbundle" type="http://www.ibm.com/xmlns/prod/cics/bundle/WARBUNDLE"/>'
+		checkManifest(['id="cics-bundle-gradle">',
+		               '<define name="helloworldwar" path="helloworldwar.warbundle" type="http://www.ibm.com/xmlns/prod/cics/bundle/WARBUNDLE"/>'
 		])
 	}
 
@@ -298,7 +297,6 @@ class BuildTests extends AbstractTest {
            
             dependencies {
             }
-
         """
 
 		when:
@@ -327,7 +325,6 @@ class BuildTests extends AbstractTest {
            
             dependencies {
             }
-
         """
 
 		when:
@@ -339,7 +336,6 @@ class BuildTests extends AbstractTest {
 				[],
 				FAILED)
 	}
-
 
 	def "Test packageCICSBundle produces zip in default location"() {
 		given:
@@ -362,7 +358,6 @@ class BuildTests extends AbstractTest {
             dependencies {
                 ${BundlePlugin.BUNDLE_DEPENDENCY_CONFIGURATION_NAME} 'org.codehaus.cargo:simple-ear:1.7.6@ear'
             }
-
         """
 
 		when:
@@ -373,6 +368,116 @@ class BuildTests extends AbstractTest {
 				['> Task :buildCICSBundle\n', '> Task :packageCICSBundle\n'],
 				['distributions/cics-bundle-gradle-1.0.0-SNAPSHOT.zip']
 				, SUCCESS)
+	}
+
+	def "Test static bundle parts and jar"() {
+		given:
+		def resources = testProjectDir.newFolder("src", "main", "resources")
+		copyBundlePartsToResources("static-bundle-parts")
+
+		settingsFile << "rootProject.name = 'cics-bundle-gradle'"
+		buildFile << """\
+            plugins {
+                id 'cics-bundle-gradle-plugin'
+            }
+            
+            version '1.0.0-SNAPSHOT'
+            
+            repositories {
+                jcenter()
+            }
+
+            ${BundlePlugin.BUILD_EXTENSION_NAME} {
+                defaultjvmserver = 'EYUCMCIJ'
+            }
+            
+            dependencies {
+                ${BundlePlugin.BUNDLE_DEPENDENCY_CONFIGURATION_NAME}('javax.servlet:javax.servlet-api:3.1.0@jar')
+            }
+        """
+
+		when:
+		def result = runGradle()
+
+		then:
+		checkResults(result,
+				['javax.servlet-api-3.1.0.jar',
+				 'Task buildCICSBundle (Gradle 5.0)',
+				 "Adding static resource 'TCPIPSV1.tcpipservice'",
+				 "Adding static resource 'TSQAdapter.epadapter'",
+				 "Adding static resource 'TRND.transaction'",
+				 "Adding static resource 'CATMANAGER.evbind'",
+				 "Adding static resource 'LIBDEF1.library'",
+				 "Adding static resource 'URIMP011.urimap'",
+				 "Adding static resource 'PROGDEF1.program'",
+				 "Adding static resource 'FILEDEFA.file'",
+				 "Adding static resource 'PACKSET1.packageset'",
+				 "Adding static resource 'EPADSET1.epadapterset'",
+				 "Adding static resource 'TDQAdapter.epadapter'",
+				 "Adding static resource 'POLDEM1.policy'"
+				],
+				['cics-bundle-gradle-1.0.0-SNAPSHOT/javax.servlet-api_3.1.0.osgibundle']
+				, SUCCESS
+		)
+
+		checkManifest([
+				'id="cics-bundle-gradle">',
+				'<define name="javax.servlet-api_3.1.0" path="javax.servlet-api_3.1.0.osgibundle" type="http://www.ibm.com/xmlns/prod/cics/bundle/OSGIBUNDLE"/>',
+				'<define name="CATMANAGER" path="CATMANAGER.evbind" type="http://www.ibm.com/xmlns/prod/cics/bundle/EVENTBINDING"/>',
+				'<define name="EPADSET1" path="EPADSET1.epadapterset" type="http://www.ibm.com/xmlns/prod/cics/bundle/EPADAPTERSET"/>',
+				'<define name="FILEDEFA" path="FILEDEFA.file" type="http://www.ibm.com/xmlns/prod/cics/bundle/FILE"/>',
+				'<define name="LIBDEF1" path="LIBDEF1.library" type="http://www.ibm.com/xmlns/prod/cics/bundle/LIBRARY"/>',
+				'<define name="PACKSET1" path="PACKSET1.packageset" type="http://www.ibm.com/xmlns/prod/cics/bundle/PACKAGESET"/>',
+				'<define name="POLDEM1" path="POLDEM1.policy" type="http://www.ibm.com/xmlns/prod/cics/bundle/POLICY"/>',
+				'<define name="PROGDEF1" path="PROGDEF1.program" type="http://www.ibm.com/xmlns/prod/cics/bundle/PROGRAM"/>',
+				'<define name="TCPIPSV1" path="TCPIPSV1.tcpipservice" type="http://www.ibm.com/xmlns/prod/cics/bundle/TCPIPSERVICE"/>',
+				'<define name="TDQAdapter" path="TDQAdapter.epadapter" type="http://www.ibm.com/xmlns/prod/cics/bundle/EPADAPTER"/>',
+				'<define name="TRND" path="TRND.transaction" type="http://www.ibm.com/xmlns/prod/cics/bundle/TRANSACTION"/>',
+				'<define name="TSQAdapter" path="TSQAdapter.epadapter" type="http://www.ibm.com/xmlns/prod/cics/bundle/EPADAPTER"/>',
+				'<define name="URIMP011" path="URIMP011.urimap" type="http://www.ibm.com/xmlns/prod/cics/bundle/URIMAP"/>'
+		])
+	}
+
+	def "Test resources is not a directory"() {
+		given:
+		def resources = testProjectDir.newFolder("src", "main")
+		def name = resources.path.toString() + '/resources'
+		def f = new File(name)
+		f.write('I am not a folder')
+		settingsFile << "rootProject.name = 'cics-bundle-gradle'"
+		buildFile << """\
+            plugins {
+                id 'cics-bundle-gradle-plugin'
+            }
+            
+            version '1.0.0-SNAPSHOT'
+            
+            repositories {
+                jcenter()
+            }
+
+            ${BundlePlugin.BUILD_EXTENSION_NAME} {
+                defaultjvmserver = 'EYUCMCIJ'
+            }
+            
+            dependencies {
+                ${BundlePlugin.BUNDLE_DEPENDENCY_CONFIGURATION_NAME}('javax.servlet:javax.servlet-api:3.1.0@jar')
+            }
+        """
+
+		when:
+		def result = runGradleAndFail()
+
+		then:
+		checkResults(result,
+				['javax.servlet-api-3.1.0.jar',
+				 'Task buildCICSBundle (Gradle 5.0)',
+				 "Static bundle resources directory '",
+				 "/src/main/resources' is not a directory"
+				],
+				[]
+				, FAILED
+		)
 	}
 
 }
