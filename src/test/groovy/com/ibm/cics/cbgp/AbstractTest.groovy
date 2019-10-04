@@ -24,7 +24,6 @@ import java.lang.management.ManagementFactory
 
 abstract class AbstractTest extends Specification {
 
-
 	@Rule
 	public TemporaryFolder testProjectDir = new TemporaryFolder()
 	protected File settingsFile
@@ -146,4 +145,16 @@ abstract class AbstractTest extends Specification {
 		return new File(buildFile.parent + '/build/' + fileName)
 	}
 
+	protected def copyBundlePartsToResources(String source_folder) {
+		// Copy the bundle part into the test build
+		def pluginClasspathResource = getClass().classLoader.findResource(source_folder)
+		if (pluginClasspathResource == null) {
+			throw new IllegalStateException("Did not find $partFileName resource.")
+		}
+
+		def root = new File(pluginClasspathResource.path).parent
+		new AntBuilder().copy(todir: (buildFile.parent + "/src/main/resources/")) {
+			fileset(dir: (root + "/" + source_folder).toString())
+		}
+	}
 }

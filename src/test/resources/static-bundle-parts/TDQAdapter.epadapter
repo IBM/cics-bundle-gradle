@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<ns2:EPAdapter CICSEPSchemaVersion="4" CICSEPSchemaRelease="0" xsi:schemaLocation="http://www.ibm.com/xmlns/prod/cics/eventprocessing/eventbinding CicsEPAdapter.xsd " xmlns:ns2="http://www.ibm.com/xmlns/prod/cics/eventprocessing/eventbinding" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+    <description>Demo TDQ Adapter</description>
+    <eventDispatcherSpecification>
+        <eventDispatcher>
+            <eventDispatcherPolicy>
+                <dispatchPriority>normal</dispatchPriority>
+                <eventsTransactional>false</eventsTransactional>
+                <adapterUserid useContextUserid="false"></adapterUserid>
+                <adapterTranId></adapterTranId>
+            </eventDispatcherPolicy>
+            <eventDispatcherAdapter>
+                <cicsTDQueueAdapter>
+                    <queueName>TDQ1</queueName>
+                    <sysid></sysid>
+                    <format>CFE</format>
+                </cicsTDQueueAdapter>
+            </eventDispatcherAdapter>
+        </eventDispatcher>
+    </eventDispatcherSpecification>
+</ns2:EPAdapter>
