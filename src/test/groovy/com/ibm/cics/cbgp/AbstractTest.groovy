@@ -95,11 +95,11 @@ abstract class AbstractTest extends Specification {
 		result.task(":$defaultTask").outcome == outcome
 	}
 
-	protected def checkManifest(List manifestStrings) {
+	protected def checkManifest(List manifestStringsExpected) {
 		def manifestFile = getFileInBuildOutputFolder('cics-bundle-gradle-1.0.0-SNAPSHOT/META-INF/cics.xml')
 		assert manifestFile.exists(): "Unable to find cics.xml"
 		def lines = manifestFile.readLines()
-		manifestStrings.each { searchString ->
+		manifestStringsExpected.each { searchString ->
 			def found = lines.find { line ->
 				if (line.contains(searchString)) {
 					return true
@@ -109,8 +109,21 @@ abstract class AbstractTest extends Specification {
 		}
 	}
 
-	// Print out the file tree after the test excluding hidden files.
-	// Print out cics.xml if found
+	protected def checkManifestDoesNotContain(List manifestStringsUndesired) {
+		def manifestFile = getFileInBuildOutputFolder('cics-bundle-gradle-1.0.0-SNAPSHOT/META-INF/cics.xml')
+		assert manifestFile.exists(): "Unable to find cics.xml"
+		def lines = manifestFile.readLines()
+		manifestStringsUndesired.each { searchString ->
+			lines.each { line ->
+				if (line.contains(searchString)) {
+					assert false: "cics.xml contains unwanted data : '$searchString'"
+				}
+			}
+		}
+	}
+
+// Print out the file tree after the test excluding hidden files.
+// Print out cics.xml if found
 	protected void printTemporaryFileTree() {
 		def tempFolder = new File(buildFile.parent)
 		def manifestFilename = ""
@@ -159,4 +172,5 @@ abstract class AbstractTest extends Specification {
 			fileset(dir: (root + "/" + source_folder).toString())
 		}
 	}
+
 }
