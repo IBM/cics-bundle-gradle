@@ -1,0 +1,32 @@
+<?xml version="1.0"?>
+<!--
+  ~ #%L
+  ~ CICS Bundle Gradle Plugin
+  ~ %%
+  ~ Copyright (C) 2019 IBM Corp.
+  ~ %%
+  ~ This program and the accompanying materials are made
+  ~ available under the terms of the Eclipse Public License 2.0
+  ~ which is available at https://www.eclipse.org/legal/epl-2.0/
+  ~
+  ~ SPDX-License-Identifier: EPL-2.0
+  ~ #L%
+  -->
+<cics:atomservice xmlns:atom="http://www.w3.org/2005/Atom" xmlns:app="http://www.w3.org/2007/app" xmlns:cics="http://www.ibm.com/xmlns/prod/cics/atom/atomservice" type="collection" version="2" build="IntB-201809142129">
+    <cics:feed>
+        <cics:authority date="2019-10-07" name="example.com"/>
+        <cics:resource type="file" name="FILERES">
+            <cics:bind xmltransform="jane"/>
+        </cics:resource>
+    </cics:feed>
+    <cics:urimap uri="xxxx/*"/>
+    <atom:feed>
+        <atom:title>FeedTitle</atom:title>
+        <atom:link href="xxxx/feed" rel="self"/>
+        <atom:entry>
+            <atom:title>EntryTitle</atom:title>
+            <atom:link href="xxxx/entry/" rel="self"/>
+            <atom:content cics:type="file" cics:resource="FILERES"/>
+        </atom:entry>
+    </atom:feed>
+</cics:atomservice>
