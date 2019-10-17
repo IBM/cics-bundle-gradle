@@ -436,6 +436,70 @@ class BuildTests extends AbstractTest {
 				'<define name="TSQAdapter" path="TSQAdapter.epadapter" type="http://www.ibm.com/xmlns/prod/cics/bundle/EPADAPTER"/>',
 				'<define name="URIMP011" path="URIMP011.urimap" type="http://www.ibm.com/xmlns/prod/cics/bundle/URIMAP"/>'
 		])
+		checkManifestDoesNotContain(['ATOM'])
+	}
+
+	def "Test static bundle parts only"() {
+		given:
+		def resources = testProjectDir.newFolder("src", "main", "resources")
+		copyBundlePartsToResources("static-bundle-parts")
+
+		settingsFile << "rootProject.name = 'cics-bundle-gradle'"
+		buildFile << """\
+            plugins {
+                id 'cics-bundle-gradle-plugin'
+            }
+            
+            version '1.0.0-SNAPSHOT'
+            
+            repositories {
+                jcenter()
+            }
+
+            ${BundlePlugin.BUILD_EXTENSION_NAME} {
+                defaultjvmserver = 'EYUCMCIJ'
+            }
+        """
+
+		when:
+		def result = runGradle()
+
+		then:
+		checkResults(result,
+				['Task buildCICSBundle (Gradle 5.0)',
+				 "Adding static resource 'TCPIPSV1.tcpipservice'",
+				 "Adding static resource 'TSQAdapter.epadapter'",
+				 "Adding static resource 'TRND.transaction'",
+				 "Adding static resource 'CATMANAGER.evbind'",
+				 "Adding static resource 'LIBDEF1.library'",
+				 "Adding static resource 'URIMP011.urimap'",
+				 "Adding static resource 'PROGDEF1.program'",
+				 "Adding static resource 'FILEDEFA.file'",
+				 "Adding static resource 'PACKSET1.packageset'",
+				 "Adding static resource 'EPADSET1.epadapterset'",
+				 "Adding static resource 'TDQAdapter.epadapter'",
+				 "Adding static resource 'POLDEM1.policy'"
+				],
+				[]
+				, SUCCESS
+		)
+
+		checkManifest([
+				'id="cics-bundle-gradle">',
+				'<define name="CATMANAGER" path="CATMANAGER.evbind" type="http://www.ibm.com/xmlns/prod/cics/bundle/EVENTBINDING"/>',
+				'<define name="EPADSET1" path="EPADSET1.epadapterset" type="http://www.ibm.com/xmlns/prod/cics/bundle/EPADAPTERSET"/>',
+				'<define name="FILEDEFA" path="FILEDEFA.file" type="http://www.ibm.com/xmlns/prod/cics/bundle/FILE"/>',
+				'<define name="LIBDEF1" path="LIBDEF1.library" type="http://www.ibm.com/xmlns/prod/cics/bundle/LIBRARY"/>',
+				'<define name="PACKSET1" path="PACKSET1.packageset" type="http://www.ibm.com/xmlns/prod/cics/bundle/PACKAGESET"/>',
+				'<define name="POLDEM1" path="POLDEM1.policy" type="http://www.ibm.com/xmlns/prod/cics/bundle/POLICY"/>',
+				'<define name="PROGDEF1" path="PROGDEF1.program" type="http://www.ibm.com/xmlns/prod/cics/bundle/PROGRAM"/>',
+				'<define name="TCPIPSV1" path="TCPIPSV1.tcpipservice" type="http://www.ibm.com/xmlns/prod/cics/bundle/TCPIPSERVICE"/>',
+				'<define name="TDQAdapter" path="TDQAdapter.epadapter" type="http://www.ibm.com/xmlns/prod/cics/bundle/EPADAPTER"/>',
+				'<define name="TRND" path="TRND.transaction" type="http://www.ibm.com/xmlns/prod/cics/bundle/TRANSACTION"/>',
+				'<define name="TSQAdapter" path="TSQAdapter.epadapter" type="http://www.ibm.com/xmlns/prod/cics/bundle/EPADAPTER"/>',
+				'<define name="URIMP011" path="URIMP011.urimap" type="http://www.ibm.com/xmlns/prod/cics/bundle/URIMAP"/>'
+		])
+		checkManifestDoesNotContain(['ATOM'])
 	}
 
 	def "Test resources is not a directory"() {
