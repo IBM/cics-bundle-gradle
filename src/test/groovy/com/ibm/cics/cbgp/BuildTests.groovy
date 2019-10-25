@@ -52,7 +52,7 @@ class BuildTests extends AbstractTest {
 
 		then:
 		checkResults(result,
-				['javax.servlet-api-3.1.0.jar', 'Task buildCICSBundle (Gradle 5.0)',"No resources folder 'src/main/resources' to search for bundle parts"],
+				['javax.servlet-api-3.1.0.jar', 'Task buildCICSBundle (Gradle 5.0)',"No resources folder 'src${File.separator}main${File.separator}resources' to search for bundle parts"],
 				['cics-bundle-gradle-1.0.0-SNAPSHOT/javax.servlet-api_3.1.0.osgibundle']
 				, SUCCESS
 		)
@@ -365,7 +365,7 @@ class BuildTests extends AbstractTest {
 
 		then:
 		checkResults(result,
-				['> Task :buildCICSBundle\n', '> Task :packageCICSBundle\n'],
+				['> Task :buildCICSBundle', '> Task :packageCICSBundle'],
 				['distributions/cics-bundle-gradle-1.0.0-SNAPSHOT.zip']
 				, SUCCESS)
 	}
@@ -537,7 +537,7 @@ class BuildTests extends AbstractTest {
 				['javax.servlet-api-3.1.0.jar',
 				 'Task buildCICSBundle (Gradle 5.0)',
 				 "Static bundle resources directory '",
-				 "/src/main/resources' is not a directory"
+				 "${File.separator}src${File.separator}main${File.separator}resources' is not a directory"
 				],
 				[]
 				, FAILED
