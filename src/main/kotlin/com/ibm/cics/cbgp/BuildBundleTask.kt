@@ -84,6 +84,7 @@ open class BuildBundleTask : AbstractBundleTask() {
 		addStaticResourcesToBundle(bundlePublisher)
 		try {
 			bundlePublisher.publishResources()
+			bundlePublisher.publishDynamicResources()
 		} catch (e: PublishException) {
 			throw GradleException(e.message as String, e)
 		}
