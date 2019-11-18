@@ -53,7 +53,7 @@ class BuildTests extends AbstractTest {
 		then:
 		checkResults(result,
 				['javax.servlet-api-3.1.0.jar', 'Task buildCICSBundle (Gradle 5.0)',"No resources folder 'src${File.separator}main${File.separator}resources' to search for bundle parts"],
-				['cics-bundle-gradle-1.0.0-SNAPSHOT/javax.servlet-api_3.1.0.osgibundle']
+				['cics-bundle-gradle-1.0.0-SNAPSHOT/javax.servlet-api_3.1.0.osgibundle', 'cics-bundle-gradle-1.0.0-SNAPSHOT/javax.servlet-api_3.1.0.jar']
 				, SUCCESS
 		)
 
@@ -91,7 +91,7 @@ class BuildTests extends AbstractTest {
 		then:
 		checkResults(result,
 				['org.glassfish.main.admingui', 'war-5.1.0.war'],
-				['cics-bundle-gradle-1.0.0-SNAPSHOT/war.warbundle'],
+				['cics-bundle-gradle-1.0.0-SNAPSHOT/war.warbundle', 'cics-bundle-gradle-1.0.0-SNAPSHOT/war.war'],
 				SUCCESS)
 
 		checkManifest(['id="cics-bundle-gradle">',
@@ -128,8 +128,8 @@ class BuildTests extends AbstractTest {
 		then:
 		checkResults(result,
 				['org.codehaus.cargo', 'simple-ear-1.7.6.ear'],
-				['cics-bundle-gradle-1.0.0-SNAPSHOT/simple-ear.earbundle']
-				, SUCCESS)
+				['cics-bundle-gradle-1.0.0-SNAPSHOT/simple-ear.earbundle', 'cics-bundle-gradle-1.0.0-SNAPSHOT/simple-ear.ear'],
+				SUCCESS)
 
 		checkManifest(['id="cics-bundle-gradle">',
 		               '<define name="simple-ear" path="simple-ear.earbundle" type="http://www.ibm.com/xmlns/prod/cics/bundle/EARBUNDLE"/>'
@@ -190,7 +190,7 @@ class BuildTests extends AbstractTest {
 		then:
 		checkResults(result,
 				['Task :helloworldwar:build', "${warProjectName}-1.0-SNAPSHOT.war"],
-				["cics-bundle-gradle-1.0.0-SNAPSHOT/helloworldwar.warbundle"],
+				['cics-bundle-gradle-1.0.0-SNAPSHOT/helloworldwar.warbundle', 'cics-bundle-gradle-1.0.0-SNAPSHOT/helloworldwar.war'],
 				SUCCESS)
 
 		checkManifest(['id="cics-bundle-gradle">',
