@@ -22,4 +22,5 @@ open class DeployExtension {
     var url = ""
     var username = ""
     var password = ""
+    var insecure = false
 }

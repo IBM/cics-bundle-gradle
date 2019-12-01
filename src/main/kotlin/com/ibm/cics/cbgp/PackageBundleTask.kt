@@ -14,9 +14,9 @@
 package com.ibm.cics.cbgp
 
 import org.gradle.api.file.DirectoryProperty
-
+import org.gradle.api.file.RegularFileProperty
 import org.gradle.api.tasks.InputDirectory
-import org.gradle.api.tasks.TaskAction
+import org.gradle.api.tasks.OutputFile
 import org.gradle.api.tasks.bundling.Zip
 
 open class PackageBundleTask : Zip() {
@@ -27,13 +27,11 @@ open class PackageBundleTask : Zip() {
 	@InputDirectory
 	var inputDirectory: DirectoryProperty = project.objects.directoryProperty()
 
+	@OutputFile
+	var outputFile: RegularFileProperty = project.objects.fileProperty()
+
 	init {
 		extension = BUNDLE_EXTENSION
 		metadataCharset = "UTF-8"
-	}
-
-	@TaskAction
-	fun packageCICSBundle() {
-
 	}
 }
