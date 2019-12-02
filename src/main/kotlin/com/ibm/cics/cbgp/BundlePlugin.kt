@@ -16,14 +16,9 @@ package com.ibm.cics.cbgp
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.artifacts.ConfigurationContainer
-import org.gradle.api.artifacts.PublishArtifact
 import org.gradle.api.internal.artifacts.dsl.LazyPublishArtifact
 import org.gradle.api.internal.plugins.DefaultArtifactPublicationSet
-import org.gradle.api.model.ObjectFactory
 import org.gradle.api.plugins.BasePlugin
-import org.gradle.api.tasks.TaskProvider
-
-import javax.inject.Inject
 
 class BundlePlugin : Plugin<Project> {
 	companion object {
@@ -59,9 +54,9 @@ class BundlePlugin : Plugin<Project> {
 		val pkg = project.tasks.register(PACKAGE_TASK_NAME, PackageBundleTask::class.java) {
 			it.description = "Packages a CICS bundle into a zipped archive and includes external dependencies."
 			it.group = BasePlugin.BUILD_GROUP
-
 		}
-		project.tasks.register(DEPLOY_TASK_NAME, DeployBundleTask::class.java) {
+
+		val deploy = project.tasks.register(DEPLOY_TASK_NAME, DeployBundleTask::class.java) {
 			it.description = "Deploys a CICS bundle to a CICS system."
 			it.group = BasePlugin.UPLOAD_GROUP
 		}
@@ -71,9 +66,19 @@ class BundlePlugin : Plugin<Project> {
 			packageBundleTask.inputDirectory.set(build.flatMap { buildBundleTask -> buildBundleTask.outputDirectory })
 		}
 
+		deploy.configure { deployBundleTask ->
+			// Wire output of package task to input of deploy task, by default
+			deployBundleTask.inputFile.set(pkg.flatMap { packageBundleTask -> packageBundleTask.outputFile })
+		}
+
 		build.configure {
 			// Define output for build task, by default
 			it.outputDirectory.set(project.layout.buildDirectory.dir("${project.name}-${project.version}"))
+		}
+
+		pkg.configure {
+			// Define output for package task, by default
+			it.outputFile.set(pkg.get().archivePath)
 		}
 
 		// Register output of archive task as the default artifact

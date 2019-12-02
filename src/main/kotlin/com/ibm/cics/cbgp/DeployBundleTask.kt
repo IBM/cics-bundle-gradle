@@ -13,9 +13,13 @@
  */
 package com.ibm.cics.cbgp
 
+import com.ibm.cics.bundle.deploy.BundleDeployHelper
 import org.gradle.api.GradleException
+import org.gradle.api.file.RegularFileProperty
 import org.gradle.api.tasks.Input
+import org.gradle.api.tasks.InputFile
 import org.gradle.api.tasks.TaskAction
+import java.net.URI
 
 open class DeployBundleTask : AbstractBundleTask() {
 
@@ -51,11 +55,26 @@ open class DeployBundleTask : AbstractBundleTask() {
 	@Input
 	val deployExtension = project.extensions.getByName(BundlePlugin.DEPLOY_EXTENSION_NAME) as DeployExtension
 
+	@InputFile
+	var inputFile: RegularFileProperty = project.objects.fileProperty()
+
 	@TaskAction
 	fun deployCICSBundle() {
 		println("Task deployCICSBundle")
 
 		validateDeployExtension()
+
+		val bundle = inputFile.get().asFile
+		val cicsplex = deployExtension.cicsplex
+		val region = deployExtension.region
+		val bunddef = deployExtension.bunddef
+		val csdgroup = deployExtension.csdgroup
+		val endpointURL = URI(deployExtension.url)
+		val username = deployExtension.username
+		val password = deployExtension.password
+		val insecure = deployExtension.insecure
+
+		BundleDeployHelper.deployBundle(endpointURL, bundle, bunddef, csdgroup, cicsplex, region, username, password, insecure)
 	}
 
 	private fun validateDeployExtension() {
