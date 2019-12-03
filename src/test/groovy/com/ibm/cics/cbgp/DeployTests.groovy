@@ -20,27 +20,35 @@ class DeployTests extends AbstractTest {
 
 	// TODO Add deploy success tests once deploy task is performing deploy action.
 
+	/**
+	 * Common build.gradle contents for all tests.
+	 */
+	private String commonBuildFileContents
+
 	def setup() {
 		commonSetup(BundlePlugin.DEPLOY_TASK_NAME)
 		settingsFile << "rootProject.name = 'cics-bundle-gradle'"
+		commonBuildFileContents = """\
+            plugins {
+                id 'cics-bundle-gradle-plugin'
+            }
+
+            version '1.0.0-SNAPSHOT'
+
+            repositories {
+                jcenter()
+            }
+            
+            ${BundlePlugin.BUILD_EXTENSION_NAME} {
+                defaultjvmserver = 'EYUCMCIJ'
+            }
+        """
 	}
 
 	def "Test missing deploy extension block"() {
 		given:
 		buildFile << """\
-            plugins {
-                id 'cics-bundle-gradle-plugin'
-            }
-            
-            version '1.0.0-SNAPSHOT'
-            
-            repositories {
-                jcenter()
-            }
-            
-            dependencies {
-                ${BundlePlugin.BUNDLE_DEPENDENCY_CONFIGURATION_NAME}('javax.servlet:javax.servlet-api:3.1.0@jar')
-            }
+			${commonBuildFileContents}
         """
 
 		when:
@@ -53,12 +61,8 @@ class DeployTests extends AbstractTest {
 	def "Test empty deploy extension block"() {
 		given:
 		buildFile << """\
-            plugins {
-                id 'cics-bundle-gradle-plugin'
-            }
-            
-            version '1.0.0-SNAPSHOT'
-            
+            ${commonBuildFileContents}
+
             ${BundlePlugin.DEPLOY_EXTENSION_NAME} {
             }
 
@@ -74,10 +78,8 @@ class DeployTests extends AbstractTest {
 	def "Test missing cicsplex"() {
 		given:
 		buildFile << """\
-            plugins {
-                id 'cics-bundle-gradle-plugin'
-            }
-            
+            ${commonBuildFileContents}
+
             ${BundlePlugin.DEPLOY_EXTENSION_NAME} {
                 region = 'MYEGION'
                 bunddef = 'MYDEF'
@@ -98,16 +100,8 @@ class DeployTests extends AbstractTest {
 	def "Test missing region"() {
 		given:
 		buildFile << """\
-            plugins {
-                id 'cics-bundle-gradle-plugin'
-            }
-            
-            version '1.0.0-SNAPSHOT'
-            
-            repositories {
-                jcenter()
-            }
-            
+            ${commonBuildFileContents}
+
             ${BundlePlugin.DEPLOY_EXTENSION_NAME} {
                 cicsplex            = 'MYPLEX'
                 bunddef             = 'MYDEF'
@@ -115,10 +109,6 @@ class DeployTests extends AbstractTest {
                 url                 = 'someurl'
                 username            = 'bob'
                 password            = 'passw0rd'
-            }
-            
-            dependencies {
-                ${BundlePlugin.BUNDLE_DEPENDENCY_CONFIGURATION_NAME}('javax.servlet:javax.servlet-api:3.1.0@jar')
             }
         """
 
@@ -132,16 +122,8 @@ class DeployTests extends AbstractTest {
 	def "Test missing bunddef"() {
 		given:
 		buildFile << """\
-            plugins {
-                id 'cics-bundle-gradle-plugin'
-            }
-            
-            version '1.0.0-SNAPSHOT'
-            
-            repositories {
-                jcenter()
-            }
-            
+            ${commonBuildFileContents}
+
             ${BundlePlugin.DEPLOY_EXTENSION_NAME} {
                 cicsplex            = 'MYPLEX'
                 region              = 'MYEGION'
@@ -149,10 +131,6 @@ class DeployTests extends AbstractTest {
                 url                 = 'someurl'
                 username            = 'bob'
                 password            = 'passw0rd'
-            }
-            
-            dependencies {
-                ${BundlePlugin.BUNDLE_DEPENDENCY_CONFIGURATION_NAME}('javax.servlet:javax.servlet-api:3.1.0@jar')
             }
         """
 
@@ -166,16 +144,8 @@ class DeployTests extends AbstractTest {
 	def "Test missing csdgroup"() {
 		given:
 		buildFile << """\
-            plugins {
-                id 'cics-bundle-gradle-plugin'
-            }
-            
-            version '1.0.0-SNAPSHOT'
-            
-            repositories {
-                jcenter()
-            }
-            
+            ${commonBuildFileContents}
+
             ${BundlePlugin.DEPLOY_EXTENSION_NAME} {
                 cicsplex            = 'MYPLEX'
                 region              = 'MYEGION'
@@ -183,10 +153,6 @@ class DeployTests extends AbstractTest {
                 url                 = 'someurl'
                 username            = 'bob'
                 password            = 'passw0rd'
-            }
-            
-            dependencies {
-                ${BundlePlugin.BUNDLE_DEPENDENCY_CONFIGURATION_NAME}('javax.servlet:javax.servlet-api:3.1.0@jar')
             }
         """
 
@@ -200,16 +166,8 @@ class DeployTests extends AbstractTest {
 	def "Test missing url"() {
 		given:
 		buildFile << """\
-            plugins {
-                id 'cics-bundle-gradle-plugin'
-            }
-            
-            version '1.0.0-SNAPSHOT'
-            
-            repositories {
-                jcenter()
-            }
-            
+            ${commonBuildFileContents}
+
             ${BundlePlugin.DEPLOY_EXTENSION_NAME} {
                 cicsplex            = 'MYPLEX'
                 region              = 'MYEGION'
@@ -217,10 +175,6 @@ class DeployTests extends AbstractTest {
                 csdgroup            = 'MYGROUP'
                 username = 'bob'
                 password = 'passw0rd'
-            }
-            
-            dependencies {
-                ${BundlePlugin.BUNDLE_DEPENDENCY_CONFIGURATION_NAME}('javax.servlet:javax.servlet-api:3.1.0@jar')
             }
         """
 
@@ -234,16 +188,8 @@ class DeployTests extends AbstractTest {
 	def "Test missing username"() {
 		given:
 		buildFile << """\
-            plugins {
-                id 'cics-bundle-gradle-plugin'
-            }
-            
-            version '1.0.0-SNAPSHOT'
-            
-            repositories {
-                jcenter()
-            }
-            
+            ${commonBuildFileContents}
+
             ${BundlePlugin.DEPLOY_EXTENSION_NAME} {
                 cicsplex            = 'MYPLEX'
                 region              = 'MYEGION'
@@ -251,10 +197,6 @@ class DeployTests extends AbstractTest {
                 csdgroup            = 'MYGROUP'
                 url                 = 'someurl'
                 password            = 'passw0rd'
-            }
-            
-            dependencies {
-                ${BundlePlugin.BUNDLE_DEPENDENCY_CONFIGURATION_NAME}('javax.servlet:javax.servlet-api:3.1.0@jar')
             }
         """
 
@@ -268,16 +210,8 @@ class DeployTests extends AbstractTest {
 	def "Test missing password"() {
 		given:
 		buildFile << """\
-            plugins {
-                id 'cics-bundle-gradle-plugin'
-            }
-            
-            version '1.0.0-SNAPSHOT'
-            
-            repositories {
-                jcenter()
-            }
-            
+            ${commonBuildFileContents}
+
             ${BundlePlugin.DEPLOY_EXTENSION_NAME} {
                 cicsplex            = 'MYPLEX'
                 region              = 'MYEGION'
@@ -285,10 +219,6 @@ class DeployTests extends AbstractTest {
                 csdgroup            = 'MYGROUP'
                 url                 = 'someurl'
                 username            = 'bob'
-            }
-            
-            dependencies {
-                ${BundlePlugin.BUNDLE_DEPENDENCY_CONFIGURATION_NAME}('javax.servlet:javax.servlet-api:3.1.0@jar')
             }
         """
 
@@ -302,26 +232,14 @@ class DeployTests extends AbstractTest {
 	def "Test multiple items missing"() {
 		given:
 		buildFile << """\
-            plugins {
-                id 'cics-bundle-gradle-plugin'
-            }
-            
-            version '1.0.0-SNAPSHOT'
-            
-            repositories {
-                jcenter()
-            }
-            
+            ${commonBuildFileContents}
+
             ${BundlePlugin.DEPLOY_EXTENSION_NAME} {
                 cicsplex            = 'MYPLEX'
                 csdgroup            = 'MYGROUP'
                 url                 = 'someurl'
                 username            = 'bob'
                 password            = 'passw0rd'
-            }
-            
-            dependencies {
-                ${BundlePlugin.BUNDLE_DEPENDENCY_CONFIGURATION_NAME}('javax.servlet:javax.servlet-api:3.1.0@jar')
             }
         """
 
@@ -345,16 +263,8 @@ class DeployTests extends AbstractTest {
         """
 
 		buildFile << """\
-            plugins {
-                id 'cics-bundle-gradle-plugin'
-            }
-            
-            version '1.0.0-SNAPSHOT'
-            
-            repositories {
-                jcenter()
-            }
-            
+            ${commonBuildFileContents}
+
             ${BundlePlugin.DEPLOY_EXTENSION_NAME} {
                 region   = 'MYEGION'
                 cicsplex = 'MYPLEX'
@@ -367,10 +277,10 @@ class DeployTests extends AbstractTest {
         """
 
 		when:
-		def result = runGradle()
+		def result = runGradleAndFail()
 
 		then:
-		checkResults(result, [], [], SUCCESS)
+		// This error indicates success as it won't get this far if the substitution fails.
+		checkResults(result, ["Target host is null"], [], FAILED)
 	}
-
 }
