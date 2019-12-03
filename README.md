@@ -46,13 +46,13 @@ It can deploy CICS bundles containing any bundleparts.
 ## To use the `cics-bundle-gradle-plugin`
 To use the plugin, clone or download the GitHub repository. Then create a separate Gradle module for your CICS bundle and configure it as follows.
 
-1. Add the plugin id to your `build.gradle.kts`.
+1. Add the plugin id to your `build.gradle`.
     ```gradle
      plugins {
          id 'cics-bundle-gradle-plugin'
      }
     ```
-1. Add the `mavenCentral` repository to your `build.gradle.kts`, so Gradle can find the plugin.
+1. Add the `mavenCentral` repository to your `build.gradle`, so Gradle can find the plugin.
     ```gradle
      repositories {
          mavenCentral()
@@ -89,7 +89,7 @@ Before building the CICS bundle module, you need to build the cloned plugin firs
 
  ## To deploy a CICS bundle
 
-1. In the CICS bunlde module's `build.gradle.kts`, add the deployCICSBundleConfig block for the deploy destination.
+1. In the CICS bundle module's `build.gradle`, add the deployCICSBundleConfig block for the deploy destination.
       ```gradle
          deployCICSBundleConfig {
              cicsplex = 'MYPLEX'
