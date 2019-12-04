@@ -36,7 +36,7 @@ It can deploy CICS bundles containing any bundleparts.
  The `cics-bundle-gradle-plugin` contributes the following gradle tasks.
 
 ### `buildCICSBundle`
-  This task uses the `cicsBundle` dependency configuration to scope the EAR, WAR and OSGi java dependencies to be added to the CICS bundle, other bundle parts are automatically added from the resources folder of your build.  
+  This task uses the `cicsBundle` dependency configuration to scope the EAR, WAR and OSGi java dependencies to be added to the CICS bundle. Other bundle parts are automatically added from the resources folder of your build.  
   Specify the default JVM server in the `buildCICSBundleConfig` block.
 
 ### `deployCICSBundle`
