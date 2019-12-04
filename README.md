@@ -27,7 +27,7 @@ It can deploy CICS bundles containing any bundleparts.
 
 ## Pre-requisites
  The plugin requires Gradle version 5 features and will not work correctly on earlier releases of Gradle.  
- If you're using the `deployCICSBundle`, further configuration to CICS is required to make use of the CICS bundle deployment API (see the [CICS TS doc](https://www.ibm.com/support/knowledgecenter/en/SSGMCP_5.6.0/configuring/cmci/config-bundle-api.html) for details). Simply put, you'll need:  
+ If you're using the `deployCICSBundle` task, further configuration to CICS is required to make use of the CICS bundle deployment API (see the [CICS TS doc](https://www.ibm.com/support/knowledgecenter/en/SSGMCP_5.6.0/configuring/cmci/config-bundle-api.html) for details). Simply put, you'll need:  
  * A CICS region that is at CICS® TS V5.6 open beta or later
  * The region to be configured as a WUI region for the CICSplex that contains the deployment target region
  * The WUI region to be configured to use the CMCI JVM server, including the CICS bundle deployment API
