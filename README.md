@@ -41,7 +41,7 @@ It can deploy CICS bundles containing any bundleparts.
 
 ### `deployCICSBundle`
  This task uses settings in the `deployCICSBundleConfig` block to deploy the CICS bundle to CICS on z/OS,
- define the bundle in CICS, install and enable it.
+ install and enable it.
 
 ## To use the `cics-bundle-gradle-plugin`
 To use the plugin, clone or download the GitHub repository. Then create a separate Gradle module for your CICS bundle and configure it as follows.
