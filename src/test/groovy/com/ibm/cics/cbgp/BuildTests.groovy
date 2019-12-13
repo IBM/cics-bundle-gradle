@@ -136,6 +136,43 @@ class BuildTests extends AbstractTest {
 		])
 	}
 
+	def "Test maven EBA dependency"() {
+		given:
+		settingsFile << "rootProject.name = 'cics-bundle-gradle'"
+		buildFile << """\
+            plugins {
+                id 'cics-bundle-gradle-plugin'
+            }
+            
+            version '1.0.0-SNAPSHOT'
+            
+            repositories {
+                mavenCentral()
+            }
+ 
+            ${BundlePlugin.BUILD_EXTENSION_NAME} {
+                defaultjvmserver = 'EYUCMCIJ'
+            }
+           
+            dependencies {
+                ${BundlePlugin.BUNDLE_DEPENDENCY_CONFIGURATION_NAME}(group: 'org.apache.aries.samples.twitter', name: 'org.apache.aries.samples.twitter.eba', version: '1.0.0', ext: 'eba')
+            }
+        """
+
+		when:
+		def result = runGradle()
+
+		then:
+		checkResults(result,
+				['org.apache.aries.samples.twitter', 'org.apache.aries.samples.twitter.eba-1.0.0.eba'],
+				['cics-bundle-gradle-1.0.0-SNAPSHOT/org.apache.aries.samples.twitter.eba.ebabundle', 'cics-bundle-gradle-1.0.0-SNAPSHOT/org.apache.aries.samples.twitter.eba.eba'],
+				SUCCESS)
+
+		checkManifest(['id="cics-bundle-gradle">',
+					   '<define name="org.apache.aries.samples.twitter.eba" path="org.apache.aries.samples.twitter.eba.ebabundle" type="http://www.ibm.com/xmlns/prod/cics/bundle/EBABUNDLE"/>'
+		])
+	}
+
 	def "Test local project dependency"() {
 
 		def warProjectName = 'helloworldwar'

@@ -14,29 +14,17 @@
 package com.ibm.cics.cbgp
 
 import com.ibm.cics.bundle.parts.BundleResource
-import com.ibm.cics.bundle.parts.OsgiBundlePart
+import com.ibm.cics.bundle.parts.EbaBundlePart
 import org.gradle.api.GradleException
 import java.io.File
-import java.io.IOException
 
-class OsgibundlePartBinding : AbstractNameableJavaBundlePartBinding() {
+
+class EbabundlePartBinding : AbstractNameableJavaBundlePartBinding() {
 
 	@Throws(GradleException::class)
 	override fun toBundlePartImpl(file: File?): BundleResource {
-		var osgiVersion: String?
-		try {
-			osgiVersion = OsgiBundlePart.getBundleVersion(file)
-		} catch (e: IOException) {
-			throw GradleException("Error reading OSGi bundle version", e)
-		}
-
-		if (osgiVersion == null) {
-			throw GradleException("TODO Parse version from file name or pass in from cicsBundle config dependency")
-		}
-
-		return OsgiBundlePart(
+		return EbaBundlePart(
 				name,
-				osgiVersion,
 				jvmserver,
 				file
 		)

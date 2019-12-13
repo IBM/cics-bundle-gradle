@@ -48,7 +48,7 @@ open class BuildBundleTask : AbstractBundleTask() {
 				   defaultjvmserver = 'EYUCMCIJ'
 				} 
 			""".trimIndent()
-		val VALID_DEPENDENCY_FILE_EXTENSIONS = listOf("ear", "jar", "war")
+		val VALID_DEPENDENCY_FILE_EXTENSIONS = listOf("ear", "jar", "war", "eba")
 	}
 
 	@OutputDirectory
@@ -140,34 +140,33 @@ open class BuildBundleTask : AbstractBundleTask() {
 				"ear" -> addEar(file, name, bundlePublisher)
 				"jar" -> addJar(file, name, bundlePublisher)
 				"war" -> addWar(file, name, bundlePublisher)
+				"eba" -> addEba(file, name, bundlePublisher)
 			}
 		}
 		return
 	}
 
-	// TODO AddEar, addJar, addWar can be one method as only the binding differs (at the moment).
 	private fun addEar(file: File, name: String, bundlePublisher: BundlePublisher) {
 		val binding = EarbundlePartBinding()
-		binding.name = name
-		try {
-			bundlePublisher.addResource(binding.toBundlePart(file, this))
-		} catch (e: PublishException) {
-			throw GradleException("Error adding bundle resource for artifact `$name` : ${e.message} ")
-		}
+		addJavaBundlePartBinding(file, name, binding, bundlePublisher)
 	}
 
 	private fun addJar(file: File, name: String, bundlePublisher: BundlePublisher) {
 		val binding = OsgibundlePartBinding()
-		binding.name = name
-		try {
-			bundlePublisher.addResource(binding.toBundlePart(file, this))
-		} catch (e: PublishException) {
-			throw GradleException("Error adding bundle resource for artifact `$name` : ${e.message} ")
-		}
+		addJavaBundlePartBinding(file, name, binding, bundlePublisher)
 	}
 
 	private fun addWar(file: File, name: String, bundlePublisher: BundlePublisher) {
 		val binding = WarbundlePartBinding()
+		addJavaBundlePartBinding(file, name, binding, bundlePublisher)
+	}
+
+	private fun addEba(file: File, name: String, bundlePublisher: BundlePublisher) {
+		val binding = EbabundlePartBinding()
+		addJavaBundlePartBinding(file, name, binding, bundlePublisher)
+	}
+
+	private fun addJavaBundlePartBinding(file: File, name: String, binding: AbstractNameableJavaBundlePartBinding, bundlePublisher: BundlePublisher) {
 		binding.name = name
 		try {
 			bundlePublisher.addResource(binding.toBundlePart(file, this))
