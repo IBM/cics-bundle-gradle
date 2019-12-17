@@ -24,7 +24,7 @@ If you're thinking of fixing a bug or adding new features, be sure to open an is
 
 ### Licensing
 
-All code must have an EPL v2.0 header. To save you the menial work of getting the header right, you can let the Maven build do so by using the `add-licences` profile:
+All code must have an EPL v2.0 header.
 
 ```
 mvn -Padd-licences process-sources
