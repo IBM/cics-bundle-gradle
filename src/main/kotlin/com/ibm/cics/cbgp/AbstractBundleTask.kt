@@ -26,7 +26,7 @@ open class AbstractBundleTask : DefaultTask() {
 	}
 
 	@Input
-	var defaultJvmserver = ""
+	var defaultJVMServer = ""
 
 	protected fun initBundlePublisher(outputDirectory: DirectoryProperty): BundlePublisher {
 		val outputDirAsFile = outputDirectory.asFile.get()

@@ -23,7 +23,7 @@ abstract class AbstractJavaBundlePartBinding : AbstractBundlePartBinding() {
 	@Throws(GradleException::class)
 	override fun applyDefaults(file: File?, task: AbstractBundleTask) {
 		if (jvmserver.isNullOrEmpty()) {
-			jvmserver = task.defaultJvmserver
+			jvmserver = task.defaultJVMServer
 		}
 	}
 }

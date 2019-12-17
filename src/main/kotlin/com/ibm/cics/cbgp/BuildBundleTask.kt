@@ -35,19 +35,10 @@ open class BuildBundleTask : AbstractBundleTask() {
 
 		const val FAILED_DEPENDENCY_RESOLUTION = "Failed to resolve cicsBundle dependencies"
 		const val MISSING_CONFIG = "Define '${BundlePlugin.BUNDLE_DEPENDENCY_CONFIGURATION_NAME}' configuration with CICS bundle dependencies"
-		const val MISSING_JVMSERVER = "Specify defaultjvmserver for build"
 		const val NO_DEPENDENCIES_WARNING = "Warning, no external or project dependencies in '${BundlePlugin.BUNDLE_DEPENDENCY_CONFIGURATION_NAME}' configuration"
 		const val PLEASE_SPECIFY = "Please specify build configuration"
 		const val UNSUPPORTED_EXTENSIONS_FOUND = "Unsupported file extensions for some dependencies, see earlier messages."
 
-		val BUILD_CONFIG_EXCEPTION =
-				PLEASE_SPECIFY + """\
-
-			Example:
-				 ${BundlePlugin.BUILD_EXTENSION_NAME} {
-				   defaultjvmserver = 'EYUCMCIJ'
-				} 
-			""".trimIndent()
 		val VALID_DEPENDENCY_FILE_EXTENSIONS = listOf("ear", "jar", "war", "eba")
 	}
 
@@ -58,9 +49,8 @@ open class BuildBundleTask : AbstractBundleTask() {
 	fun buildCICSBundle() {
 		logger.info("Task ${BundlePlugin.BUILD_TASK_NAME} (Gradle ${project.gradle.gradleVersion})")
 
-		val buildExtension = project.extensions.getByName(BundlePlugin.BUILD_EXTENSION_NAME) as BuildExtension
-		validateBuildExtension(buildExtension)
-		this.defaultJvmserver = buildExtension.defaultjvmserver
+		val bundleExtension = project.extensions.getByName(BundlePlugin.BUNDLE_EXTENSION_NAME) as BundleExtension
+		this.defaultJVMServer = bundleExtension.defaultJVMServer
 
 		// Find & process the configuration
 		val foundConfig = project.configurations.find {
@@ -182,21 +172,6 @@ open class BuildBundleTask : AbstractBundleTask() {
 			return dep.dependencyProject.name
 		} else {
 			throw GradleException("Unexpected dependency type ${dep::class.java} for dependency \$dep")
-		}
-	}
-
-	private fun validateBuildExtension(buildExtension: BuildExtension) {
-		var blockValid = true
-
-		// Validate block items exist, no check on content
-		if (buildExtension.defaultjvmserver.isEmpty()) {
-			logger.error(MISSING_JVMSERVER)
-			blockValid = false
-		}
-
-		// Throw exception if anything is wrong in the extension block
-		if (!blockValid) {
-			throw GradleException(BUILD_CONFIG_EXCEPTION)
 		}
 	}
 

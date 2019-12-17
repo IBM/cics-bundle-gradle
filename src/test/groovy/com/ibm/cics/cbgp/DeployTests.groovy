@@ -21,7 +21,7 @@ class DeployTests extends AbstractTest {
 	// TODO Add deploy success tests once deploy task is performing deploy action.
 
 	/**
-	 * Common build.gradle contents for all tests.
+	 * Common build.gradle contents for most tests.
 	 */
 	private String commonBuildFileContents
 
@@ -30,7 +30,7 @@ class DeployTests extends AbstractTest {
 		settingsFile << "rootProject.name = 'cics-bundle-gradle'"
 		commonBuildFileContents = """\
             plugins {
-                id 'cics-bundle-gradle-plugin'
+                id 'com.ibm.cics.bundle'
             }
 
             version '1.0.0-SNAPSHOT'
@@ -39,8 +39,8 @@ class DeployTests extends AbstractTest {
                 jcenter()
             }
             
-            ${BundlePlugin.BUILD_EXTENSION_NAME} {
-                defaultjvmserver = 'EYUCMCIJ'
+            ${BundlePlugin.BUNDLE_EXTENSION_NAME} {
+                defaultJVMServer = 'MYJVMS'
             }
         """
 	}
@@ -63,7 +63,7 @@ class DeployTests extends AbstractTest {
 		buildFile << """\
             ${commonBuildFileContents}
 
-            ${BundlePlugin.DEPLOY_EXTENSION_NAME} {
+            ${BundlePlugin.BUNDLE_EXTENSION_NAME} {
             }
 
         """
@@ -80,7 +80,7 @@ class DeployTests extends AbstractTest {
 		buildFile << """\
             ${commonBuildFileContents}
 
-            ${BundlePlugin.DEPLOY_EXTENSION_NAME} {
+            ${BundlePlugin.BUNDLE_EXTENSION_NAME} {
                 region = 'MYEGION'
                 bunddef = 'MYDEF'
                 csdgroup = 'MYGROUP'
@@ -102,7 +102,7 @@ class DeployTests extends AbstractTest {
 		buildFile << """\
             ${commonBuildFileContents}
 
-            ${BundlePlugin.DEPLOY_EXTENSION_NAME} {
+            ${BundlePlugin.BUNDLE_EXTENSION_NAME} {
                 cicsplex            = 'MYPLEX'
                 bunddef             = 'MYDEF'
                 csdgroup            = 'MYGROUP'
@@ -124,7 +124,7 @@ class DeployTests extends AbstractTest {
 		buildFile << """\
             ${commonBuildFileContents}
 
-            ${BundlePlugin.DEPLOY_EXTENSION_NAME} {
+            ${BundlePlugin.BUNDLE_EXTENSION_NAME} {
                 cicsplex            = 'MYPLEX'
                 region              = 'MYEGION'
                 csdgroup            = 'MYGROUP'
@@ -146,7 +146,7 @@ class DeployTests extends AbstractTest {
 		buildFile << """\
             ${commonBuildFileContents}
 
-            ${BundlePlugin.DEPLOY_EXTENSION_NAME} {
+            ${BundlePlugin.BUNDLE_EXTENSION_NAME} {
                 cicsplex            = 'MYPLEX'
                 region              = 'MYEGION'
                 bunddef             = 'MYDEF'
@@ -168,7 +168,7 @@ class DeployTests extends AbstractTest {
 		buildFile << """\
             ${commonBuildFileContents}
 
-            ${BundlePlugin.DEPLOY_EXTENSION_NAME} {
+            ${BundlePlugin.BUNDLE_EXTENSION_NAME} {
                 cicsplex            = 'MYPLEX'
                 region              = 'MYEGION'
                 bunddef             = 'MYDEF'
@@ -190,7 +190,7 @@ class DeployTests extends AbstractTest {
 		buildFile << """\
             ${commonBuildFileContents}
 
-            ${BundlePlugin.DEPLOY_EXTENSION_NAME} {
+            ${BundlePlugin.BUNDLE_EXTENSION_NAME} {
                 cicsplex            = 'MYPLEX'
                 region              = 'MYEGION'
                 bunddef             = 'MYDEF'
@@ -212,7 +212,7 @@ class DeployTests extends AbstractTest {
 		buildFile << """\
             ${commonBuildFileContents}
 
-            ${BundlePlugin.DEPLOY_EXTENSION_NAME} {
+            ${BundlePlugin.BUNDLE_EXTENSION_NAME} {
                 cicsplex            = 'MYPLEX'
                 region              = 'MYEGION'
                 bunddef             = 'MYDEF'
@@ -234,7 +234,7 @@ class DeployTests extends AbstractTest {
 		buildFile << """\
             ${commonBuildFileContents}
 
-            ${BundlePlugin.DEPLOY_EXTENSION_NAME} {
+            ${BundlePlugin.BUNDLE_EXTENSION_NAME} {
                 cicsplex            = 'MYPLEX'
                 csdgroup            = 'MYGROUP'
                 url                 = 'someurl'
@@ -265,7 +265,7 @@ class DeployTests extends AbstractTest {
 		buildFile << """\
             ${commonBuildFileContents}
 
-            ${BundlePlugin.DEPLOY_EXTENSION_NAME} {
+            ${BundlePlugin.BUNDLE_EXTENSION_NAME} {
                 region   = 'MYEGION'
                 cicsplex = 'MYPLEX'
                 bunddef  = 'MYDEF'

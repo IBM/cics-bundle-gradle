@@ -38,7 +38,7 @@ open class DeployBundleTask : AbstractBundleTask() {
 			PLEASE_SPECIFY + """\
 
 			Example:
-				 ${BundlePlugin.DEPLOY_EXTENSION_NAME} {
+				 ${BundlePlugin.BUNDLE_EXTENSION_NAME} {
 					cicsplex = 'MYPLEX'
 					region   = 'MYEGION'
 					bunddef  = 'MYDEF'
@@ -53,7 +53,7 @@ open class DeployBundleTask : AbstractBundleTask() {
 	}
 
 	@Input
-	val deployExtension = project.extensions.getByName(BundlePlugin.DEPLOY_EXTENSION_NAME) as DeployExtension
+	val bundleExtension = project.extensions.getByName(BundlePlugin.BUNDLE_EXTENSION_NAME) as BundleExtension
 
 	@InputFile
 	var inputFile: RegularFileProperty = project.objects.fileProperty()
@@ -62,57 +62,57 @@ open class DeployBundleTask : AbstractBundleTask() {
 	fun deployCICSBundle() {
 		println("Task deployCICSBundle")
 
-		validateDeployExtension()
+		validateBundleExtension()
 
 		val bundle = inputFile.get().asFile
-		val cicsplex = deployExtension.cicsplex
-		val region = deployExtension.region
-		val bunddef = deployExtension.bunddef
-		val csdgroup = deployExtension.csdgroup
-		val endpointURL = URI(deployExtension.url)
-		val username = deployExtension.username
-		val password = deployExtension.password
-		val insecure = deployExtension.insecure
+		val cicsplex = bundleExtension.cicsplex
+		val region = bundleExtension.region
+		val bunddef = bundleExtension.bunddef
+		val csdgroup = bundleExtension.csdgroup
+		val endpointURL = URI(bundleExtension.url)
+		val username = bundleExtension.username
+		val password = bundleExtension.password
+		val insecure = bundleExtension.insecure
 
 		BundleDeployHelper.deployBundle(endpointURL, bundle, bunddef, csdgroup, cicsplex, region, username, password, insecure)
 	}
 
-	private fun validateDeployExtension() {
+	private fun validateBundleExtension() {
 		var blockValid = true
 
-		if (deployExtension.cicsplex.length +
-				deployExtension.region.length +
-				deployExtension.bunddef.length +
-				deployExtension.csdgroup.length == 0) {
+		if (bundleExtension.cicsplex.length +
+				bundleExtension.region.length +
+				bundleExtension.bunddef.length +
+				bundleExtension.csdgroup.length == 0) {
 			logger.error(MISSING_CONFIG)
 			blockValid = false
 		} else {
 			// Validate block items exist, no check on content
-			if (deployExtension.cicsplex.isEmpty()) {
+			if (bundleExtension.cicsplex.isEmpty()) {
 				logger.error(MISSING_CICSPLEX)
 				blockValid = false
 			}
-			if (deployExtension.region.isEmpty()) {
+			if (bundleExtension.region.isEmpty()) {
 				logger.error(MISSING_REGION)
 				blockValid = false
 			}
-			if (deployExtension.bunddef.isEmpty()) {
+			if (bundleExtension.bunddef.isEmpty()) {
 				logger.error(MISSING_BUNDDEF)
 				blockValid = false
 			}
-			if (deployExtension.csdgroup.isEmpty()) {
+			if (bundleExtension.csdgroup.isEmpty()) {
 				logger.error(MISSING_CSDGROUP)
 				blockValid = false
 			}
-			if (deployExtension.url.isEmpty()) {
+			if (bundleExtension.url.isEmpty()) {
 				logger.error(MISSING_URL)
 				blockValid = false
 			}
-			if (deployExtension.username.isEmpty()) {
+			if (bundleExtension.username.isEmpty()) {
 				logger.error(MISSING_USERNAME)
 				blockValid = false
 			}
-			if (deployExtension.password.isEmpty()) {
+			if (bundleExtension.password.isEmpty()) {
 				logger.error(MISSING_PASSWORD)
 				blockValid = false
 			}

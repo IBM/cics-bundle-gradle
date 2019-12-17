@@ -20,27 +20,59 @@ import static org.gradle.testkit.runner.TaskOutcome.SUCCESS
 
 class BuildTests extends AbstractTest {
 
+	// TODO Test that default JVMServer value is used if not specified in extension.
+
+	/**
+	 * Common build.gradle contents for most tests.
+	 */
+	private String commonBuildFileContents
+	private String pluginDetails
+
 	def setup() {
 		commonSetup(BundlePlugin.BUILD_TASK_NAME)
+		pluginDetails = """\
+            plugins {
+                id 'com.ibm.cics.bundle'
+            }
+
+            version '1.0.0-SNAPSHOT'
+
+            repositories {
+                jcenter()
+                mavenCentral()
+            }
+        """
+		commonBuildFileContents = """\
+            ${pluginDetails}
+
+            ${BundlePlugin.BUNDLE_EXTENSION_NAME} {
+                defaultJVMServer = 'MYJVMS'
+            }
+        """
+	}
+
+	def "Test build empty bundle"() {
+		given:
+		settingsFile << "rootProject.name = 'cics-bundle-gradle'"
+		buildFile << """\
+           ${pluginDetails}
+        """
+
+		when:
+		def result = runGradle()
+
+		then:
+		checkResults(result, [], [], SUCCESS)
+
+		checkManifest(['id="cics-bundle-gradle">'])
+		checkManifestDoesNotContain(['<define '])
 	}
 
 	def "Test jcenter jar dependency"() {
 		given:
 		settingsFile << "rootProject.name = 'cics-bundle-gradle'"
 		buildFile << """\
-            plugins {
-                id 'cics-bundle-gradle-plugin'
-            }
-            
-            version '1.0.0-SNAPSHOT'
-            
-            repositories {
-                jcenter()
-            }
-
-            ${BundlePlugin.BUILD_EXTENSION_NAME} {
-                defaultjvmserver = 'EYUCMCIJ'
-            }
+           ${commonBuildFileContents}
 
             dependencies {
                 ${BundlePlugin.BUNDLE_DEPENDENCY_CONFIGURATION_NAME}('javax.servlet:javax.servlet-api:3.1.0@jar')
@@ -66,19 +98,7 @@ class BuildTests extends AbstractTest {
 		given:
 		settingsFile << "rootProject.name = 'cics-bundle-gradle'"
 		buildFile << """\
-            plugins {
-                id 'cics-bundle-gradle-plugin'
-            }
-            
-            version '1.0.0-SNAPSHOT'
-            
-            repositories {
-                mavenCentral()
-            }
-
-            ${BundlePlugin.BUILD_EXTENSION_NAME} {
-                defaultjvmserver = 'EYUCMCIJ'
-            }
+           ${commonBuildFileContents}
             
             dependencies {
                 ${BundlePlugin.BUNDLE_DEPENDENCY_CONFIGURATION_NAME}(group: 'org.glassfish.main.admingui', name: 'war', version: '5.1.0', ext: 'war')
@@ -103,19 +123,7 @@ class BuildTests extends AbstractTest {
 		given:
 		settingsFile << "rootProject.name = 'cics-bundle-gradle'"
 		buildFile << """\
-            plugins {
-                id 'cics-bundle-gradle-plugin'
-            }
-            
-            version '1.0.0-SNAPSHOT'
-            
-            repositories {
-                mavenCentral()
-            }
- 
-            ${BundlePlugin.BUILD_EXTENSION_NAME} {
-                defaultjvmserver = 'EYUCMCIJ'
-            }
+            ${commonBuildFileContents}
            
             dependencies {
                 ${BundlePlugin.BUNDLE_DEPENDENCY_CONFIGURATION_NAME}(group: 'org.codehaus.cargo', name: 'simple-ear', version: '1.7.6', ext: 'ear')
@@ -140,19 +148,7 @@ class BuildTests extends AbstractTest {
 		given:
 		settingsFile << "rootProject.name = 'cics-bundle-gradle'"
 		buildFile << """\
-            plugins {
-                id 'cics-bundle-gradle-plugin'
-            }
-            
-            version '1.0.0-SNAPSHOT'
-            
-            repositories {
-                mavenCentral()
-            }
- 
-            ${BundlePlugin.BUILD_EXTENSION_NAME} {
-                defaultjvmserver = 'EYUCMCIJ'
-            }
+            ${commonBuildFileContents}
            
             dependencies {
                 ${BundlePlugin.BUNDLE_DEPENDENCY_CONFIGURATION_NAME}(group: 'org.apache.aries.samples.twitter', name: 'org.apache.aries.samples.twitter.eba', version: '1.0.0', ext: 'eba')
@@ -192,19 +188,8 @@ class BuildTests extends AbstractTest {
             }
             """
 		buildFile << """\
-            plugins {
-                id 'cics-bundle-gradle-plugin'
-            }
-            
-            version '1.0.0-SNAPSHOT'
-            
-            repositories {
-                mavenCentral()
-            }
+            ${commonBuildFileContents}
 
-            ${BundlePlugin.BUILD_EXTENSION_NAME} {
-                defaultjvmserver = 'EYUCMCIJ'
-            }
             dependencies {
                 ${BundlePlugin.BUNDLE_DEPENDENCY_CONFIGURATION_NAME} project(path: ':$warProjectName', configuration: 'war')
             }
@@ -252,19 +237,7 @@ class BuildTests extends AbstractTest {
             """
 
 		buildFile << """\
-            plugins {
-                id 'cics-bundle-gradle-plugin'
-            }
-            
-            version '1.0.0-SNAPSHOT'
-            
-            repositories {
-                jcenter()
-            }
-
-            ${BundlePlugin.BUILD_EXTENSION_NAME} {
-                defaultjvmserver = 'EYUCMCIJ'
-            }
+            ${commonBuildFileContents}
             
             dependencies {
                 ${BundlePlugin.BUNDLE_DEPENDENCY_CONFIGURATION_NAME}(group: 'org.apache.jmeter', name: 'apache-jmeter', version: '2.3.4-atlassian-1'  )
@@ -287,19 +260,7 @@ class BuildTests extends AbstractTest {
 		settingsFile << "rootProject.name = 'cics-bundle-gradle'"
 
 		buildFile << """\
-            plugins {
-                id 'cics-bundle-gradle-plugin'
-            }
-            
-            version '1.0.0-SNAPSHOT'
-            
-            repositories {
-                jcenter()
-            }
- 
-            ${BundlePlugin.BUILD_EXTENSION_NAME} {
-                defaultjvmserver = 'EYUCMCIJ'
-            }
+            ${commonBuildFileContents}
            
             dependencies {
             }
@@ -315,82 +276,11 @@ class BuildTests extends AbstractTest {
 				SUCCESS)
 	}
 
-	def "Test missing defaultjvmserver in block"() {
-		given:
-		settingsFile << "rootProject.name = 'cics-bundle-gradle'"
-		buildFile << """\
-            plugins {
-                id 'cics-bundle-gradle-plugin'
-            }
-            
-            version '1.0.0-SNAPSHOT'
-            
-            repositories {
-                jcenter()
-            }
- 
-            ${BundlePlugin.BUILD_EXTENSION_NAME} {
-            }
-           
-            dependencies {
-            }
-        """
-
-		when:
-		def result = runGradleAndFail()
-
-		then:
-		checkResults(result,
-				[BuildBundleTask.MISSING_JVMSERVER, BuildBundleTask.PLEASE_SPECIFY],
-				[],
-				FAILED)
-	}
-
-	def "Test missing config block"() {
-		given:
-		settingsFile << "rootProject.name = 'cics-bundle-gradle'"
-		buildFile << """\
-            plugins {
-                id 'cics-bundle-gradle-plugin'
-            }
-            
-            version '1.0.0-SNAPSHOT'
-            
-            repositories {
-                jcenter()
-            }
-           
-            dependencies {
-            }
-        """
-
-		when:
-		def result = runGradleAndFail()
-
-		then:
-		checkResults(result,
-				[BuildBundleTask.MISSING_JVMSERVER, BuildBundleTask.PLEASE_SPECIFY],
-				[],
-				FAILED)
-	}
-
 	def "Test packageCICSBundle produces zip in default location"() {
 		given:
 		settingsFile << "rootProject.name = 'cics-bundle-gradle'"
 		buildFile << """\
-            plugins {
-                id 'cics-bundle-gradle-plugin'
-            }
-
-            version '1.0.0-SNAPSHOT'
-
-            repositories {
-                mavenCentral()
-            }
-
-            ${BundlePlugin.BUILD_EXTENSION_NAME} {
-                defaultjvmserver = 'EYUCMCIJ'
-            }
+            ${commonBuildFileContents}
 
             dependencies {
                 ${BundlePlugin.BUNDLE_DEPENDENCY_CONFIGURATION_NAME} 'org.codehaus.cargo:simple-ear:1.7.6@ear'
@@ -414,19 +304,7 @@ class BuildTests extends AbstractTest {
 
 		settingsFile << "rootProject.name = 'cics-bundle-gradle'"
 		buildFile << """\
-            plugins {
-                id 'cics-bundle-gradle-plugin'
-            }
-            
-            version '1.0.0-SNAPSHOT'
-            
-            repositories {
-                jcenter()
-            }
-
-            ${BundlePlugin.BUILD_EXTENSION_NAME} {
-                defaultjvmserver = 'EYUCMCIJ'
-            }
+            ${commonBuildFileContents}
             
             dependencies {
                 ${BundlePlugin.BUNDLE_DEPENDENCY_CONFIGURATION_NAME}('javax.servlet:javax.servlet-api:3.1.0@jar')
@@ -483,19 +361,7 @@ class BuildTests extends AbstractTest {
 
 		settingsFile << "rootProject.name = 'cics-bundle-gradle'"
 		buildFile << """\
-            plugins {
-                id 'cics-bundle-gradle-plugin'
-            }
-            
-            version '1.0.0-SNAPSHOT'
-            
-            repositories {
-                jcenter()
-            }
-
-            ${BundlePlugin.BUILD_EXTENSION_NAME} {
-                defaultjvmserver = 'EYUCMCIJ'
-            }
+            ${commonBuildFileContents}
         """
 
 		when:
@@ -547,19 +413,7 @@ class BuildTests extends AbstractTest {
 		f.write('I am not a folder')
 		settingsFile << "rootProject.name = 'cics-bundle-gradle'"
 		buildFile << """\
-            plugins {
-                id 'cics-bundle-gradle-plugin'
-            }
-            
-            version '1.0.0-SNAPSHOT'
-            
-            repositories {
-                jcenter()
-            }
-
-            ${BundlePlugin.BUILD_EXTENSION_NAME} {
-                defaultjvmserver = 'EYUCMCIJ'
-            }
+            ${commonBuildFileContents}
             
             dependencies {
                 ${BundlePlugin.BUNDLE_DEPENDENCY_CONFIGURATION_NAME}('javax.servlet:javax.servlet-api:3.1.0@jar')

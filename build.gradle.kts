@@ -25,8 +25,8 @@ version = "0.0.1-SNAPSHOT"
 
 gradlePlugin {
     plugins {
-        register("cics-bundle-gradle-plugin") {
-            id = "cics-bundle-gradle-plugin"
+        register("com.ibm.cics.bundle") {
+            id = "com.ibm.cics.bundle"
             implementationClass = "com.ibm.cics.cbgp.BundlePlugin"
         }
     }

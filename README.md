@@ -37,10 +37,10 @@ It can deploy CICS bundles containing any bundleparts.
 
 ### `buildCICSBundle`
   This task uses the `cicsBundle` dependency configuration to scope the EAR, WAR and OSGi java dependencies to be added to the CICS bundle. Other bundle parts are automatically added from the resources folder of your build.  
-  Specify the default JVM server in the `buildCICSBundleConfig` block.
+  Specify the default JVM server in the `cicsBundle` block.
 
 ### `deployCICSBundle`
- This task uses settings in the `deployCICSBundleConfig` block to deploy the CICS bundle to CICS on z/OS,
+ This task uses settings in the `cicsBundle` block to deploy the CICS bundle to CICS on z/OS,
  install and enable it.
 
 ## To use the `cics-bundle-gradle-plugin`
@@ -49,7 +49,7 @@ To use the plugin, clone or download the GitHub repository. Then create a separa
 1. Add the plugin id to your `build.gradle`.
     ```gradle
      plugins {
-         id 'cics-bundle-gradle-plugin'
+         id 'com.ibm.cics.bundle'
      }
     ```
 1. Add the `mavenCentral` repository to your `build.gradle`, so Gradle can find the plugin.
@@ -74,11 +74,11 @@ Before building the CICS bundle module, you need to build the cloned plugin firs
          cicsBundle(group: 'javax.servlet', name: 'javax.servlet-api', version: '3.1.0', ext: 'jar')
      }
      ```
-1. Add the buildCICSBundleConfig block to define the default JVM server.
+1. Add the `cicsBundle` block to define the default JVM server.
      ```gradle
-        buildCICSBundleConfig {
-           defaultjvmserver = 'EYUCMCIJ'
-        }
+        cicsBundle {
+           defaultJVMServer = 'MYJVMS'
+        } 
      ```
 1. Define the version information for the bundle.
      ```gradle
@@ -89,9 +89,9 @@ Before building the CICS bundle module, you need to build the cloned plugin firs
 
  ## To deploy a CICS bundle
 
-1. In the CICS bundle module's `build.gradle`, add the deployCICSBundleConfig block for the deploy destination.
+1. In the CICS bundle module's `build.gradle`, add settings to the `cicsBundle` block for the deploy destination.
       ```gradle
-         deployCICSBundleConfig {
+         cicsBundle {
              cicsplex = 'MYPLEX'
              region   = 'MYEGION'
              bunddef  = 'MYDEF'

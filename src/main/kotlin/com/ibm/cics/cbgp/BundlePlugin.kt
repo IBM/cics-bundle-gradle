@@ -25,16 +25,13 @@ class BundlePlugin : Plugin<Project> {
 		const val BUILD_TASK_NAME = "buildCICSBundle"
 		const val PACKAGE_TASK_NAME = "packageCICSBundle"
 		const val DEPLOY_TASK_NAME = "deployCICSBundle"
-		const val BUILD_EXTENSION_NAME = BUILD_TASK_NAME + "Config"
-		const val DEPLOY_EXTENSION_NAME = DEPLOY_TASK_NAME + "Config"
-
+		const val BUNDLE_EXTENSION_NAME = "cicsBundle"
 		const val BUNDLE_DEPENDENCY_CONFIGURATION_NAME = "cicsBundle"
 	}
 
 	override fun apply(project: Project) {
 		project.pluginManager.apply(BasePlugin::class.java)
-		project.extensions.create(BUILD_EXTENSION_NAME, BuildExtension::class.java)
-		project.extensions.create(DEPLOY_EXTENSION_NAME, DeployExtension::class.java)
+		project.extensions.create(BUNDLE_EXTENSION_NAME, BundleExtension::class.java)
 
 		project.tasks.withType(BuildBundleTask::class.java).configureEach {
 			it.dependsOn(
