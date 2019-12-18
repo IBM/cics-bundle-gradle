@@ -17,27 +17,59 @@ plugins {
     id("groovy")
     id("java-gradle-plugin")
     id("maven-publish")
+    id("com.gradle.plugin-publish") version "0.10.1"
     id("org.jetbrains.kotlin.jvm") version "1.3.50"
 }
 
 group = "com.ibm.cics"
 version = "0.0.1-SNAPSHOT"
+val isReleaseVersion by extra(!version.toString().endsWith("SNAPSHOT"))
+val onlyIfSnapshot: (PublishToMavenRepository).() -> Unit = {
+    this.onlyIf { !isReleaseVersion }
+}
+
+// Only publish to Gradle plugin portal if a release
+tasks.publishPlugins{ enabled = isReleaseVersion }
+
+// Only publish to Sonatype Snapshots if a snapshot
+tasks.withType<org.gradle.api.publish.maven.tasks.PublishToMavenRepository>().configureEach { onlyIfSnapshot }
+tasks.withType<org.gradle.api.publish.maven.tasks.GenerateMavenPom>().configureEach { onlyIfSnapshot }
 
 gradlePlugin {
     plugins {
         register("com.ibm.cics.bundle") {
             id = "com.ibm.cics.bundle"
+            displayName = "CICS Bundle Gradle Plugin"
+            description = "A Gradle plugin to build CICS bundles, including external dependencies."
             implementationClass = "com.ibm.cics.cbgp.BundlePlugin"
+        }
+    }
+}
+
+pluginBundle {
+    website = "https://github.com/IBM/cics-bundle-gradle"
+    vcsUrl = "https://github.com/IBM/cics-bundle-gradle"
+    tags = listOf("cics", "cicsts", "cicsbundle", "cics-bundle")
+}
+
+val ossrhUser: String? by project
+val ossrhPassword: String? by project
+
+publishing {
+    repositories {
+        maven {
+            name = "Sonatype Snapshots"
+            url = uri("https://oss.sonatype.org/content/repositories/snapshots")
+            credentials {
+                username = ossrhUser
+                password = ossrhPassword
+            }
         }
     }
 }
 
 repositories {
     mavenCentral()
-    maven {
-        // For cics-bundle-common // TODO update when published formally
-        url = uri("https://oss.sonatype.org/content/repositories/snapshots")
-    }
 }
 
 defaultTasks("build")
@@ -53,4 +85,9 @@ dependencies {
 
 tasks.withType<KotlinCompile> {
     kotlinOptions.jvmTarget = "1.8"
+}
+
+tasks.register("publishAll") {
+    dependsOn("publishPlugins")
+    dependsOn("publish")
 }
