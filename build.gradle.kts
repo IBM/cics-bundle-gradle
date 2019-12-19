@@ -18,7 +18,7 @@ plugins {
     id("java-gradle-plugin")
     id("maven-publish")
     id("com.gradle.plugin-publish") version "0.10.1"
-    id("org.jetbrains.kotlin.jvm") version "1.3.50"
+    `kotlin-dsl`
 }
 
 group = "com.ibm.cics"
@@ -80,11 +80,6 @@ dependencies {
     testImplementation("org.spockframework:spock-core:1.1-groovy-2.4") {
         exclude(module =  "groovy-all")
     }
-    implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
-}
-
-tasks.withType<KotlinCompile> {
-    kotlinOptions.jvmTarget = "1.8"
 }
 
 tasks.register("publishAll") {
