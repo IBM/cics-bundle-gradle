@@ -3,10 +3,10 @@
 A collection of Gradle plugins and utilities that can be used to build CICS bundles, ready to be installed into CICS TS.
 
 This project contains:
-  `com.ibm.cics.bundle`, a Gradle plugin that builds CICS bundles, includes selected Java-based dependencies and deploys them to CICS.
+  The CICS bundle Gradle plugin (`com.ibm.cics.bundle`), a Gradle plugin that builds CICS bundles, includes selected Java-based dependencies and deploys them to CICS.
 
 ## Supported bundlepart types
-The `com.ibm.cics.bundle` plugin supports building CICS bundles that contain the following bundleparts:
+The CICS bundle Gradle plugin supports building CICS bundles that contain the following bundleparts:
   * EAR
   * OSGi bundle
   * WAR
@@ -33,7 +33,7 @@ It can deploy CICS bundles containing any bundleparts.
  * The WUI region to be configured to use the CMCI JVM server, including the CICS bundle deployment API
 
 ## Gradle Tasks
- The `com.ibm.cics.bundle` plugin contributes the following gradle tasks.
+ The CICS bundle Gradle plugin contributes the following gradle tasks.
 
 ### `buildCICSBundle`
   This task uses the `cicsBundle` dependency configuration to scope the EAR, WAR and OSGi java dependencies to be added to the CICS bundle. Other bundle parts are automatically added from the resources folder of your build.  
@@ -43,7 +43,7 @@ It can deploy CICS bundles containing any bundleparts.
  This task uses settings in the `cicsBundle` block to deploy the CICS bundle to CICS on z/OS,
  install and enable it.
 
-## To use the `com.ibm.cics.bundle` plugin
+## To use the CICS bundle Gradle plugin
 To use the plugin, clone or download the GitHub repository. Then create a separate Gradle module for your CICS bundle and configure it as follows.
 
 1. Add the plugin id to your `build.gradle`.
