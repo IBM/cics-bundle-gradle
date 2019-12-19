@@ -48,7 +48,7 @@ open class AbstractBundleTask : DefaultTask() {
 		val pv = project.version
 		if (pv is String) {
 			val versionNumber = VersionNumber.parse(pv.toString())
-			if (versionNumber != VersionNumber.UNKNOWN) {
+			if (!VersionNumber.UNKNOWN.equals(versionNumber)) {
 				return versionNumber
 			}
 		}

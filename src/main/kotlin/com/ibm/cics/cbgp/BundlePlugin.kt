@@ -34,48 +34,48 @@ class BundlePlugin : Plugin<Project> {
 		project.extensions.create(BUNDLE_EXTENSION_NAME, BundleExtension::class.java)
 
 		project.tasks.withType(BuildBundleTask::class.java).configureEach {
-			it.dependsOn(
+			this.dependsOn(
 				project.configurations.getByName(BUNDLE_DEPENDENCY_CONFIGURATION_NAME)
 			)
 		}
 
-		project.tasks.withType(PackageBundleTask::class.java).configureEach { packageTask ->
-			packageTask.from(packageTask.inputDirectory)
+		project.tasks.withType(PackageBundleTask::class.java).configureEach {
+			this.from(this.inputDirectory)
 		}
 
 		val build = project.tasks.register(BUILD_TASK_NAME, BuildBundleTask::class.java) {
-			it.description = "Generates a CICS bundle with all the bundle parts."
-			it.group = BasePlugin.BUILD_GROUP
+			this.description = "Generates a CICS bundle with all the bundle parts."
+			this.group = BasePlugin.BUILD_GROUP
 		}
 
 		val pkg = project.tasks.register(PACKAGE_TASK_NAME, PackageBundleTask::class.java) {
-			it.description = "Packages a CICS bundle into a zipped archive and includes external dependencies."
-			it.group = BasePlugin.BUILD_GROUP
+			this.description = "Packages a CICS bundle into a zipped archive and includes external dependencies."
+			this.group = BasePlugin.BUILD_GROUP
 		}
 
 		val deploy = project.tasks.register(DEPLOY_TASK_NAME, DeployBundleTask::class.java) {
-			it.description = "Deploys a CICS bundle to a CICS system."
-			it.group = BasePlugin.UPLOAD_GROUP
+			this.description = "Deploys a CICS bundle to a CICS system."
+			this.group = BasePlugin.UPLOAD_GROUP
 		}
 
-		pkg.configure { packageBundleTask ->
+		pkg.configure {
 			// Wire output of build task to input of package task, by default
-			packageBundleTask.inputDirectory.set(build.flatMap { buildBundleTask -> buildBundleTask.outputDirectory })
+			this.inputDirectory.set(build.flatMap { buildBundleTask -> buildBundleTask.outputDirectory })
 		}
 
-		deploy.configure { deployBundleTask ->
+		deploy.configure {
 			// Wire output of package task to input of deploy task, by default
-			deployBundleTask.inputFile.set(pkg.flatMap { packageBundleTask -> packageBundleTask.outputFile })
+			this.inputFile.set(pkg.flatMap { packageBundleTask -> packageBundleTask.outputFile })
 		}
 
 		build.configure {
 			// Define output for build task, by default
-			it.outputDirectory.set(project.layout.buildDirectory.dir("${project.name}-${project.version}"))
+			this.outputDirectory.set(project.layout.buildDirectory.dir("${project.name}-${project.version}"))
 		}
 
 		pkg.configure {
 			// Define output for package task, by default
-			it.outputFile.set(pkg.get().archivePath)
+			this.outputFile.set(pkg.get().archivePath)
 		}
 
 		// Register output of archive task as the default artifact

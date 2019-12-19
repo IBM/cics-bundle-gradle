@@ -31,7 +31,7 @@ open class PackageBundleTask : Zip() {
 	var outputFile: RegularFileProperty = project.objects.fileProperty()
 
 	init {
-		extension = BUNDLE_EXTENSION
-		metadataCharset = "UTF-8"
+		setExtension(BUNDLE_EXTENSION)
+		setMetadataCharset("UTF-8")
 	}
 }
