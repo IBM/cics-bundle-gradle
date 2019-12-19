@@ -3,7 +3,7 @@
 A collection of Gradle plugins and utilities that can be used to build CICS bundles, ready to be installed into CICS TS.
 
 This project contains:
-  The CICS bundle Gradle plugin (`com.ibm.cics.bundle`), a Gradle plugin that builds CICS bundles, includes selected Java-based dependencies and deploys them to CICS.
+  The CICS bundle Gradle plugin (`com.ibm.cics.bundle`), a Gradle plugin that can build CICS bundles, include selected Java-based dependencies, and deploy them to CICS.
 
 ## Supported bundlepart types
 The CICS bundle Gradle plugin supports building CICS bundles that contain the following bundleparts:
@@ -49,14 +49,20 @@ To use the plugin, clone or download the GitHub repository. Then create a separa
 1. Add the plugin id to your `build.gradle`.
     ```gradle
      plugins {
-         id 'com.ibm.cics.bundle'
+         id 'com.ibm.cics.bundle' version '0.0.1-SNAPSHOT'
      }
     ```
-1. Add the `mavenCentral` repository to your `build.gradle`, so Gradle can find the plugin.
+1. If using a snapshot version of the plugin, add the snapshot repository to your `settings.gradle`, so Gradle can find the plugin.
     ```gradle
-     repositories {
-         mavenCentral()
-     }
+    pluginManagement {
+        repositories {
+            maven {
+                name = "Sonatype Snapshots"
+                url = uri("https://oss.sonatype.org/content/repositories/snapshots")
+            }
+            mavenCentral() // Needed for the plugin's own deps
+        }
+    }
     ```
 
 ## To build a CICS bundle
@@ -70,11 +76,11 @@ Before building the CICS bundle module, you need to build the cloned plugin firs
          cicsBundle project(path: ':helloworldwar', configuration: 'war')
 
          // External dependencies, specify the repositories in the repositories block as usual
-         cicsBundle(group: 'org.glassfish.main.admingui', name: 'war', version: '5.1.0', ext: 'war'  )
+         cicsBundle(group: 'org.glassfish.main.admingui', name: 'war', version: '5.1.0', ext: 'war')
          cicsBundle(group: 'javax.servlet', name: 'javax.servlet-api', version: '3.1.0', ext: 'jar')
      }
      ```
-1. Add the `cicsBundle` block to define the default JVM server.
+1. Add the `cicsBundle` block to define the default JVM server used by Java bundle parts.
      ```gradle
         cicsBundle {
            defaultJVMServer = 'MYJVMS'
@@ -84,7 +90,7 @@ Before building the CICS bundle module, you need to build the cloned plugin firs
      ```gradle
        version '1.0.0-SNAPSHOT'
      ```
-1. Invoke the `buildCICSBundle` task in your build. It builds the CICS bundle with its contained modules.
+1. Invoke the `build` task in your build. It builds the CICS bundle with its contained modules, and packages it as a zip file.
 
 
  ## To deploy a CICS bundle
