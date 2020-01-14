@@ -50,7 +50,7 @@ Their dependencies are as follows:
 |         +--- :buildCICSBundle
 ```
 
-## Configure for the CICS bundle Gradle plugin
+## Configure the CICS bundle Gradle plugin
 To use the plugin, clone or download the GitHub repository. Then create a separate Gradle module for your CICS bundle and configure it as follows.
 
 1. Add the plugin id to your `build.gradle`.
