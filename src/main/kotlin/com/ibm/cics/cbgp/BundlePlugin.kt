@@ -69,6 +69,11 @@ class BundlePlugin : Plugin<Project> {
 		}
 
 		build.configure {
+			// Define input for build task, by default
+			val resources = project.layout.projectDirectory.dir(BuildBundleTask.RESOURCES_PATH)
+			if (resources.asFile.exists()) {
+				it.resourcesDirectory.set(resources)
+			}
 			// Define output for build task, by default
 			it.outputDirectory.set(project.layout.buildDirectory.dir("${project.name}-${project.version}"))
 		}

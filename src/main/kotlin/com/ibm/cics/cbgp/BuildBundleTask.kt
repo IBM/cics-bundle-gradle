@@ -15,6 +15,7 @@ package com.ibm.cics.cbgp
 
 import com.ibm.cics.bundle.parts.BundlePublisher
 import com.ibm.cics.bundle.parts.BundlePublisher.PublishException
+import org.apache.commons.io.FileUtils
 import org.gradle.api.GradleException
 import org.gradle.api.artifacts.Configuration
 import org.gradle.api.artifacts.Dependency
@@ -22,25 +23,32 @@ import org.gradle.api.artifacts.ResolvedConfiguration
 import org.gradle.api.file.DirectoryProperty
 import org.gradle.api.internal.artifacts.dependencies.DefaultExternalModuleDependency
 import org.gradle.api.internal.artifacts.dependencies.DefaultProjectDependency
-import org.gradle.api.tasks.OutputDirectory
-import org.gradle.api.tasks.TaskAction
+import org.gradle.api.tasks.*
 import java.io.File
 import java.io.IOException
 import java.nio.file.Files
-import java.nio.file.Path
 
 open class BuildBundleTask : AbstractBundleTask() {
 
 	companion object {
 
-		const val FAILED_DEPENDENCY_RESOLUTION = "Failed to resolve cicsBundle dependencies"
-		const val MISSING_CONFIG = "Define '${BundlePlugin.BUNDLE_DEPENDENCY_CONFIGURATION_NAME}' configuration with CICS bundle dependencies"
-		const val NO_DEPENDENCIES_WARNING = "Warning, no external or project dependencies in '${BundlePlugin.BUNDLE_DEPENDENCY_CONFIGURATION_NAME}' configuration"
-		const val PLEASE_SPECIFY = "Please specify build configuration"
-		const val UNSUPPORTED_EXTENSIONS_FOUND = "Unsupported file extensions for some dependencies, see earlier messages."
-
+		const val RESOURCES_PATH = "src/main/resources"
 		val VALID_DEPENDENCY_FILE_EXTENSIONS = listOf("ear", "jar", "war", "eba")
+
+		const val FAILED_DEPENDENCY_RESOLUTION = "Failed to resolve '${BundlePlugin.BUNDLE_DEPENDENCY_CONFIGURATION_NAME}' dependencies"
+		const val NO_DEPENDENCIES_WARNING = "Warning, no external or project dependencies in '${BundlePlugin.BUNDLE_DEPENDENCY_CONFIGURATION_NAME}' configuration"
+		val UNSUPPORTED_EXTENSIONS_FOUND = "Unsupported file extensions for some dependencies, see earlier messages. Supported extensions are: $VALID_DEPENDENCY_FILE_EXTENSIONS."
 	}
+
+	@InputFiles
+	val cicsBundleConfig: Configuration = project.configurations.getByName(BundlePlugin.BUNDLE_DEPENDENCY_CONFIGURATION_NAME)
+
+	/**
+	 * This property will only get set if the src/main/resources directory exists, otherwise the build would fail.
+	 */
+	@InputDirectory
+	@Optional
+	val resourcesDirectory: DirectoryProperty = project.objects.directoryProperty()
 
 	@OutputDirectory
 	val outputDirectory: DirectoryProperty = project.objects.directoryProperty()
@@ -52,26 +60,25 @@ open class BuildBundleTask : AbstractBundleTask() {
 		val bundleExtension = project.extensions.getByName(BundlePlugin.BUNDLE_EXTENSION_NAME) as BundleExtension
 		this.defaultJVMServer = bundleExtension.defaultJVMServer
 
-		// Find & process the configuration
-		val foundConfig = project.configurations.find {
-			if (it.name == BundlePlugin.BUNDLE_DEPENDENCY_CONFIGURATION_NAME) {
-				processCICSBundle(it)
-				true
-			} else {
-				false
-			}
-		} != null
-
-		if (!foundConfig) {
-			throw GradleException(MISSING_CONFIG)
-		}
+		processCICSBundle(cicsBundleConfig)
 	}
 
 	private fun processCICSBundle(config: Configuration) {
-		logger.info("processing '${BundlePlugin.BUNDLE_DEPENDENCY_CONFIGURATION_NAME}' configuration")
+		logger.info("Processing '${BundlePlugin.BUNDLE_DEPENDENCY_CONFIGURATION_NAME}' configuration")
 		val bundlePublisher = initBundlePublisher(outputDirectory)
 		processDependencies(config, bundlePublisher)
 		addStaticResourcesToBundle(bundlePublisher)
+
+		val buildDirectory = project.layout.buildDirectory.get().asFile
+		if (buildDirectory.exists()) {
+			logger.debug("Deleting $buildDirectory")
+			try {
+				FileUtils.deleteDirectory(buildDirectory)
+			} catch (e: IOException) {
+				throw GradleException("Unable to delete CICS bundle output directory $buildDirectory", e)
+			}
+		}
+
 		try {
 			bundlePublisher.publishResources()
 			bundlePublisher.publishDynamicResources()
@@ -176,34 +183,33 @@ open class BuildBundleTask : AbstractBundleTask() {
 	}
 
 	private fun addStaticResourcesToBundle(bundlePublisher: BundlePublisher) {
-		val projectPath: Path = outputDirectory.asFile.get().toPath().parent.parent
-		val bundlePartSource: Path = projectPath.resolve("src/main/resources")
 
-		if (Files.exists(bundlePartSource)) {
-			logger.lifecycle("Gathering bundle parts from ${projectPath.relativize(bundlePartSource)}")
-			if (Files.isDirectory(bundlePartSource)) {
+		if (resourcesDirectory.isPresent) {
+			logger.lifecycle("Adding bundle parts from '$RESOURCES_PATH'")
+			val resourcesDirectoryPath = resourcesDirectory.get().asFile.toPath()
+			if (Files.isDirectory(resourcesDirectoryPath)) {
 				try {
-					File(bundlePartSource.toString())
+					File(resourcesDirectoryPath.toString())
 							.walk(FileWalkDirection.TOP_DOWN)
 							.filter { it.isFile }
 							.forEach {
 								try {
-									logger.lifecycle("Adding static resource '${it.name}'")
-									bundlePublisher.addStaticResource(bundlePartSource.relativize(it.toPath())) {
+									logger.lifecycle("Adding bundle part '${it.name}'")
+									bundlePublisher.addStaticResource(resourcesDirectoryPath.relativize(it.toPath())) {
 										Files.newInputStream(it.toPath())
 									}
 								} catch (e: PublishException) {
-									throw GradleException("Failure adding static resource '${it.name}' : ${e.message}", e)
+									throw GradleException("Failure adding bundle part '${it.name}' : ${e.message}", e)
 								}
 							}
 				} catch (e: IOException) {
-					throw GradleException("Failure adding static resources", e)
+					throw GradleException("Failure adding bundle parts", e)
 				}
 			} else {
-				throw GradleException("Static bundle resources directory '$bundlePartSource' is not a directory")
+				throw GradleException("Resources folder path '$resourcesDirectoryPath' is not a directory")
 			}
 		} else {
-			logger.info("No resources folder '${projectPath.relativize(bundlePartSource)}' to search for bundle parts")
+			logger.info("No resources folder '$RESOURCES_PATH' to search for bundle parts")
 		}
 	}
 }

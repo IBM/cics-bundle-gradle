@@ -53,24 +53,18 @@ abstract class AbstractTest extends Specification {
 		def result
 		args.add("--stacktrace")
 		args.add("--info")
+		GradleRunner gradleRunner = GradleRunner
+				.create()
+				.withProjectDir(testProjectDir.root)
+				.withArguments(args)
+				.withPluginClasspath()
+				.withDebug(isDebug)
+				.withGradleVersion("5.0")
+
 		if (!failExpected) {
-			result = GradleRunner
-					.create()
-					.withProjectDir(testProjectDir.root)
-					.withArguments(args)
-					.withPluginClasspath()
-					.withDebug(isDebug)
-					.withGradleVersion("5.0")
-					.build()
+			result = gradleRunner.build()
 		} else {
-			result = GradleRunner
-					.create()
-					.withProjectDir(testProjectDir.root)
-					.withArguments(args)
-					.withPluginClasspath()
-					.withDebug(isDebug)
-					.withGradleVersion("5.0")
-					.buildAndFail()
+			result = gradleRunner.buildAndFail()
 		}
 		printRunOutput(result)
 		return result
@@ -161,16 +155,27 @@ abstract class AbstractTest extends Specification {
 	}
 
 	protected def copyBundlePartsToResources(String source_folder) {
-		// Copy the bundle part into the test build
-		def pluginClasspathResource = getClass().classLoader.findResource(source_folder)
-		if (pluginClasspathResource == null) {
-			throw new IllegalStateException("Did not find $partFileName resource.")
-		}
-
-		def root = new File(pluginClasspathResource.path).parent
-		new AntBuilder().copy(todir: (buildFile.parent + "/src/main/resources/")) {
-			fileset(dir: (root + "/" + source_folder).toString())
-		}
+		return copyBundlePartToResources(source_folder, null)
 	}
 
+	/**
+	 * Copy a file from test data directory into the project under test.
+	 * @param source_folder Test data directory
+	 * @param source_file File to copy, or null to copy everything in the directory.
+	 */
+	protected def copyBundlePartToResources(String source_folder, String source_file) {
+		// Copy the bundle part(s) into the test build
+		def pluginClasspathResource = getClass().classLoader.findResource(source_folder)
+		if (pluginClasspathResource == null) {
+			throw new IllegalStateException("Did not find $source_file resource in $source_folder directory.")
+		}
+		def root = new File(pluginClasspathResource.path).parent
+		new AntBuilder().copy(todir: (buildFile.parent + "/src/main/resources/")) {
+			fileset(dir: (root + "/" + source_folder).toString()) {
+				if (source_file != null) {
+					include(name: source_file)
+				}
+			}
+		}
+	}
 }
