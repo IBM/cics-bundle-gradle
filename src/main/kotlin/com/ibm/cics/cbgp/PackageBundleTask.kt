@@ -20,18 +20,22 @@ import org.gradle.api.tasks.OutputFile
 import org.gradle.api.tasks.bundling.Zip
 
 open class PackageBundleTask : Zip() {
-	companion object {
-		const val BUNDLE_EXTENSION = "zip"
-	}
 
+	/**
+	 * Set the build directory as a task input. This will be linked to the output of the build task.
+	 */
 	@InputDirectory
 	var inputDirectory: DirectoryProperty = project.objects.directoryProperty()
 
+	/**
+	 * Set the zip archive file as a task output. This will be linked to the input of the deploy task.
+	 */
 	@OutputFile
 	var outputFile: RegularFileProperty = project.objects.fileProperty()
 
 	init {
-		extension = BUNDLE_EXTENSION
+		// Tell the task which directory to zip up
+		from(inputDirectory)
 		metadataCharset = "UTF-8"
 	}
 }

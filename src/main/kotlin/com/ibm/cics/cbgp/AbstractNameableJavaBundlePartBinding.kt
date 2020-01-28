@@ -19,9 +19,8 @@ import java.io.File
 abstract class AbstractNameableJavaBundlePartBinding : AbstractJavaBundlePartBinding() {
 	var name : String = ""
 
-
 	@Throws(GradleException::class)
-	override fun applyDefaults(file: File?, task: AbstractBundleTask) {
+	override fun applyDefaults(file: File?, defaultJVMServer: String) {
 		if (name.isNullOrEmpty()) {
 			if (file != null) {
 				name = file.nameWithoutExtension
@@ -29,6 +28,6 @@ abstract class AbstractNameableJavaBundlePartBinding : AbstractJavaBundlePartBin
 				throw GradleException("Unable to set part name as filename not provided")
 			}
 		}
-		super.applyDefaults(file, task)
+		super.applyDefaults(file, defaultJVMServer)
 	}
 }
