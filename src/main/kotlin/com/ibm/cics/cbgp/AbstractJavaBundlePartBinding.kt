@@ -13,7 +13,6 @@
  */
 package com.ibm.cics.cbgp
 
-
 import org.gradle.api.GradleException
 import java.io.File
 
@@ -21,9 +20,9 @@ abstract class AbstractJavaBundlePartBinding : AbstractBundlePartBinding() {
 	var jvmserver: String? = null
 
 	@Throws(GradleException::class)
-	override fun applyDefaults(file: File?, task: AbstractBundleTask) {
+	override fun applyDefaults(file: File?, defaultJVMServer: String) {
 		if (jvmserver.isNullOrEmpty()) {
-			jvmserver = task.defaultJVMServer
+			jvmserver = defaultJVMServer
 		}
 	}
 }

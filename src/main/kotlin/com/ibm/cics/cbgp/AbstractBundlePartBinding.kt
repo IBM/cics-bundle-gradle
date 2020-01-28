@@ -22,13 +22,13 @@ abstract class AbstractBundlePartBinding {
 	var cacheFile: File? = null
 
 	@Throws(GradleException::class)
-	fun toBundlePart(cacheFile: File?, task: AbstractBundleTask): BundleResource {
-		applyDefaults(cacheFile, task)
+	fun toBundlePart(cacheFile: File?, defaultJVMServer: String): BundleResource {
+		applyDefaults(cacheFile, defaultJVMServer)
 		return toBundlePartImpl(cacheFile)
 	}
 
 	@Throws(GradleException::class)
-	protected abstract fun applyDefaults(file: File?, task: AbstractBundleTask)
+	protected abstract fun applyDefaults(file: File?, defaultJVMServer: String)
 
 	@Throws(GradleException::class)
 	protected abstract fun toBundlePartImpl(file: File?): BundleResource
