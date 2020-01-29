@@ -14,14 +14,13 @@
 package com.ibm.cics.cbgp
 
 import com.ibm.cics.bundle.deploy.BundleDeployHelper
+import org.gradle.api.DefaultTask
 import org.gradle.api.GradleException
 import org.gradle.api.file.RegularFileProperty
-import org.gradle.api.tasks.Input
-import org.gradle.api.tasks.InputFile
-import org.gradle.api.tasks.TaskAction
+import org.gradle.api.tasks.*
 import java.net.URI
 
-open class DeployBundleTask : AbstractBundleTask() {
+open class DeployBundleTask : DefaultTask() {
 
 	companion object {
 		const val MISSING_CONFIG = "Missing or empty deploy configuration"
@@ -52,9 +51,31 @@ open class DeployBundleTask : AbstractBundleTask() {
 			""".trimIndent()
 	}
 
-	@Input
+	/**
+	 * Set parameters from the cicsBundle extension as task inputs.
+	 */
+	@Internal
 	val bundleExtension = project.extensions.getByName(BundlePlugin.BUNDLE_EXTENSION_NAME) as BundleExtension
+	@Input
+	var cicsplex = bundleExtension.cicsplex
+	@Input
+	var region = bundleExtension.region
+	@Input
+	var bunddef = bundleExtension.bunddef
+	@Input
+	var csdgroup = bundleExtension.csdgroup
+	@Input
+	var url = bundleExtension.url
+	@Input
+	var username = bundleExtension.username
+	@Input
+	var password = bundleExtension.password
+	@Input
+	var insecure = bundleExtension.insecure
 
+	/**
+	 * Set the bundle archive file as a task input. This will be linked to the output of the package task.
+	 */
 	@InputFile
 	var inputFile: RegularFileProperty = project.objects.fileProperty()
 
@@ -65,54 +86,46 @@ open class DeployBundleTask : AbstractBundleTask() {
 		validateBundleExtension()
 
 		val bundle = inputFile.get().asFile
-		val cicsplex = bundleExtension.cicsplex
-		val region = bundleExtension.region
-		val bunddef = bundleExtension.bunddef
-		val csdgroup = bundleExtension.csdgroup
-		val endpointURL = URI(bundleExtension.url)
-		val username = bundleExtension.username
-		val password = bundleExtension.password
-		val insecure = bundleExtension.insecure
-
+		val endpointURL = URI(url)
 		BundleDeployHelper.deployBundle(endpointURL, bundle, bunddef, csdgroup, cicsplex, region, username, password, insecure)
 	}
 
 	private fun validateBundleExtension() {
 		var blockValid = true
 
-		if (bundleExtension.cicsplex.length +
-				bundleExtension.region.length +
-				bundleExtension.bunddef.length +
-				bundleExtension.csdgroup.length == 0) {
+		if (cicsplex.length +
+				region.length +
+				bunddef.length +
+				csdgroup.length == 0) {
 			logger.error(MISSING_CONFIG)
 			blockValid = false
 		} else {
 			// Validate block items exist, no check on content
-			if (bundleExtension.cicsplex.isEmpty()) {
+			if (cicsplex.isEmpty()) {
 				logger.error(MISSING_CICSPLEX)
 				blockValid = false
 			}
-			if (bundleExtension.region.isEmpty()) {
+			if (region.isEmpty()) {
 				logger.error(MISSING_REGION)
 				blockValid = false
 			}
-			if (bundleExtension.bunddef.isEmpty()) {
+			if (bunddef.isEmpty()) {
 				logger.error(MISSING_BUNDDEF)
 				blockValid = false
 			}
-			if (bundleExtension.csdgroup.isEmpty()) {
+			if (csdgroup.isEmpty()) {
 				logger.error(MISSING_CSDGROUP)
 				blockValid = false
 			}
-			if (bundleExtension.url.isEmpty()) {
+			if (url.isEmpty()) {
 				logger.error(MISSING_URL)
 				blockValid = false
 			}
-			if (bundleExtension.username.isEmpty()) {
+			if (username.isEmpty()) {
 				logger.error(MISSING_USERNAME)
 				blockValid = false
 			}
-			if (bundleExtension.password.isEmpty()) {
+			if (password.isEmpty()) {
 				logger.error(MISSING_PASSWORD)
 				blockValid = false
 			}

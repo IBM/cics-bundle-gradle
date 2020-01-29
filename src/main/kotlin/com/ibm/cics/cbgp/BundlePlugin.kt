@@ -15,7 +15,6 @@ package com.ibm.cics.cbgp
 
 import org.gradle.api.Plugin
 import org.gradle.api.Project
-import org.gradle.api.artifacts.ConfigurationContainer
 import org.gradle.api.internal.artifacts.dsl.LazyPublishArtifact
 import org.gradle.api.internal.plugins.DefaultArtifactPublicationSet
 import org.gradle.api.plugins.BasePlugin
@@ -30,64 +29,58 @@ class BundlePlugin : Plugin<Project> {
 	}
 
 	override fun apply(project: Project) {
+
+		// Apply the Base Plugin
 		project.pluginManager.apply(BasePlugin::class.java)
+
+		// Create cicsBundle extension
 		project.extensions.create(BUNDLE_EXTENSION_NAME, BundleExtension::class.java)
 
-		project.tasks.withType(BuildBundleTask::class.java).configureEach {
-			this.dependsOn(
-				project.configurations.getByName(BUNDLE_DEPENDENCY_CONFIGURATION_NAME)
-			)
+		// Define and configure cicsBundle dependency configuration
+		project.configurations.register(BUNDLE_DEPENDENCY_CONFIGURATION_NAME) {
+			this.description = "Dependencies that constitute bundle parts that should be included in this CICS bundle."
+			this.isVisible = false
 		}
 
-		project.tasks.withType(PackageBundleTask::class.java).configureEach {
-			this.from(this.inputDirectory)
-		}
-
-		val build = project.tasks.register(BUILD_TASK_NAME, BuildBundleTask::class.java) {
+		// Define and configure build task
+		val buildTaskProvider = project.tasks.register(BUILD_TASK_NAME, BuildBundleTask::class.java) {
 			this.description = "Generates a CICS bundle with all the bundle parts."
 			this.group = BasePlugin.BUILD_GROUP
-		}
 
-		val pkg = project.tasks.register(PACKAGE_TASK_NAME, PackageBundleTask::class.java) {
-			this.description = "Packages a CICS bundle into a zipped archive and includes external dependencies."
-			this.group = BasePlugin.BUILD_GROUP
-		}
+			// Set resources directory to src/main/resources, by default
+			val resources = project.layout.projectDirectory.dir(BuildBundleTask.RESOURCES_PATH)
+			// Gradle will fail the build if we set a task input to a directory that doesn't exist
+			if (resources.asFile.exists()) {
+				this.resourcesDirectory.set(resources)
+			}
 
-		val deploy = project.tasks.register(DEPLOY_TASK_NAME, DeployBundleTask::class.java) {
-			this.description = "Deploys a CICS bundle to a CICS system."
-			this.group = BasePlugin.UPLOAD_GROUP
-		}
-
-		pkg.configure {
-			// Wire output of build task to input of package task, by default
-			this.inputDirectory.set(build.flatMap { buildBundleTask -> buildBundleTask.outputDirectory })
-		}
-
-		deploy.configure {
-			// Wire output of package task to input of deploy task, by default
-			this.inputFile.set(pkg.flatMap { packageBundleTask -> packageBundleTask.outputFile })
-		}
-
-		build.configure {
-			// Define output for build task, by default
+			// Set build directory to build/<name>-<version>, by default
 			this.outputDirectory.set(project.layout.buildDirectory.dir("${project.name}-${project.version}"))
 		}
 
-		pkg.configure {
-			// Define output for package task, by default
-			this.outputFile.set(pkg.get().archivePath)
+		// Define and configure package task
+		val packageTaskProvider = project.tasks.register(PACKAGE_TASK_NAME, PackageBundleTask::class.java) {
+			this.description = "Packages a CICS bundle into a zipped archive and includes external dependencies."
+			this.group = BasePlugin.BUILD_GROUP
+
+			// Wire output of build task to input of package task, by default
+			this.inputDirectory.set(buildTaskProvider.get().outputDirectory)
+
+			// Set the output file to be the zip archive, by default
+			this.outputFile.set(this.archivePath)
 		}
 
-		// Register output of archive task as the default artifact
-		val bundleArtifact = LazyPublishArtifact(pkg)
+		// Define and configure deploy task
+		val deployTaskProvider = project.tasks.register(DEPLOY_TASK_NAME, DeployBundleTask::class.java) {
+			this.description = "Deploys a CICS bundle to a CICS system."
+			this.group = BasePlugin.UPLOAD_GROUP
+
+			// Wire output of package task to input of deploy task, by default
+			this.inputFile.set(packageTaskProvider.get().outputFile)
+		}
+
+		// Register output of package task as the default artifact
+		val bundleArtifact = LazyPublishArtifact(packageTaskProvider)
 		project.extensions.getByType(DefaultArtifactPublicationSet::class.java).addCandidate(bundleArtifact)
-
-		configureConfigurations(project.configurations)
-	}
-
-	private fun configureConfigurations(configurationContainer: ConfigurationContainer) {
-		val configuration = configurationContainer.create(BUNDLE_DEPENDENCY_CONFIGURATION_NAME)
-		configuration.isVisible = false
-		configuration.description = "Dependencies that constitute bundle parts that should be included in this CICS bundle."
 	}
 }
