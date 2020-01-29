@@ -13,8 +13,6 @@
  */
 package com.ibm.cics.cbgp
 
-import java.nio.file.Files
-
 import static org.gradle.testkit.runner.TaskOutcome.FAILED
 import static org.gradle.testkit.runner.TaskOutcome.SUCCESS
 
@@ -62,7 +60,11 @@ class BuildTests extends AbstractTest {
 		def result = runGradle()
 
 		then:
-		checkResults(result, [], [], SUCCESS)
+		checkResults(result,
+				['Task buildCICSBundle (Gradle 5.0)'],
+				[],
+				SUCCESS
+		)
 
 		checkManifest(['id="cics-bundle-gradle">'])
 		checkManifestDoesNotContain(['<define '])
@@ -84,9 +86,12 @@ class BuildTests extends AbstractTest {
 
 		then:
 		checkResults(result,
-				['javax.servlet-api-3.1.0.jar', 'Task buildCICSBundle (Gradle 5.0)',"No resources folder 'src${File.separator}main${File.separator}resources' to search for bundle parts"],
-				['cics-bundle-gradle-1.0.0-SNAPSHOT/javax.servlet-api_3.1.0.osgibundle', 'cics-bundle-gradle-1.0.0-SNAPSHOT/javax.servlet-api_3.1.0.jar']
-				, SUCCESS
+				['javax.servlet-api-3.1.0.jar'
+				],
+				['cics-bundle-gradle-1.0.0-SNAPSHOT/javax.servlet-api_3.1.0.osgibundle',
+				 'cics-bundle-gradle-1.0.0-SNAPSHOT/javax.servlet-api_3.1.0.jar'
+				],
+				SUCCESS
 		)
 
 		checkManifest(['id="cics-bundle-gradle">',
@@ -110,8 +115,12 @@ class BuildTests extends AbstractTest {
 
 		then:
 		checkResults(result,
-				['org.glassfish.main.admingui', 'war-5.1.0.war'],
-				['cics-bundle-gradle-1.0.0-SNAPSHOT/war.warbundle', 'cics-bundle-gradle-1.0.0-SNAPSHOT/war.war'],
+				['org.glassfish.main.admingui',
+				 'war-5.1.0.war'
+				],
+				['cics-bundle-gradle-1.0.0-SNAPSHOT/war.warbundle',
+				 'cics-bundle-gradle-1.0.0-SNAPSHOT/war.war'
+				],
 				SUCCESS)
 
 		checkManifest(['id="cics-bundle-gradle">',
@@ -135,8 +144,12 @@ class BuildTests extends AbstractTest {
 
 		then:
 		checkResults(result,
-				['org.codehaus.cargo', 'simple-ear-1.7.6.ear'],
-				['cics-bundle-gradle-1.0.0-SNAPSHOT/simple-ear.earbundle', 'cics-bundle-gradle-1.0.0-SNAPSHOT/simple-ear.ear'],
+				['org.codehaus.cargo',
+				 'simple-ear-1.7.6.ear'
+				],
+				['cics-bundle-gradle-1.0.0-SNAPSHOT/simple-ear.earbundle',
+				 'cics-bundle-gradle-1.0.0-SNAPSHOT/simple-ear.ear'
+				],
 				SUCCESS)
 
 		checkManifest(['id="cics-bundle-gradle">',
@@ -160,8 +173,12 @@ class BuildTests extends AbstractTest {
 
 		then:
 		checkResults(result,
-				['org.apache.aries.samples.twitter', 'org.apache.aries.samples.twitter.eba-1.0.0.eba'],
-				['cics-bundle-gradle-1.0.0-SNAPSHOT/org.apache.aries.samples.twitter.eba.ebabundle', 'cics-bundle-gradle-1.0.0-SNAPSHOT/org.apache.aries.samples.twitter.eba.eba'],
+				['org.apache.aries.samples.twitter',
+				 'org.apache.aries.samples.twitter.eba-1.0.0.eba'
+				],
+				['cics-bundle-gradle-1.0.0-SNAPSHOT/org.apache.aries.samples.twitter.eba.ebabundle',
+				 'cics-bundle-gradle-1.0.0-SNAPSHOT/org.apache.aries.samples.twitter.eba.eba'
+				],
 				SUCCESS)
 
 		checkManifest(['id="cics-bundle-gradle">',
@@ -211,8 +228,12 @@ class BuildTests extends AbstractTest {
 
 		then:
 		checkResults(result,
-				['Task :helloworldwar:build', "${warProjectName}-1.0-SNAPSHOT.war"],
-				['cics-bundle-gradle-1.0.0-SNAPSHOT/helloworldwar.warbundle', 'cics-bundle-gradle-1.0.0-SNAPSHOT/helloworldwar.war'],
+				['Task :helloworldwar:build',
+				 "${warProjectName}-1.0-SNAPSHOT.war"
+				],
+				['cics-bundle-gradle-1.0.0-SNAPSHOT/helloworldwar.warbundle',
+				 'cics-bundle-gradle-1.0.0-SNAPSHOT/helloworldwar.war'
+				],
 				SUCCESS)
 
 		checkManifest(['id="cics-bundle-gradle">',
@@ -249,7 +270,9 @@ class BuildTests extends AbstractTest {
 
 		then:
 		checkResults(result,
-				[BuildBundleTask.UNSUPPORTED_EXTENSIONS_FOUND, "Unsupported file extension 'gz' for dependency 'apache-jmeter-2.3.4-atlassian-1.tar.gz'"],
+				[BuildBundleTask.UNSUPPORTED_EXTENSIONS_FOUND,
+				 "Unsupported file extension 'gz' for dependency 'apache-jmeter-2.3.4-atlassian-1.tar.gz'"
+				],
 				[],
 				FAILED)
 	}
@@ -288,18 +311,19 @@ class BuildTests extends AbstractTest {
         """
 
 		when:
-		def result = runGradle(['packageCICSBundle'], false)
+		def result = runGradle(['packageCICSBundle'])
 
 		then:
 		checkResults(result,
-				['> Task :buildCICSBundle', '> Task :packageCICSBundle'],
-				['distributions/cics-bundle-gradle-1.0.0-SNAPSHOT.zip']
-				, SUCCESS)
+				['> Task :buildCICSBundle',
+				 '> Task :packageCICSBundle'
+				],
+				['distributions/cics-bundle-gradle-1.0.0-SNAPSHOT.zip'],
+				SUCCESS)
 	}
 
 	def "Test static bundle parts and jar"() {
 		given:
-		def resources = testProjectDir.newFolder("src", "main", "resources")
 		copyBundlePartsToResources("static-bundle-parts")
 
 		settingsFile << "rootProject.name = 'cics-bundle-gradle'"
@@ -317,22 +341,21 @@ class BuildTests extends AbstractTest {
 		then:
 		checkResults(result,
 				['javax.servlet-api-3.1.0.jar',
-				 'Task buildCICSBundle (Gradle 5.0)',
-				 "Adding static resource 'TCPIPSV1.tcpipservice'",
-				 "Adding static resource 'TSQAdapter.epadapter'",
-				 "Adding static resource 'TRND.transaction'",
-				 "Adding static resource 'CATMANAGER.evbind'",
-				 "Adding static resource 'LIBDEF1.library'",
-				 "Adding static resource 'URIMP011.urimap'",
-				 "Adding static resource 'PROGDEF1.program'",
-				 "Adding static resource 'FILEDEFA.file'",
-				 "Adding static resource 'PACKSET1.packageset'",
-				 "Adding static resource 'EPADSET1.epadapterset'",
-				 "Adding static resource 'TDQAdapter.epadapter'",
-				 "Adding static resource 'POLDEM1.policy'"
+				 "Adding bundle part 'TCPIPSV1.tcpipservice'",
+				 "Adding bundle part 'TSQAdapter.epadapter'",
+				 "Adding bundle part 'TRND.transaction'",
+				 "Adding bundle part 'CATMANAGER.evbind'",
+				 "Adding bundle part 'LIBDEF1.library'",
+				 "Adding bundle part 'URIMP011.urimap'",
+				 "Adding bundle part 'PROGDEF1.program'",
+				 "Adding bundle part 'FILEDEFA.file'",
+				 "Adding bundle part 'PACKSET1.packageset'",
+				 "Adding bundle part 'EPADSET1.epadapterset'",
+				 "Adding bundle part 'TDQAdapter.epadapter'",
+				 "Adding bundle part 'POLDEM1.policy'"
 				],
-				['cics-bundle-gradle-1.0.0-SNAPSHOT/javax.servlet-api_3.1.0.osgibundle']
-				, SUCCESS
+				['cics-bundle-gradle-1.0.0-SNAPSHOT/javax.servlet-api_3.1.0.osgibundle'],
+				SUCCESS
 		)
 
 		checkManifest([
@@ -356,7 +379,6 @@ class BuildTests extends AbstractTest {
 
 	def "Test static bundle parts only"() {
 		given:
-		def resources = testProjectDir.newFolder("src", "main", "resources")
 		copyBundlePartsToResources("static-bundle-parts")
 
 		settingsFile << "rootProject.name = 'cics-bundle-gradle'"
@@ -369,22 +391,21 @@ class BuildTests extends AbstractTest {
 
 		then:
 		checkResults(result,
-				['Task buildCICSBundle (Gradle 5.0)',
-				 "Adding static resource 'TCPIPSV1.tcpipservice'",
-				 "Adding static resource 'TSQAdapter.epadapter'",
-				 "Adding static resource 'TRND.transaction'",
-				 "Adding static resource 'CATMANAGER.evbind'",
-				 "Adding static resource 'LIBDEF1.library'",
-				 "Adding static resource 'URIMP011.urimap'",
-				 "Adding static resource 'PROGDEF1.program'",
-				 "Adding static resource 'FILEDEFA.file'",
-				 "Adding static resource 'PACKSET1.packageset'",
-				 "Adding static resource 'EPADSET1.epadapterset'",
-				 "Adding static resource 'TDQAdapter.epadapter'",
-				 "Adding static resource 'POLDEM1.policy'"
+				["Adding bundle part 'TCPIPSV1.tcpipservice'",
+				 "Adding bundle part 'TSQAdapter.epadapter'",
+				 "Adding bundle part 'TRND.transaction'",
+				 "Adding bundle part 'CATMANAGER.evbind'",
+				 "Adding bundle part 'LIBDEF1.library'",
+				 "Adding bundle part 'URIMP011.urimap'",
+				 "Adding bundle part 'PROGDEF1.program'",
+				 "Adding bundle part 'FILEDEFA.file'",
+				 "Adding bundle part 'PACKSET1.packageset'",
+				 "Adding bundle part 'EPADSET1.epadapterset'",
+				 "Adding bundle part 'TDQAdapter.epadapter'",
+				 "Adding bundle part 'POLDEM1.policy'"
 				],
-				[]
-				, SUCCESS
+				[],
+				SUCCESS
 		)
 
 		checkManifest([
@@ -405,19 +426,36 @@ class BuildTests extends AbstractTest {
 		checkManifestDoesNotContain(['ATOM'])
 	}
 
-	def "Test resources is not a directory"() {
+	def "Test resources does not exist"() {
 		given:
-		def resources = testProjectDir.newFolder("src", "main")
-		def name = resources.path.toString() + '/resources'
-		def f = new File(name)
-		f.write('I am not a folder')
+		def resources = testProjectDir.newFolder("src", "main", "resources")
+		resources.delete()
+
 		settingsFile << "rootProject.name = 'cics-bundle-gradle'"
 		buildFile << """\
             ${commonBuildFileContents}
-            
-            dependencies {
-                ${BundlePlugin.BUNDLE_DEPENDENCY_CONFIGURATION_NAME}('javax.servlet:javax.servlet-api:3.1.0@jar')
-            }
+        """
+
+		when:
+		def result = runGradle()
+
+		then:
+		checkResults(result,
+				["No resources folder '${BuildBundleTask.RESOURCES_PATH}' to search for bundle parts"],
+				[],
+				SUCCESS
+		)
+	}
+
+	def "Test resources is not a directory"() {
+		given:
+		def resources = testProjectDir.newFolder("src", "main", "resources")
+		resources.delete()
+		resources.write("I am not a folder")
+
+		settingsFile << "rootProject.name = 'cics-bundle-gradle'"
+		buildFile << """\
+            ${commonBuildFileContents}
         """
 
 		when:
@@ -425,14 +463,109 @@ class BuildTests extends AbstractTest {
 
 		then:
 		checkResults(result,
-				['javax.servlet-api-3.1.0.jar',
-				 'Task buildCICSBundle (Gradle 5.0)',
-				 "Static bundle resources directory '",
-				 "${File.separator}src${File.separator}main${File.separator}resources' is not a directory"
-				],
-				[]
-				, FAILED
+				["Directory '${resources.getCanonicalPath()}' specified for property 'resourcesDirectory' is not a directory."],
+				[],
+				FAILED
 		)
 	}
 
+	def "Test rebuild static parts with changes"() {
+		given:
+		copyBundlePartToResources("static-bundle-parts", "FILEDEFA.file")
+
+		settingsFile << "rootProject.name = 'cics-bundle-gradle'"
+		buildFile << """\
+            ${commonBuildFileContents}
+        """
+
+		when:
+		def result = runGradle()
+
+		then:
+		checkResults(result,
+				["Adding bundle part 'FILEDEFA.file'"],
+				[],
+				SUCCESS
+		)
+
+		checkManifest([
+				'id="cics-bundle-gradle">',
+				'<define name="FILEDEFA" path="FILEDEFA.file" type="http://www.ibm.com/xmlns/prod/cics/bundle/FILE"/>'
+		])
+
+		when:
+		copyBundlePartToResources("static-bundle-parts", "LIBDEF1.library")
+		result = runGradle()
+
+		then:
+		checkResults(result,
+				["Adding bundle part 'FILEDEFA.file'",
+				 "Adding bundle part 'LIBDEF1.library'",
+				],
+				[],
+				SUCCESS
+		)
+
+		checkManifest([
+				'id="cics-bundle-gradle">',
+				'<define name="FILEDEFA" path="FILEDEFA.file" type="http://www.ibm.com/xmlns/prod/cics/bundle/FILE"/>',
+				'<define name="LIBDEF1" path="LIBDEF1.library" type="http://www.ibm.com/xmlns/prod/cics/bundle/LIBRARY"/>'
+		])
+	}
+
+	def "Test rebuild Java parts with changes"() {
+		given:
+		settingsFile << "rootProject.name = 'cics-bundle-gradle'"
+		buildFile << """\
+           ${commonBuildFileContents}
+            
+            dependencies {
+                ${BundlePlugin.BUNDLE_DEPENDENCY_CONFIGURATION_NAME}(group: 'org.glassfish.main.admingui', name: 'war', version: '5.1.0', ext: 'war')
+            }
+        """
+
+		when:
+		def result = runGradle()
+
+		then:
+		checkResults(result,
+				['org.glassfish.main.admingui',
+				 'war-5.1.0.war'
+				],
+				['cics-bundle-gradle-1.0.0-SNAPSHOT/war.warbundle',
+				 'cics-bundle-gradle-1.0.0-SNAPSHOT/war.war'
+				],
+				SUCCESS)
+
+		checkManifest(['id="cics-bundle-gradle">',
+					   '<define name="war" path="war.warbundle" type="http://www.ibm.com/xmlns/prod/cics/bundle/WARBUNDLE"/>'
+		])
+
+		when:
+		buildFile << """\
+            dependencies {
+                ${BundlePlugin.BUNDLE_DEPENDENCY_CONFIGURATION_NAME}(group: 'org.codehaus.cargo', name: 'simple-ear', version: '1.7.6', ext: 'ear')
+            }
+        """
+		result = runGradle()
+
+		then:
+		checkResults(result,
+				['org.glassfish.main.admingui',
+				 'war-5.1.0.war',
+				 'org.codehaus.cargo',
+				 'simple-ear-1.7.6.ear'
+				],
+				['cics-bundle-gradle-1.0.0-SNAPSHOT/war.warbundle',
+				 'cics-bundle-gradle-1.0.0-SNAPSHOT/war.war',
+				 'cics-bundle-gradle-1.0.0-SNAPSHOT/simple-ear.earbundle',
+				 'cics-bundle-gradle-1.0.0-SNAPSHOT/simple-ear.ear'
+				],
+				SUCCESS)
+
+		checkManifest(['id="cics-bundle-gradle">',
+					   '<define name="war" path="war.warbundle" type="http://www.ibm.com/xmlns/prod/cics/bundle/WARBUNDLE"/>',
+					   '<define name="simple-ear" path="simple-ear.earbundle" type="http://www.ibm.com/xmlns/prod/cics/bundle/EARBUNDLE"/>'
+		])
+	}
 }
