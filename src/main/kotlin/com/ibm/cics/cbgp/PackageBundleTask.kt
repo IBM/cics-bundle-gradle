@@ -36,6 +36,6 @@ open class PackageBundleTask : Zip() {
 	init {
 		// Tell the task which directory to zip up
 		from(inputDirectory)
-		metadataCharset = "UTF-8"
+		setMetadataCharset("UTF-8")
 	}
 }

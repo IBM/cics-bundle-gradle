@@ -37,46 +37,46 @@ class BundlePlugin : Plugin<Project> {
 		project.extensions.create(BUNDLE_EXTENSION_NAME, BundleExtension::class.java)
 
 		// Define and configure cicsBundle dependency configuration
-		project.configurations.register(BUNDLE_DEPENDENCY_CONFIGURATION_NAME) { cicsBundleConfig ->
-			cicsBundleConfig.description = "Dependencies that constitute bundle parts that should be included in this CICS bundle."
-			cicsBundleConfig.isVisible = false
+		project.configurations.register(BUNDLE_DEPENDENCY_CONFIGURATION_NAME) {
+			this.description = "Dependencies that constitute bundle parts that should be included in this CICS bundle."
+			this.isVisible = false
 		}
 
 		// Define and configure build task
-		val buildTaskProvider = project.tasks.register(BUILD_TASK_NAME, BuildBundleTask::class.java) { buildTask ->
-			buildTask.description = "Generates a CICS bundle with all the bundle parts."
-			buildTask.group = BasePlugin.BUILD_GROUP
+		val buildTaskProvider = project.tasks.register(BUILD_TASK_NAME, BuildBundleTask::class.java) {
+			this.description = "Generates a CICS bundle with all the bundle parts."
+			this.group = BasePlugin.BUILD_GROUP
 
 			// Set resources directory to src/main/resources, by default
 			val resources = project.layout.projectDirectory.dir(BuildBundleTask.RESOURCES_PATH)
 			// Gradle will fail the build if we set a task input to a directory that doesn't exist
 			if (resources.asFile.exists()) {
-				buildTask.resourcesDirectory.set(resources)
+				this.resourcesDirectory.set(resources)
 			}
 
 			// Set build directory to build/<name>-<version>, by default
-			buildTask.outputDirectory.set(project.layout.buildDirectory.dir("${project.name}-${project.version}"))
+			this.outputDirectory.set(project.layout.buildDirectory.dir("${project.name}-${project.version}"))
 		}
 
 		// Define and configure package task
-		val packageTaskProvider = project.tasks.register(PACKAGE_TASK_NAME, PackageBundleTask::class.java) { packageTask ->
-			packageTask.description = "Packages a CICS bundle into a zipped archive and includes external dependencies."
-			packageTask.group = BasePlugin.BUILD_GROUP
+		val packageTaskProvider = project.tasks.register(PACKAGE_TASK_NAME, PackageBundleTask::class.java) {
+			this.description = "Packages a CICS bundle into a zipped archive and includes external dependencies."
+			this.group = BasePlugin.BUILD_GROUP
 
 			// Wire output of build task to input of package task, by default
-			packageTask.inputDirectory.set(buildTaskProvider.get().outputDirectory)
+			this.inputDirectory.set(buildTaskProvider.get().outputDirectory)
 
 			// Set the output file to be the zip archive, by default
-			packageTask.outputFile.set(packageTask.archivePath)
+			this.outputFile.set(this.archivePath)
 		}
 
 		// Define and configure deploy task
-		val deployTaskProvider = project.tasks.register(DEPLOY_TASK_NAME, DeployBundleTask::class.java) { deployTask ->
-			deployTask.description = "Deploys a CICS bundle to a CICS system."
-			deployTask.group = BasePlugin.UPLOAD_GROUP
+		val deployTaskProvider = project.tasks.register(DEPLOY_TASK_NAME, DeployBundleTask::class.java) {
+			this.description = "Deploys a CICS bundle to a CICS system."
+			this.group = BasePlugin.UPLOAD_GROUP
 
 			// Wire output of package task to input of deploy task, by default
-			deployTask.inputFile.set(packageTaskProvider.get().outputFile)
+			this.inputFile.set(packageTaskProvider.get().outputFile)
 		}
 
 		// Register output of package task as the default artifact
