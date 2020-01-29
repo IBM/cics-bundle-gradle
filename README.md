@@ -33,17 +33,24 @@ It can deploy CICS bundles containing any bundleparts.
  * The WUI region to be configured to use the CMCI JVM server, including the CICS bundle deployment API
 
 ## Gradle Tasks
- The CICS bundle Gradle plugin contributes the following gradle tasks.
+ The CICS bundle Gradle plugin contributes the following gradle tasks in sequential order.
 
-### `buildCICSBundle`
-  This task uses the `cicsBundle` dependency configuration to scope the EAR, WAR and OSGi java dependencies to be added to the CICS bundle. Other bundle parts are automatically added from the resources folder of your build.  
-  Specify the default JVM server in the `cicsBundle` block.
+Tasks | Description
+--|--
+`buildCICSBundle`| Scopes the EAR, WAR and OSGi java dependencies to be added to the CICS bundle, using the `cicsBundle` dependency configuration. Other bundleparts are automatically added from the resources folder of your build.<br/>You'll need to specify the default JVM server in the `cicsBundle` block.
+`deployCICSBundle`| Deploys the CICS bundle to CICS on z/OS, installs and enables it, using settings in the `cicsBundle` block.
+`assemble` | Assembles all the archives in the project.
+`build` | Performs a full build of the project. **You only need to call the `build` task when packaging or deploying your CICS bundles as it depends on previous tasks.**
 
-### `deployCICSBundle`
- This task uses settings in the `cicsBundle` block to deploy the CICS bundle to CICS on z/OS,
- install and enable it.
+Their dependencies are as follows:
+```
+:build
++--- :assemble
+|    \--- :deployCICSBundle
+|         +--- :buildCICSBundle
+```
 
-## To use the CICS bundle Gradle plugin
+## Configure the CICS bundle Gradle plugin
 To use the plugin, clone or download the GitHub repository. Then create a separate Gradle module for your CICS bundle and configure it as follows.
 
 1. Add the plugin id to your `build.gradle`.
@@ -65,7 +72,7 @@ To use the plugin, clone or download the GitHub repository. Then create a separa
     }
     ```
 
-## To build a CICS bundle
+## Build a CICS bundle
 Before building the CICS bundle module, you need to build the cloned plugin first, which provides necessary dependencies.
 
 1. In the CICS bundle module, add local and remote dependencies to the `cicsBundle` configuration in the `dependencies` block, by prepending them
@@ -80,11 +87,11 @@ Before building the CICS bundle module, you need to build the cloned plugin firs
          cicsBundle(group: 'javax.servlet', name: 'javax.servlet-api', version: '3.1.0', ext: 'jar')
      }
      ```
-1. Add the `cicsBundle` block to define the default JVM server used by Java bundle parts.
+1. Add the `cicsBundle` block to define the default JVM server used by Java bundleparts.
      ```gradle
         cicsBundle {
            defaultJVMServer = 'MYJVMS'
-        } 
+        }
      ```
 1. Define the version information for the bundle.
      ```gradle
@@ -93,7 +100,10 @@ Before building the CICS bundle module, you need to build the cloned plugin firs
 1. Invoke the `build` task in your build. It builds the CICS bundle with its contained modules, and packages it as a zip file.
 
 
- ## To deploy a CICS bundle
+## Deploy a CICS bundle
+Deploying your bundle to CICS requires extra configuration in CICS, as described in [Pre-requisites](https://github.com/IBM/cics-bundle-gradle#pre-requisites).
+
+Also ensure a BUNDLE definition for this CICS bundle has already been created in the CSD. You can ask your system admin to do this and pass you the CSD group and name of the definition. The bundle directory of the BUNDLE definition should be set as follows to match your CICS bundle:`<bundle_deploy_root>/<bundle_id>_<bundle_version>`.
 
 1. In the CICS bundle module's `build.gradle`, add settings to the `cicsBundle` block for the deploy destination.
       ```gradle
@@ -103,11 +113,17 @@ Before building the CICS bundle module, you need to build the cloned plugin firs
              bunddef  = 'MYDEF'
              csdgroup = 'MYGROUP'
              url      = 'myserver.site.domain.com:1234'
-             username = my_username      // Define my_username in gradle.properties file
-             password = my_password      // Define my_password in gradle.properties file   
+             username = project.myUsername      // Define myUsername in gradle.properties file
+             password = project.myPassword      // Define myPassword in gradle.properties file   
          }
     ```
-
+    Edit the code snippet above to match your CICS configuration:
+    * `url` - Set the transport, hostname, and port for your CMCI
+    * `username & password` - These are your credentials for CICS. You can define them in the `gradle.properties` file and call them here, or use other plugins for further encryption, such as the [gradle-credentials-plugin](https://github.com/etiennestuder/gradle-credentials-plugin).
+    * `bunddef` - The name of the BUNDLE definition to be installed.
+    * `csdgroup` - The name of the CSD group that contains the BUNDLE definition.
+    * `cicsplex` - The name of the CICSplex that the target region belongs to.
+    * `region` - The name of the region that the bundle should be installed to.  
 1. Invoke the `deployCICSBundle` task in your build to deploy the bundle to the target CICSplex and region.
 
 
