@@ -53,9 +53,11 @@ class BundlePlugin : Plugin<Project> {
 			if (resources.asFile.exists()) {
 				this.resourcesDirectory.set(resources)
 			}
-
+		}
+		// projectsEvaluated ensures that this runs after project.version is set
+		project.gradle.projectsEvaluated {
 			// Set build directory to build/<name>-<version>, by default
-			this.outputDirectory.set(project.layout.buildDirectory.dir("${project.name}-${project.version}"))
+			buildTaskProvider.get().outputDirectory.set(project.layout.buildDirectory.dir("${project.name}-${project.version}"))
 		}
 
 		// Define and configure package task
