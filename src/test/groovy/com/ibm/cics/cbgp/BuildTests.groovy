@@ -88,14 +88,14 @@ class BuildTests extends AbstractTest {
 		checkResults(result,
 				['javax.servlet-api-3.1.0.jar'
 				],
-				['cics-bundle-gradle-1.0.0-SNAPSHOT/javax.servlet-api_3.1.0.osgibundle',
-				 'cics-bundle-gradle-1.0.0-SNAPSHOT/javax.servlet-api_3.1.0.jar'
+				['cics-bundle-gradle-1.0.0-SNAPSHOT/javax.servlet-api-3.1.0_3.1.0.osgibundle',
+				 'cics-bundle-gradle-1.0.0-SNAPSHOT/javax.servlet-api-3.1.0_3.1.0.jar'
 				],
 				SUCCESS
 		)
 
 		checkManifest(['id="cics-bundle-gradle">',
-		               '<define name="javax.servlet-api_3.1.0" path="javax.servlet-api_3.1.0.osgibundle" type="http://www.ibm.com/xmlns/prod/cics/bundle/OSGIBUNDLE"/>'
+		               '<define name="javax.servlet-api-3.1.0_3.1.0" path="javax.servlet-api-3.1.0_3.1.0.osgibundle" type="http://www.ibm.com/xmlns/prod/cics/bundle/OSGIBUNDLE"/>'
 		])
 	}
 
@@ -118,13 +118,13 @@ class BuildTests extends AbstractTest {
 				['org.glassfish.main.admingui',
 				 'war-5.1.0.war'
 				],
-				['cics-bundle-gradle-1.0.0-SNAPSHOT/war.warbundle',
-				 'cics-bundle-gradle-1.0.0-SNAPSHOT/war.war'
+				['cics-bundle-gradle-1.0.0-SNAPSHOT/war-5.1.0.warbundle',
+				 'cics-bundle-gradle-1.0.0-SNAPSHOT/war-5.1.0.war'
 				],
 				SUCCESS)
 
 		checkManifest(['id="cics-bundle-gradle">',
-		               '<define name="war" path="war.warbundle" type="http://www.ibm.com/xmlns/prod/cics/bundle/WARBUNDLE"/>'
+		               '<define name="war-5.1.0" path="war-5.1.0.warbundle" type="http://www.ibm.com/xmlns/prod/cics/bundle/WARBUNDLE"/>'
 		])
 	}
 
@@ -147,13 +147,13 @@ class BuildTests extends AbstractTest {
 				['org.codehaus.cargo',
 				 'simple-ear-1.7.6.ear'
 				],
-				['cics-bundle-gradle-1.0.0-SNAPSHOT/simple-ear.earbundle',
-				 'cics-bundle-gradle-1.0.0-SNAPSHOT/simple-ear.ear'
+				['cics-bundle-gradle-1.0.0-SNAPSHOT/simple-ear-1.7.6.earbundle',
+				 'cics-bundle-gradle-1.0.0-SNAPSHOT/simple-ear-1.7.6.ear'
 				],
 				SUCCESS)
 
 		checkManifest(['id="cics-bundle-gradle">',
-		               '<define name="simple-ear" path="simple-ear.earbundle" type="http://www.ibm.com/xmlns/prod/cics/bundle/EARBUNDLE"/>'
+		               '<define name="simple-ear-1.7.6" path="simple-ear-1.7.6.earbundle" type="http://www.ibm.com/xmlns/prod/cics/bundle/EARBUNDLE"/>'
 		])
 	}
 
@@ -176,13 +176,13 @@ class BuildTests extends AbstractTest {
 				['org.apache.aries.samples.twitter',
 				 'org.apache.aries.samples.twitter.eba-1.0.0.eba'
 				],
-				['cics-bundle-gradle-1.0.0-SNAPSHOT/org.apache.aries.samples.twitter.eba.ebabundle',
-				 'cics-bundle-gradle-1.0.0-SNAPSHOT/org.apache.aries.samples.twitter.eba.eba'
+				['cics-bundle-gradle-1.0.0-SNAPSHOT/org.apache.aries.samples.twitter.eba-1.0.0.ebabundle',
+				 'cics-bundle-gradle-1.0.0-SNAPSHOT/org.apache.aries.samples.twitter.eba-1.0.0.eba'
 				],
 				SUCCESS)
 
 		checkManifest(['id="cics-bundle-gradle">',
-					   '<define name="org.apache.aries.samples.twitter.eba" path="org.apache.aries.samples.twitter.eba.ebabundle" type="http://www.ibm.com/xmlns/prod/cics/bundle/EBABUNDLE"/>'
+					   '<define name="org.apache.aries.samples.twitter.eba-1.0.0" path="org.apache.aries.samples.twitter.eba-1.0.0.ebabundle" type="http://www.ibm.com/xmlns/prod/cics/bundle/EBABUNDLE"/>'
 		])
 	}
 
@@ -231,13 +231,13 @@ class BuildTests extends AbstractTest {
 				['Task :helloworldwar:build',
 				 "${warProjectName}-1.0-SNAPSHOT.war"
 				],
-				['cics-bundle-gradle-1.0.0-SNAPSHOT/helloworldwar.warbundle',
-				 'cics-bundle-gradle-1.0.0-SNAPSHOT/helloworldwar.war'
+				['cics-bundle-gradle-1.0.0-SNAPSHOT/helloworldwar-1.0-SNAPSHOT.warbundle',
+				 'cics-bundle-gradle-1.0.0-SNAPSHOT/helloworldwar-1.0-SNAPSHOT.war'
 				],
 				SUCCESS)
 
 		checkManifest(['id="cics-bundle-gradle">',
-		               '<define name="helloworldwar" path="helloworldwar.warbundle" type="http://www.ibm.com/xmlns/prod/cics/bundle/WARBUNDLE"/>'
+		               '<define name="helloworldwar-1.0-SNAPSHOT" path="helloworldwar-1.0-SNAPSHOT.warbundle" type="http://www.ibm.com/xmlns/prod/cics/bundle/WARBUNDLE"/>'
 		])
 	}
 
@@ -354,13 +354,13 @@ class BuildTests extends AbstractTest {
 				 "Adding bundle part 'TDQAdapter.epadapter'",
 				 "Adding bundle part 'POLDEM1.policy'"
 				],
-				['cics-bundle-gradle-1.0.0-SNAPSHOT/javax.servlet-api_3.1.0.osgibundle'],
+				['cics-bundle-gradle-1.0.0-SNAPSHOT/javax.servlet-api-3.1.0_3.1.0.osgibundle'],
 				SUCCESS
 		)
 
 		checkManifest([
 				'id="cics-bundle-gradle">',
-				'<define name="javax.servlet-api_3.1.0" path="javax.servlet-api_3.1.0.osgibundle" type="http://www.ibm.com/xmlns/prod/cics/bundle/OSGIBUNDLE"/>',
+				'<define name="javax.servlet-api-3.1.0_3.1.0" path="javax.servlet-api-3.1.0_3.1.0.osgibundle" type="http://www.ibm.com/xmlns/prod/cics/bundle/OSGIBUNDLE"/>',
 				'<define name="CATMANAGER" path="CATMANAGER.evbind" type="http://www.ibm.com/xmlns/prod/cics/bundle/EVENTBINDING"/>',
 				'<define name="EPADSET1" path="EPADSET1.epadapterset" type="http://www.ibm.com/xmlns/prod/cics/bundle/EPADAPTERSET"/>',
 				'<define name="FILEDEFA" path="FILEDEFA.file" type="http://www.ibm.com/xmlns/prod/cics/bundle/FILE"/>',
@@ -532,13 +532,13 @@ class BuildTests extends AbstractTest {
 				['org.glassfish.main.admingui',
 				 'war-5.1.0.war'
 				],
-				['cics-bundle-gradle-1.0.0-SNAPSHOT/war.warbundle',
-				 'cics-bundle-gradle-1.0.0-SNAPSHOT/war.war'
+				['cics-bundle-gradle-1.0.0-SNAPSHOT/war-5.1.0.warbundle',
+				 'cics-bundle-gradle-1.0.0-SNAPSHOT/war-5.1.0.war'
 				],
 				SUCCESS)
 
 		checkManifest(['id="cics-bundle-gradle">',
-					   '<define name="war" path="war.warbundle" type="http://www.ibm.com/xmlns/prod/cics/bundle/WARBUNDLE"/>'
+					   '<define name="war-5.1.0" path="war-5.1.0.warbundle" type="http://www.ibm.com/xmlns/prod/cics/bundle/WARBUNDLE"/>'
 		])
 
 		when:
@@ -556,16 +556,16 @@ class BuildTests extends AbstractTest {
 				 'org.codehaus.cargo',
 				 'simple-ear-1.7.6.ear'
 				],
-				['cics-bundle-gradle-1.0.0-SNAPSHOT/war.warbundle',
-				 'cics-bundle-gradle-1.0.0-SNAPSHOT/war.war',
-				 'cics-bundle-gradle-1.0.0-SNAPSHOT/simple-ear.earbundle',
-				 'cics-bundle-gradle-1.0.0-SNAPSHOT/simple-ear.ear'
+				['cics-bundle-gradle-1.0.0-SNAPSHOT/war-5.1.0.warbundle',
+				 'cics-bundle-gradle-1.0.0-SNAPSHOT/war-5.1.0.war',
+				 'cics-bundle-gradle-1.0.0-SNAPSHOT/simple-ear-1.7.6.earbundle',
+				 'cics-bundle-gradle-1.0.0-SNAPSHOT/simple-ear-1.7.6.ear'
 				],
 				SUCCESS)
 
 		checkManifest(['id="cics-bundle-gradle">',
-					   '<define name="war" path="war.warbundle" type="http://www.ibm.com/xmlns/prod/cics/bundle/WARBUNDLE"/>',
-					   '<define name="simple-ear" path="simple-ear.earbundle" type="http://www.ibm.com/xmlns/prod/cics/bundle/EARBUNDLE"/>'
+					   '<define name="war-5.1.0" path="war-5.1.0.warbundle" type="http://www.ibm.com/xmlns/prod/cics/bundle/WARBUNDLE"/>',
+					   '<define name="simple-ear-1.7.6" path="simple-ear-1.7.6.earbundle" type="http://www.ibm.com/xmlns/prod/cics/bundle/EARBUNDLE"/>'
 		])
 	}
 }

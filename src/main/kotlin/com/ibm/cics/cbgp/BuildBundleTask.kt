@@ -19,11 +19,8 @@ import org.apache.commons.io.FileUtils
 import org.gradle.api.DefaultTask
 import org.gradle.api.GradleException
 import org.gradle.api.artifacts.Configuration
-import org.gradle.api.artifacts.Dependency
 import org.gradle.api.artifacts.ResolvedConfiguration
 import org.gradle.api.file.DirectoryProperty
-import org.gradle.api.internal.artifacts.dependencies.DefaultExternalModuleDependency
-import org.gradle.api.internal.artifacts.dependencies.DefaultProjectDependency
 import org.gradle.api.tasks.*
 import org.gradle.util.VersionNumber
 import java.io.File
@@ -163,15 +160,10 @@ open class BuildBundleTask : DefaultTask() {
 	}
 
 	private fun addResolvedFilesToBundle(resolved: ResolvedConfiguration, bundlePublisher: BundlePublisher) {
-
 		val resolvedFiles = resolved.files.toTypedArray()
-		val dependencies = cicsBundleConfig.dependencies.toTypedArray()
-
-		// TODO - Depends on dependencies and resolved files being in the same order.
-		for (i in resolvedFiles.indices) {
-			val file = resolvedFiles[i]
-			val name = getNameForDependency(dependencies[i])
-			logger.lifecycle("Resolved '$name' to file: '$file'")
+		resolvedFiles.forEach { file ->
+			logger.lifecycle("Adding Java-based dependency: '$file'")
+			val name = file.nameWithoutExtension
 			// Already checked all extensions will be one of these
 			when (file.extension) {
 				"ear" -> addEar(file, name, bundlePublisher)
@@ -209,16 +201,6 @@ open class BuildBundleTask : DefaultTask() {
 			bundlePublisher.addResource(binding.toBundlePart(file, defaultJVMServer))
 		} catch (e: PublishException) {
 			throw GradleException("Error adding bundle resource for artifact `$name` : ${e.message} ")
-		}
-	}
-
-	private fun getNameForDependency(dep: Dependency): String {
-		if (dep is DefaultExternalModuleDependency) {
-			return dep.name
-		} else if (dep is DefaultProjectDependency) {
-			return dep.dependencyProject.name
-		} else {
-			throw GradleException("Unexpected dependency type ${dep::class.java} for dependency \$dep")
 		}
 	}
 
