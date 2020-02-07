@@ -53,6 +53,7 @@ class BundlePlugin : Plugin<Project> {
 			this.description = "Packages a built CICS bundle into a zipped archive."
 			this.group = BasePlugin.BUILD_GROUP
 		}
+		project.tasks.getByName(BasePlugin.ASSEMBLE_TASK_NAME).dependsOn(packageTaskProvider)
 
 		// Define deploy task
 		val deployTaskProvider = project.tasks.register(DEPLOY_TASK_NAME, DeployBundleTask::class.java) {
@@ -83,7 +84,7 @@ class BundlePlugin : Plugin<Project> {
 			deployTaskProvider.get().inputFile.set(packageTaskProvider.get().outputFile)
 		}
 
-		// Register output of package task as the default artifact
+		// Add the bundle zip to the 'archives' configuration so it can be consumed by other projects
 		val bundleArtifact = LazyPublishArtifact(packageTaskProvider)
 		project.extensions.getByType(DefaultArtifactPublicationSet::class.java).addCandidate(bundleArtifact)
 	}
