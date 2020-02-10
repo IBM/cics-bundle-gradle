@@ -37,17 +37,23 @@ It can deploy CICS bundles containing any bundleparts.
 
 Tasks | Description
 --|--
-`buildCICSBundle`| Scopes the EAR, WAR and OSGi java dependencies to be added to the CICS bundle, using the `cicsBundle` dependency configuration. Other bundleparts are automatically added from the resources folder of your build.<br/>You'll need to specify the default JVM server in the `cicsBundle` block.
-`deployCICSBundle`| Deploys the CICS bundle to CICS on z/OS, installs and enables it, using settings in the `cicsBundle` block.
-`assemble` | Assembles all the archives in the project.
-`build` | Performs a full build of the project. **You only need to call the `build` task when packaging or deploying your CICS bundles as it depends on previous tasks.**
+`buildCICSBundle`| Builds a CICS bundle.<br/>Java-based dependencies such as OSGi bundle, WAR, EAR, or EBAs are added using the `cicsBundle` dependency configuration. You'll need to specify the default JVM server in the `cicsBundle` extension block.<br/>Resource definition bundleparts are automatically added from the src/main/resources folder of your project.
+`packageCICSBundle`| Packages the built CICS bundle into a zipped archive.
+`deployCICSBundle`| Deploys the packaged CICS bundle to CICS on z/OS, installs and enables it, using settings in the `cicsBundle` extension block.
+`build` | Performs a full build of the project, including assembling all artifacts and running all tests. **You only need to call the `build` task when building or packaging your CICS bundles as it depends on those tasks.**
 
 Their dependencies are as follows:
 ```
 :build
 +--- :assemble
-|    \--- :deployCICSBundle
-|         +--- :buildCICSBundle
+|    \--- :packageCICSBundle
+|         \--- :buildCICSBundle
+\--- :check
+
+
+:deployCICSBundle
+\--- :packageCICSBundle
+     \--- :buildCICSBundle
 ```
 
 ## Configure the CICS bundle Gradle plugin
@@ -55,9 +61,9 @@ To use the plugin, clone or download the GitHub repository. Then create a separa
 
 1. Add the plugin id to your `build.gradle`.
     ```gradle
-     plugins {
-         id 'com.ibm.cics.bundle' version '0.0.1-SNAPSHOT'
-     }
+    plugins {
+        id 'com.ibm.cics.bundle' version '0.0.1-SNAPSHOT'
+    }
     ```
 1. If using a snapshot version of the plugin, add the snapshot repository to your `settings.gradle`, so Gradle can find the plugin.
     ```gradle
@@ -67,55 +73,66 @@ To use the plugin, clone or download the GitHub repository. Then create a separa
                 name = "Sonatype Snapshots"
                 url = uri("https://oss.sonatype.org/content/repositories/snapshots")
             }
-            mavenCentral() // Needed for the plugin's own deps
+            gradlePluginPortal()
         }
     }
     ```
 
-## Build a CICS bundle
-Before building the CICS bundle module, you need to build the cloned plugin first, which provides necessary dependencies.
-
-1. In the CICS bundle module, add local and remote dependencies to the `cicsBundle` configuration in the `dependencies` block, by prepending them
- with the `cicsBundle` build configuration name that the plugin provides.
-     ```gradle
-     dependencies {
-          // A project within the build
-         cicsBundle project(path: ':helloworldwar', configuration: 'war')
-
-         // External dependencies, specify the repositories in the repositories block as usual
-         cicsBundle(group: 'org.glassfish.main.admingui', name: 'war', version: '5.1.0', ext: 'war')
-         cicsBundle(group: 'javax.servlet', name: 'javax.servlet-api', version: '3.1.0', ext: 'jar')
-     }
-     ```
-1. Add the `cicsBundle` block to define the default JVM server used by Java bundleparts.
-     ```gradle
-        cicsBundle {
-           defaultJVMServer = 'MYJVMS'
+## Build and package a CICS bundle
+1. In your `build.gradle`, define the version for the bundle.
+    ```gradle
+    version '1.0.0'
+    ```
+1. Add Java-based dependencies to the bundle by adding them to the `dependencies` block using the `cicsBundle` configuration.
+    * To include a dependency produced by the bundle project itself, e.g. when you are converting an existing Java project into a CICS bundle, use the `files` notation, and specify the name of the task which produces the bundlepart archive, e.g. `jar`, `war`, or `ear`.
+        ```gradle
+        dependencies {
+            cicsBundle files(war)
         }
-     ```
-1. Define the version information for the bundle.
-     ```gradle
-       version '1.0.0-SNAPSHOT'
-     ```
-1. Invoke the `build` task in your build. It builds the CICS bundle with its contained modules, and packages it as a zip file.
-
+        ```
+    * To include a dependency produced by a different local project, use the `project` notation with the `archives` configuration, and specify the path to the local project.
+        ```gradle
+        dependencies {
+            cicsBundle project(path: ':path-to-other-project', configuration: 'archives')
+        }
+        ```
+    * To include a dependency hosted in a remote repository such as Maven Central, use the default `module` notation.
+        ```gradle
+        dependencies {
+            cicsBundle(group: 'org.codehaus.cargo', name: 'simple-war', version: '1.7.7', ext: 'war')
+        }
+        ```
+        Then specify the repository to use to retrieve the remote dependency.
+        ```gradle
+        repositories {
+            mavenCentral()
+        }
+        ```
+1. If using Java-based bundleparts, add the `cicsBundle` extension block to define the default JVM server that they will use.
+    ```gradle
+    cicsBundle {
+        defaultJVMServer = 'MYJVMS'
+    }
+    ```
+1. To include CICS resource definition bundleparts like FILE or URIMAP, put the bundlepart files in the src/main/resources directory. Files in this directory will be included within the output CICS bundle, and supported types will have a <define> element added to the CICS bundle's cics.xml.
+1. Invoke the `build` task in your build. It builds the CICS bundle with its contained bundleparts, and packages it as a zip file.
 
 ## Deploy a CICS bundle
 Deploying your bundle to CICS requires extra configuration in CICS, as described in [Pre-requisites](https://github.com/IBM/cics-bundle-gradle#pre-requisites).
 
 Also ensure a BUNDLE definition for this CICS bundle has already been created in the CSD. You can ask your system admin to do this and pass you the CSD group and name of the definition. The bundle directory of the BUNDLE definition should be set as follows to match your CICS bundle:`<bundle_deploy_root>/<bundle_id>_<bundle_version>`.
 
-1. In the CICS bundle module's `build.gradle`, add settings to the `cicsBundle` block for the deploy destination.
-      ```gradle
-         cicsBundle {
-             cicsplex = 'MYPLEX'
-             region   = 'MYEGION'
-             bunddef  = 'MYDEF'
-             csdgroup = 'MYGROUP'
-             url      = 'myserver.site.domain.com:1234'
-             username = project.myUsername      // Define myUsername in gradle.properties file
-             password = project.myPassword      // Define myPassword in gradle.properties file   
-         }
+1. In the CICS bundle module's `build.gradle`, add settings to the `cicsBundle` extension block for the deploy destination.
+    ```gradle
+    cicsBundle {
+        cicsplex = 'MYPLEX'
+        region   = 'MYEGION'
+        bunddef  = 'MYDEF'
+        csdgroup = 'MYGROUP'
+        url      = 'myserver.site.domain.com:1234'
+        username = project.myUsername      // Define myUsername in gradle.properties file
+        password = project.myPassword      // Define myPassword in gradle.properties file
+    }
     ```
     Edit the code snippet above to match your CICS configuration:
     * `url` - Set the transport, hostname, and port for your CMCI
@@ -125,7 +142,6 @@ Also ensure a BUNDLE definition for this CICS bundle has already been created in
     * `cicsplex` - The name of the CICSplex that the target region belongs to.
     * `region` - The name of the region that the bundle should be installed to.  
 1. Invoke the `deployCICSBundle` task in your build to deploy the bundle to the target CICSplex and region.
-
 
 ## Contributing
 
