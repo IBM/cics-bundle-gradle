@@ -281,6 +281,6 @@ class DeployTests extends AbstractTest {
 
 		then:
 		// This error indicates success as it won't get this far if the substitution fails.
-		checkResults(result, ["Target host is null"], [], FAILED)
+		checkResults(result, ["Target host is not specified"], [], FAILED)
 	}
 }

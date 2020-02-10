@@ -88,14 +88,14 @@ class BuildTests extends AbstractTest {
 		checkResults(result,
 				['javax.servlet-api-3.1.0.jar'
 				],
-				['cics-bundle-gradle-1.0.0-SNAPSHOT/javax.servlet-api-3.1.0_3.1.0.osgibundle',
-				 'cics-bundle-gradle-1.0.0-SNAPSHOT/javax.servlet-api-3.1.0_3.1.0.jar'
+				['cics-bundle-gradle-1.0.0-SNAPSHOT/javax.servlet-api-3.1.0.osgibundle',
+				 'cics-bundle-gradle-1.0.0-SNAPSHOT/javax.servlet-api-3.1.0.jar'
 				],
 				SUCCESS
 		)
 
 		checkManifest(['id="cics-bundle-gradle">',
-		               '<define name="javax.servlet-api-3.1.0_3.1.0" path="javax.servlet-api-3.1.0_3.1.0.osgibundle" type="http://www.ibm.com/xmlns/prod/cics/bundle/OSGIBUNDLE"/>'
+		               '<define name="javax.servlet-api-3.1.0" path="javax.servlet-api-3.1.0.osgibundle" type="http://www.ibm.com/xmlns/prod/cics/bundle/OSGIBUNDLE"/>'
 		])
 	}
 
@@ -354,13 +354,13 @@ class BuildTests extends AbstractTest {
 				 "Adding bundle part 'TDQAdapter.epadapter'",
 				 "Adding bundle part 'POLDEM1.policy'"
 				],
-				['cics-bundle-gradle-1.0.0-SNAPSHOT/javax.servlet-api-3.1.0_3.1.0.osgibundle'],
+				['cics-bundle-gradle-1.0.0-SNAPSHOT/javax.servlet-api-3.1.0.osgibundle'],
 				SUCCESS
 		)
 
 		checkManifest([
 				'id="cics-bundle-gradle">',
-				'<define name="javax.servlet-api-3.1.0_3.1.0" path="javax.servlet-api-3.1.0_3.1.0.osgibundle" type="http://www.ibm.com/xmlns/prod/cics/bundle/OSGIBUNDLE"/>',
+				'<define name="javax.servlet-api-3.1.0" path="javax.servlet-api-3.1.0.osgibundle" type="http://www.ibm.com/xmlns/prod/cics/bundle/OSGIBUNDLE"/>',
 				'<define name="CATMANAGER" path="CATMANAGER.evbind" type="http://www.ibm.com/xmlns/prod/cics/bundle/EVENTBINDING"/>',
 				'<define name="EPADSET1" path="EPADSET1.epadapterset" type="http://www.ibm.com/xmlns/prod/cics/bundle/EPADAPTERSET"/>',
 				'<define name="FILEDEFA" path="FILEDEFA.file" type="http://www.ibm.com/xmlns/prod/cics/bundle/FILE"/>',

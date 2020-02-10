@@ -19,23 +19,43 @@ import org.gradle.api.GradleException
 import java.io.File
 import java.io.IOException
 
-class OsgibundlePartBinding : AbstractNameableJavaBundlePartBinding() {
+class OsgibundlePartBinding(file: File) : AbstractJavaBundlePartBinding(file) {
+
+	var symbolicName: String? = ""
+	var osgiVersion: String? = ""
 
 	@Throws(GradleException::class)
-	override fun toBundlePartImpl(file: File?): BundleResource {
-		var osgiVersion: String?
-		try {
-			osgiVersion = OsgiBundlePart.getBundleVersion(file)
-		} catch (e: IOException) {
-			throw GradleException("Error reading OSGi bundle version", e)
-		}
+	override fun applyDefaults(defaultJVMServer: String) {
+		super.applyDefaults(defaultJVMServer)
 
-		if (osgiVersion == null) {
-			throw GradleException("TODO Parse version from file name or pass in from cicsBundle config dependency")
+		try {
+			/**
+			 * For other bundle parts, symbolic name can be anything, but osgi bundle parts must use the symbolic name
+			 * that is in the manifest. This is mandatory so fail if not found in manifest.
+			 */
+			symbolicName = OsgiBundlePart.getBundleSymbolicName(file)
+			if (symbolicName == null) {
+				throw GradleException("Error reading Bundle-SymbolicName from OSGi manifest file")
+			}
+
+			/**
+			 * OSGi version is optional, so use default value if not found in manifest.
+			 */
+			osgiVersion = OsgiBundlePart.getBundleVersion(file)
+			if (osgiVersion == null) {
+				osgiVersion = "0.0.0"
+			}
+		} catch (e: IOException) {
+			throw GradleException("Error reading headers from OSGi manifest file", e)
 		}
+	}
+
+	@Throws(GradleException::class)
+	override fun toBundlePartImpl(): BundleResource {
 
 		return OsgiBundlePart(
 				name,
+				symbolicName,
 				osgiVersion,
 				jvmserver,
 				file

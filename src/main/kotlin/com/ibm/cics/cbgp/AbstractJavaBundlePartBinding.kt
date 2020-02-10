@@ -16,12 +16,16 @@ package com.ibm.cics.cbgp
 import org.gradle.api.GradleException
 import java.io.File
 
-abstract class AbstractJavaBundlePartBinding : AbstractBundlePartBinding() {
-	var jvmserver: String? = null
+abstract class AbstractJavaBundlePartBinding(file: File) : AbstractBundlePartBinding(file) {
+	var name: String = ""
+	var jvmserver: String = ""
 
 	@Throws(GradleException::class)
-	override fun applyDefaults(file: File?, defaultJVMServer: String) {
-		if (jvmserver.isNullOrEmpty()) {
+	override fun applyDefaults(defaultJVMServer: String) {
+		if (name.isEmpty()) {
+			name = file.nameWithoutExtension
+		}
+		if (jvmserver.isEmpty()) {
 			jvmserver = defaultJVMServer
 		}
 	}

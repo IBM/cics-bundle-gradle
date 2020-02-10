@@ -69,14 +69,18 @@ publishing {
 }
 
 repositories {
+    maven {
+        name = "Sonatype Snapshots"
+        url = uri("https://oss.sonatype.org/content/repositories/snapshots")
+    }
     mavenCentral()
 }
 
 defaultTasks("build")
 
 dependencies {
-    implementation("com.ibm.cics:cics-bundle-common:0.0.2")
-    testCompile("junit:junit:4.12")
+    implementation("com.ibm.cics:cics-bundle-common:0.0.3-SNAPSHOT")
+    testImplementation("junit:junit:4.12")
     testImplementation("org.spockframework:spock-core:1.1-groovy-2.4") {
         exclude(module =  "groovy-all")
     }

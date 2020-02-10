@@ -163,42 +163,40 @@ open class BuildBundleTask : DefaultTask() {
 		val resolvedFiles = resolved.files.toTypedArray()
 		resolvedFiles.forEach { file ->
 			logger.lifecycle("Adding Java-based dependency: '$file'")
-			val name = file.nameWithoutExtension
 			// Already checked all extensions will be one of these
 			when (file.extension) {
-				"ear" -> addEar(file, name, bundlePublisher)
-				"jar" -> addJar(file, name, bundlePublisher)
-				"war" -> addWar(file, name, bundlePublisher)
-				"eba" -> addEba(file, name, bundlePublisher)
+				"ear" -> addEar(file, bundlePublisher)
+				"jar" -> addJar(file, bundlePublisher)
+				"war" -> addWar(file, bundlePublisher)
+				"eba" -> addEba(file, bundlePublisher)
 			}
 		}
 		return
 	}
 
-	private fun addEar(file: File, name: String, bundlePublisher: BundlePublisher) {
-		val binding = EarbundlePartBinding()
-		addJavaBundlePartBinding(file, name, binding, bundlePublisher)
+	private fun addEar(file: File, bundlePublisher: BundlePublisher) {
+		val binding = EarbundlePartBinding(file)
+		addJavaBundlePartBinding(binding, bundlePublisher)
 	}
 
-	private fun addJar(file: File, name: String, bundlePublisher: BundlePublisher) {
-		val binding = OsgibundlePartBinding()
-		addJavaBundlePartBinding(file, name, binding, bundlePublisher)
+	private fun addJar(file: File, bundlePublisher: BundlePublisher) {
+		val binding = OsgibundlePartBinding(file)
+		addJavaBundlePartBinding(binding, bundlePublisher)
 	}
 
-	private fun addWar(file: File, name: String, bundlePublisher: BundlePublisher) {
-		val binding = WarbundlePartBinding()
-		addJavaBundlePartBinding(file, name, binding, bundlePublisher)
+	private fun addWar(file: File, bundlePublisher: BundlePublisher) {
+		val binding = WarbundlePartBinding(file)
+		addJavaBundlePartBinding(binding, bundlePublisher)
 	}
 
-	private fun addEba(file: File, name: String, bundlePublisher: BundlePublisher) {
-		val binding = EbabundlePartBinding()
-		addJavaBundlePartBinding(file, name, binding, bundlePublisher)
+	private fun addEba(file: File, bundlePublisher: BundlePublisher) {
+		val binding = EbabundlePartBinding(file)
+		addJavaBundlePartBinding(binding, bundlePublisher)
 	}
 
-	private fun addJavaBundlePartBinding(file: File, name: String, binding: AbstractNameableJavaBundlePartBinding, bundlePublisher: BundlePublisher) {
-		binding.name = name
+	private fun addJavaBundlePartBinding(binding: AbstractJavaBundlePartBinding, bundlePublisher: BundlePublisher) {
 		try {
-			bundlePublisher.addResource(binding.toBundlePart(file, defaultJVMServer))
+			bundlePublisher.addResource(binding.toBundlePart(defaultJVMServer))
 		} catch (e: PublishException) {
 			throw GradleException("Error adding bundle resource for artifact `$name` : ${e.message} ")
 		}
