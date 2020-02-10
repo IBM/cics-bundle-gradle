@@ -84,31 +84,31 @@ To use the plugin, clone or download the GitHub repository. Then create a separa
     version '1.0.0'
     ```
 1. Add Java-based dependencies to the bundle by adding them to the `dependencies` block using the `cicsBundle` configuration.
-    2. To include a dependency produced by the bundle project itself, e.g. when you are converting an existing Java project into a CICS bundle, use the `files` notation, and specify the name of the task which produces the bundlepart archive, e.g. `jar/war/ear`.
+    * To include a dependency produced by the bundle project itself, e.g. when you are converting an existing Java project into a CICS bundle, use the `files` notation, and specify the name of the task which produces the bundlepart archive, e.g. `jar`, `war`, or `ear`.
         ```gradle
         dependencies {
             cicsBundle files(war)
         }
         ```
-    2. To include a dependency produced by a different local project, use the `project` notation with the `archives` configuration, and specify the path to the local project.
+    * To include a dependency produced by a different local project, use the `project` notation with the `archives` configuration, and specify the path to the local project.
         ```gradle
         dependencies {
             cicsBundle project(path: ':path-to-other-project', configuration: 'archives')
         }
         ```
-    2. To include a dependency hosted in a remote repository such as Maven Central, use the default `module` notation.
+    * To include a dependency hosted in a remote repository such as Maven Central, use the default `module` notation.
         ```gradle
         dependencies {
             cicsBundle(group: 'org.codehaus.cargo', name: 'simple-war', version: '1.7.7', ext: 'war')
         }
         ```
-    2. Specify the repositories to use to retrieve any remote dependencies.
+        Then specify the repository to use to retrieve the remote dependency.
         ```gradle
         repositories {
             mavenCentral()
         }
         ```
-1. Add the `cicsBundle` extension block to define the default JVM server to be used by Java-based bundleparts.
+1. If using Java-based bundleparts, add the `cicsBundle` extension block to define the default JVM server that they will use.
     ```gradle
     cicsBundle {
         defaultJVMServer = 'MYJVMS'
