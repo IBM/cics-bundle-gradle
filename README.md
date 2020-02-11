@@ -46,10 +46,8 @@ Their dependencies are as follows:
 ```
 :build
 +--- :assemble
-|    \--- :packageCICSBundle
-|         \--- :buildCICSBundle
-\--- :check
-
+     \--- :packageCICSBundle
+          \--- :buildCICSBundle
 
 :deployCICSBundle
 \--- :packageCICSBundle
@@ -73,7 +71,7 @@ To use the plugin, clone or download the GitHub repository. Then create a separa
                 name = "Sonatype Snapshots"
                 url = uri("https://oss.sonatype.org/content/repositories/snapshots")
             }
-            gradlePluginPortal()
+            gradlePluginPortal() // Needed for the plugin's own dependencies.
         }
     }
     ```
@@ -96,10 +94,13 @@ To use the plugin, clone or download the GitHub repository. Then create a separa
             cicsBundle project(path: ':path-to-other-project', configuration: 'archives')
         }
         ```
-    * To include a dependency hosted in a remote repository such as Maven Central, use the default `module` notation.
+    * To include a dependency hosted in a remote repository such as Maven Central, use the default `module` notation, using any of the permitted formats.
         ```gradle
         dependencies {
-            cicsBundle(group: 'org.codehaus.cargo', name: 'simple-war', version: '1.7.7', ext: 'war')
+            // Map notation
+            cicsBundle group: 'org.codehaus.cargo', name: 'simple-war', version: '1.7.7', ext: 'war'
+            // String notation
+            cicsBundle 'org.codehaus.cargo:simple-war:1.7.7@war'
         }
         ```
         Then specify the repository to use to retrieve the remote dependency.
@@ -133,13 +134,13 @@ Also ensure a BUNDLE definition for this CICS bundle has already been created in
         bunddef  = 'MYDEF'
         csdgroup = 'MYGROUP'
         url      = 'myserver.site.domain.com:1234'
-        username = project.myUsername      // Define myUsername in gradle.properties file
-        password = project.myPassword      // Define myPassword in gradle.properties file
+        username = myUsername
+        password = myPassword
     }
     ```
     Edit the code snippet above to match your CICS configuration:
     * `url` - Set the transport, hostname, and port for your CMCI
-    * `username & password` - These are your credentials for CICS. You can define them in the `gradle.properties` file and call them here, or use other plugins for further encryption, such as the [gradle-credentials-plugin](https://github.com/etiennestuder/gradle-credentials-plugin).
+    * `username & password` - These are your credentials for CICS. You can pass these into the build in a variety of ways (see [Gradle User Guide](https://docs.gradle.org/current/userguide/build_environment.html)), or use other plugins for further encryption, such as the [gradle-credentials-plugin](https://github.com/etiennestuder/gradle-credentials-plugin).
     * `bunddef` - The name of the BUNDLE definition to be installed.
     * `csdgroup` - The name of the CSD group that contains the BUNDLE definition.
     * `cicsplex` - The name of the CICSplex that the target region belongs to.
