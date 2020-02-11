@@ -18,11 +18,10 @@ import com.ibm.cics.bundle.parts.EarBundlePart
 import org.gradle.api.GradleException
 import java.io.File
 
-
-class EarbundlePartBinding : AbstractNameableJavaBundlePartBinding() {
+class EarbundlePartBinding(file: File) : AbstractJavaBundlePartBinding(file) {
 
 	@Throws(GradleException::class)
-	override fun toBundlePartImpl(file: File?): BundleResource {
+	override fun toBundlePartImpl(): BundleResource {
 		return EarBundlePart(
 				name,
 				jvmserver,

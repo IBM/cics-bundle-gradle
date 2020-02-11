@@ -17,19 +17,17 @@ import com.ibm.cics.bundle.parts.BundleResource
 import org.gradle.api.GradleException
 import java.io.File
 
-abstract class AbstractBundlePartBinding {
-
-	var cacheFile: File? = null
+abstract class AbstractBundlePartBinding(var file: File) {
 
 	@Throws(GradleException::class)
-	fun toBundlePart(cacheFile: File?, defaultJVMServer: String): BundleResource {
-		applyDefaults(cacheFile, defaultJVMServer)
-		return toBundlePartImpl(cacheFile)
+	fun toBundlePart(defaultJVMServer: String): BundleResource {
+		applyDefaults(defaultJVMServer)
+		return toBundlePartImpl()
 	}
 
 	@Throws(GradleException::class)
-	protected abstract fun applyDefaults(file: File?, defaultJVMServer: String)
+	protected abstract fun applyDefaults(defaultJVMServer: String)
 
 	@Throws(GradleException::class)
-	protected abstract fun toBundlePartImpl(file: File?): BundleResource
+	protected abstract fun toBundlePartImpl(): BundleResource
 }
