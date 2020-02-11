@@ -3,27 +3,31 @@
 A collection of Gradle plugins and utilities that can be used to build CICS bundles, ready to be installed into CICS TS.
 
 This project contains:
-  The CICS bundle Gradle plugin (`com.ibm.cics.bundle`), a Gradle plugin that can build CICS bundles, include selected Java-based dependencies, and deploy them to CICS.
+  The CICS bundle Gradle plugin (`com.ibm.cics.bundle`), a Gradle plugin that can build CICS bundles, include selected bundle parts, and deploy them to CICS.
 
-## Supported bundlepart types
-The CICS bundle Gradle plugin supports building CICS bundles that contain the following bundleparts:
-  * EAR
-  * OSGi bundle
-  * WAR
-  * EBA
-  * EPADAPTER
-  * EPADAPTERSET
-  * EVENTBINDING
-  * FILE
-  * LIBRARY
-  * PACKAGESET
-  * POLICY
-  * PROGRAM
-  * TCPIPSERVICE
-  * TRANSACTION
-  * URIMAP  
+## Supported bundle part types
+The CICS bundle Gradle plugin supports building CICS bundles that contain the following bundle parts:
 
-It can deploy CICS bundles containing any bundleparts.
+**Java-based bundle parts**
+ * OSGi Bundle (JAR)
+ * Web Archive (WAR)
+ * Enterprise Archive (EAR)
+ * Enterprise Bundle Archive (EBA)
+ 
+**Non-Java-based bundle parts**
+ * EPADAPTER
+ * EPADAPTERSET
+ * EVENTBINDING
+ * FILE
+ * LIBRARY
+ * PACKAGESET
+ * POLICY
+ * PROGRAM
+ * TCPIPSERVICE
+ * TRANSACTION
+ * URIMAP
+
+It can deploy CICS bundles containing any bundle parts.
 
 ## Pre-requisites
  The plugin requires Gradle version 5 features and will not work correctly on earlier releases of Gradle.  
@@ -37,9 +41,9 @@ It can deploy CICS bundles containing any bundleparts.
 
 Tasks | Description
 --|--
-`buildCICSBundle`| Builds a CICS bundle.<br/>Java-based dependencies such as OSGi bundle, WAR, EAR, or EBAs are added using the `cicsBundle` dependency configuration. You'll need to specify the default JVM server in the `cicsBundle` extension block.<br/>Resource definition bundleparts are automatically added from the src/main/resources folder of your project.
+`buildCICSBundle`| Builds a CICS bundle.<br/>Java-based bundle parts are added using the `cicsBundle` dependency configuration.<br/>Non-Java-based bundle parts are automatically added from the src/main/resources folder of your project.
 `packageCICSBundle`| Packages the built CICS bundle into a zipped archive.
-`deployCICSBundle`| Deploys the packaged CICS bundle to CICS on z/OS, installs and enables it, using settings in the `cicsBundle` extension block.
+`deployCICSBundle`| Deploys the packaged CICS bundle to CICS on z/OS, installs and enables it.
 `build` | Performs a full build of the project, including assembling all artifacts and running all tests. **You only need to call the `build` task when building or packaging your CICS bundles as it depends on those tasks.**
 
 Their dependencies are as follows:
@@ -55,7 +59,11 @@ Their dependencies are as follows:
 ```
 
 ## Configure the CICS bundle Gradle plugin
-To use the plugin, clone or download the GitHub repository. Then create a separate Gradle module for your CICS bundle and configure it as follows.
+To use the plugin, you may either:
+ * Add the CICS bundle configuration into an existing Gradle Java project, such as a WAR project. This will give you a single standalone project containing both the Java application and the CICS bundle configuration.
+ * Create a separate Gradle module to contain the CICS bundle configuration. This will give you a multi-part project where the CICS bundle configuration is kept separate from the Java application.
+ 
+In either case, configure the Gradle module as follows:
 
 1. Add the plugin id to your `build.gradle`.
     ```gradle
@@ -81,20 +89,20 @@ To use the plugin, clone or download the GitHub repository. Then create a separa
     ```gradle
     version '1.0.0'
     ```
-1. Add Java-based dependencies to the bundle by adding them to the `dependencies` block using the `cicsBundle` configuration.
-    * To include a dependency produced by the bundle project itself, e.g. when you are converting an existing Java project into a CICS bundle, use the `files` notation, and specify the name of the task which produces the bundlepart archive, e.g. `jar`, `war`, or `ear`.
+1. Add Java-based bundle parts to the bundle by adding them to the `dependencies` block using the `cicsBundle` configuration.
+    * If using the standalone project option: To include the bundle part produced by the project, use the `files` notation, and specify the name of the task which produces the bundle part archive, e.g. `jar`, `war`, or `ear`.
         ```gradle
         dependencies {
             cicsBundle files(war)
         }
         ```
-    * To include a dependency produced by a different local project, use the `project` notation with the `archives` configuration, and specify the path to the local project.
+    * If using the multi-part project option: To include a bundle part produced by a separate Gradle module, use the `project` notation with the `archives` configuration, and specify the path to the module.
         ```gradle
         dependencies {
-            cicsBundle project(path: ':path-to-other-project', configuration: 'archives')
+            cicsBundle project(path: ':path-to-other-module', configuration: 'archives')
         }
         ```
-    * To include a dependency hosted in a remote repository such as Maven Central, use the default `module` notation, using any of the permitted formats.
+    * To include a bundle part hosted in a remote repository such as Maven Central, use the default `module` notation, using any of the permitted formats.
         ```gradle
         dependencies {
             // Map notation
@@ -103,20 +111,20 @@ To use the plugin, clone or download the GitHub repository. Then create a separa
             cicsBundle 'org.codehaus.cargo:simple-war:1.7.7@war'
         }
         ```
-        Then specify the repository to use to retrieve the remote dependency.
+        Then specify the repository to use to retrieve the remote bundle part.
         ```gradle
         repositories {
             mavenCentral()
         }
         ```
-1. If using Java-based bundleparts, add the `cicsBundle` extension block to define the default JVM server that they will use.
+1. If you have included any Java-based bundle parts, add the `cicsBundle` extension block to define the default JVM server that they will use.
     ```gradle
     cicsBundle {
         defaultJVMServer = 'MYJVMS'
     }
     ```
-1. To include CICS resource definition bundleparts like FILE or URIMAP, put the bundlepart files in the src/main/resources directory. Files in this directory will be included within the output CICS bundle, and supported types will have a <define> element added to the CICS bundle's cics.xml.
-1. Invoke the `build` task in your build. It builds the CICS bundle with its contained bundleparts, and packages it as a zip file.
+1. To include non-Java-based bundle parts, put the bundle part files in the src/main/resources directory. Files in this directory will be automatically included in the CICS bundle, and supported types will have a <define> element added to the CICS bundle's cics.xml.
+1. Invoke the `build` task in your build. It builds the CICS bundle with its contained bundle parts, and packages it as a zip file.
     ```
     ./gradlew build
     ```

@@ -18,7 +18,7 @@ import static org.gradle.testkit.runner.TaskOutcome.SUCCESS
 
 class BuildTests extends AbstractTest {
 
-	// TODO Test that default JVMServer value is used if not specified in extension.
+	// TODO Test that build fails if defaultJVMServer not specified in extension.
 
 	/**
 	 * Common build.gradle contents for most tests.
@@ -270,9 +270,7 @@ class BuildTests extends AbstractTest {
 
 		then:
 		checkResults(result,
-				[BuildBundleTask.UNSUPPORTED_EXTENSIONS_FOUND,
-				 "Unsupported file extension 'gz' for dependency 'apache-jmeter-2.3.4-atlassian-1.tar.gz'"
-				],
+				["Unsupported file extension 'gz' for Java-based bundle part 'apache-jmeter-2.3.4-atlassian-1.tar.gz'"],
 				[],
 				FAILED)
 	}
@@ -294,7 +292,7 @@ class BuildTests extends AbstractTest {
 
 		then:
 		checkResults(result,
-				[BuildBundleTask.NO_DEPENDENCIES_WARNING],
+				["No Java-based bundle parts found in '${BundlePlugin.BUNDLE_DEPENDENCY_CONFIGURATION_NAME}' dependency configuration"],
 				[],
 				SUCCESS)
 	}
@@ -341,18 +339,18 @@ class BuildTests extends AbstractTest {
 		then:
 		checkResults(result,
 				['javax.servlet-api-3.1.0.jar',
-				 "Adding bundle part 'TCPIPSV1.tcpipservice'",
-				 "Adding bundle part 'TSQAdapter.epadapter'",
-				 "Adding bundle part 'TRND.transaction'",
-				 "Adding bundle part 'CATMANAGER.evbind'",
-				 "Adding bundle part 'LIBDEF1.library'",
-				 "Adding bundle part 'URIMP011.urimap'",
-				 "Adding bundle part 'PROGDEF1.program'",
-				 "Adding bundle part 'FILEDEFA.file'",
-				 "Adding bundle part 'PACKSET1.packageset'",
-				 "Adding bundle part 'EPADSET1.epadapterset'",
-				 "Adding bundle part 'TDQAdapter.epadapter'",
-				 "Adding bundle part 'POLDEM1.policy'"
+				 "Adding non-Java-based bundle part: 'TCPIPSV1.tcpipservice'",
+				 "Adding non-Java-based bundle part: 'TSQAdapter.epadapter'",
+				 "Adding non-Java-based bundle part: 'TRND.transaction'",
+				 "Adding non-Java-based bundle part: 'CATMANAGER.evbind'",
+				 "Adding non-Java-based bundle part: 'LIBDEF1.library'",
+				 "Adding non-Java-based bundle part: 'URIMP011.urimap'",
+				 "Adding non-Java-based bundle part: 'PROGDEF1.program'",
+				 "Adding non-Java-based bundle part: 'FILEDEFA.file'",
+				 "Adding non-Java-based bundle part: 'PACKSET1.packageset'",
+				 "Adding non-Java-based bundle part: 'EPADSET1.epadapterset'",
+				 "Adding non-Java-based bundle part: 'TDQAdapter.epadapter'",
+				 "Adding non-Java-based bundle part: 'POLDEM1.policy'"
 				],
 				['cics-bundle-gradle-1.0.0-SNAPSHOT/javax.servlet-api-3.1.0.osgibundle'],
 				SUCCESS
@@ -391,18 +389,18 @@ class BuildTests extends AbstractTest {
 
 		then:
 		checkResults(result,
-				["Adding bundle part 'TCPIPSV1.tcpipservice'",
-				 "Adding bundle part 'TSQAdapter.epadapter'",
-				 "Adding bundle part 'TRND.transaction'",
-				 "Adding bundle part 'CATMANAGER.evbind'",
-				 "Adding bundle part 'LIBDEF1.library'",
-				 "Adding bundle part 'URIMP011.urimap'",
-				 "Adding bundle part 'PROGDEF1.program'",
-				 "Adding bundle part 'FILEDEFA.file'",
-				 "Adding bundle part 'PACKSET1.packageset'",
-				 "Adding bundle part 'EPADSET1.epadapterset'",
-				 "Adding bundle part 'TDQAdapter.epadapter'",
-				 "Adding bundle part 'POLDEM1.policy'"
+				["Adding non-Java-based bundle part: 'TCPIPSV1.tcpipservice'",
+				 "Adding non-Java-based bundle part: 'TSQAdapter.epadapter'",
+				 "Adding non-Java-based bundle part: 'TRND.transaction'",
+				 "Adding non-Java-based bundle part: 'CATMANAGER.evbind'",
+				 "Adding non-Java-based bundle part: 'LIBDEF1.library'",
+				 "Adding non-Java-based bundle part: 'URIMP011.urimap'",
+				 "Adding non-Java-based bundle part: 'PROGDEF1.program'",
+				 "Adding non-Java-based bundle part: 'FILEDEFA.file'",
+				 "Adding non-Java-based bundle part: 'PACKSET1.packageset'",
+				 "Adding non-Java-based bundle part: 'EPADSET1.epadapterset'",
+				 "Adding non-Java-based bundle part: 'TDQAdapter.epadapter'",
+				 "Adding non-Java-based bundle part: 'POLDEM1.policy'"
 				],
 				[],
 				SUCCESS
@@ -441,7 +439,7 @@ class BuildTests extends AbstractTest {
 
 		then:
 		checkResults(result,
-				["No resources folder '${BuildBundleTask.RESOURCES_PATH}' to search for bundle parts"],
+				["No non-Java-based bundle parts to add, because resources directory '${BuildBundleTask.RESOURCES_PATH}' does not exist"],
 				[],
 				SUCCESS
 		)
@@ -483,7 +481,7 @@ class BuildTests extends AbstractTest {
 
 		then:
 		checkResults(result,
-				["Adding bundle part 'FILEDEFA.file'"],
+				["Adding non-Java-based bundle part: 'FILEDEFA.file'"],
 				[],
 				SUCCESS
 		)
@@ -499,8 +497,8 @@ class BuildTests extends AbstractTest {
 
 		then:
 		checkResults(result,
-				["Adding bundle part 'FILEDEFA.file'",
-				 "Adding bundle part 'LIBDEF1.library'",
+				["Adding non-Java-based bundle part: 'FILEDEFA.file'",
+				 "Adding non-Java-based bundle part: 'LIBDEF1.library'",
 				],
 				[],
 				SUCCESS
