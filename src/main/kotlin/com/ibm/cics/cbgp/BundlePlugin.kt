@@ -44,7 +44,7 @@ class BundlePlugin : Plugin<Project> {
 
 		// Define build task
 		val buildTaskProvider = project.tasks.register(BUILD_TASK_NAME, BuildBundleTask::class.java) {
-			this.description = "Builds a CICS bundle including all Java-based dependencies and resource definition artifacts."
+			this.description = "Builds a CICS bundle including all bundle parts."
 			this.group = BasePlugin.BUILD_GROUP
 		}
 

@@ -19,7 +19,6 @@ import org.apache.commons.io.FileUtils
 import org.gradle.api.DefaultTask
 import org.gradle.api.GradleException
 import org.gradle.api.artifacts.Configuration
-import org.gradle.api.artifacts.ResolvedConfiguration
 import org.gradle.api.file.DirectoryProperty
 import org.gradle.api.tasks.*
 import org.gradle.util.VersionNumber
@@ -33,11 +32,6 @@ open class BuildBundleTask : DefaultTask() {
 
 		const val RESOURCES_PATH = "src/main/resources"
 		val VALID_DEPENDENCY_FILE_EXTENSIONS = listOf("ear", "jar", "war", "eba")
-
-		const val FAILED_DEPENDENCY_RESOLUTION = "Failed to resolve '${BundlePlugin.BUNDLE_DEPENDENCY_CONFIGURATION_NAME}' dependencies"
-		const val NO_DEPENDENCIES_WARNING = "Warning, no external or project dependencies in '${BundlePlugin.BUNDLE_DEPENDENCY_CONFIGURATION_NAME}' configuration"
-		val UNSUPPORTED_EXTENSIONS_FOUND = "Unsupported file extensions for some dependencies, see earlier messages. Supported extensions are: $VALID_DEPENDENCY_FILE_EXTENSIONS."
-		const val BAD_VERSION_NUMBER = "Bad project version number"
 	}
 
 	/**
@@ -74,29 +68,22 @@ open class BuildBundleTask : DefaultTask() {
 		// Delete existing output directory
 		val outputDirectoryFile = outputDirectory.get().asFile
 		if (outputDirectoryFile.exists()) {
-			logger.debug("Deleting $outputDirectoryFile")
+			logger.debug("Deleting $name output directory: $outputDirectoryFile")
 			try {
 				FileUtils.deleteDirectory(outputDirectoryFile)
 			} catch (e: IOException) {
-				throw GradleException("Unable to delete CICS bundle output directory $outputDirectoryFile", e)
+				throw GradleException("Unable to delete $name output directory: $outputDirectoryFile", e)
 			}
 		}
 
-		processCICSBundle()
-	}
-
-	private fun processCICSBundle() {
-		logger.info("Processing '${BundlePlugin.BUNDLE_DEPENDENCY_CONFIGURATION_NAME}' configuration")
+		logger.info("Adding bundle parts to the bundle")
 		val bundlePublisher = initBundlePublisher()
-		processDependencies(bundlePublisher)
-		addStaticResourcesToBundle(bundlePublisher)
 
-		try {
-			bundlePublisher.publishResources()
-			bundlePublisher.publishDynamicResources()
-		} catch (e: PublishException) {
-			throw GradleException(e.message as String, e)
-		}
+		addJavaBundlePartsToBundle(bundlePublisher)
+		addNonJavaBundlePartsToBundle(bundlePublisher)
+
+		bundlePublisher.publishResources()
+		bundlePublisher.publishDynamicResources()
 	}
 
 	private fun initBundlePublisher(): BundlePublisher {
@@ -121,115 +108,69 @@ open class BuildBundleTask : DefaultTask() {
 				return versionNumber
 			}
 		}
-		throw GradleException(BAD_VERSION_NUMBER)
+		throw GradleException("Project version number '$pv' could not be parsed into MAJOR.MINOR.MICRO.PATCH format")
 	}
 
-	private fun processDependencies(bundlePublisher: BundlePublisher) {
-		val resolved = validateResolvedFiles()
-		if (resolved != null) {
-			addResolvedFilesToBundle(resolved, bundlePublisher)
-		}
-	}
-
-	private fun validateResolvedFiles(): ResolvedConfiguration? {
+	private fun addJavaBundlePartsToBundle(bundlePublisher: BundlePublisher) {
+		logger.info("Adding Java-based bundle parts from '${BundlePlugin.BUNDLE_DEPENDENCY_CONFIGURATION_NAME}' dependency configuration")
 		val resolved = cicsBundleConfig.resolvedConfiguration
 		if (resolved.hasError()) {
-			throw GradleException(FAILED_DEPENDENCY_RESOLUTION)
+			throw GradleException("Failed to resolve Java-based bundle parts from '${BundlePlugin.BUNDLE_DEPENDENCY_CONFIGURATION_NAME}' dependency configuration")
 		}
 
 		if (resolved.files.isEmpty()) {
-			logger.warn(NO_DEPENDENCIES_WARNING)
-			return null
+			logger.info("No Java-based bundle parts found in '${BundlePlugin.BUNDLE_DEPENDENCY_CONFIGURATION_NAME}' dependency configuration")
+			return
 		}
 
-		var allExtensionsOk = true
 		resolved.files.forEach {
-			if (it.extension.isNullOrEmpty()) {
-				logger.error("No file extension found for dependency '${it.name}'")
-				allExtensionsOk = false
-			} else if (!VALID_DEPENDENCY_FILE_EXTENSIONS.contains(it.extension)) {
-				logger.error("Unsupported file extension '${it.extension}' for dependency '${it.name}'")
-				allExtensionsOk = false
+			if (!VALID_DEPENDENCY_FILE_EXTENSIONS.contains(it.extension)) {
+				logger.error("Unsupported file extension '${it.extension}' for Java-based bundle part '${it.name}'. Supported extensions are: $VALID_DEPENDENCY_FILE_EXTENSIONS.")
 			}
 		}
 
-		if (!allExtensionsOk) {
-			throw GradleException(UNSUPPORTED_EXTENSIONS_FOUND)
-		}
-		return resolved
-	}
-
-	private fun addResolvedFilesToBundle(resolved: ResolvedConfiguration, bundlePublisher: BundlePublisher) {
-		val resolvedFiles = resolved.files.toTypedArray()
-		resolvedFiles.forEach { file ->
-			logger.lifecycle("Adding Java-based dependency: '$file'")
-			// Already checked all extensions will be one of these
+		resolved.files.toTypedArray().forEach { file ->
+			logger.lifecycle("Adding Java-based bundle part: '$file'")
+			val binding: AbstractJavaBundlePartBinding
 			when (file.extension) {
-				"ear" -> addEar(file, bundlePublisher)
-				"jar" -> addJar(file, bundlePublisher)
-				"war" -> addWar(file, bundlePublisher)
-				"eba" -> addEba(file, bundlePublisher)
+				"jar" -> binding = OsgibundlePartBinding(file)
+				"war" -> binding = WarbundlePartBinding(file)
+				"ear" -> binding = EarbundlePartBinding(file)
+				"eba" -> binding = EbabundlePartBinding(file)
+				else -> throw GradleException("Unsupported file extension '${file.extension}' for Java-based bundle part '${file.name}'. Supported extensions are: $VALID_DEPENDENCY_FILE_EXTENSIONS.")
+			}
+			try {
+				bundlePublisher.addResource(binding.toBundlePart(defaultJVMServer))
+			} catch (e: PublishException) {
+				throw GradleException("Failure adding Java-based bundle part '${binding.name}' : ${e.message}", e)
 			}
 		}
 		return
 	}
 
-	private fun addEar(file: File, bundlePublisher: BundlePublisher) {
-		val binding = EarbundlePartBinding(file)
-		addJavaBundlePartBinding(binding, bundlePublisher)
-	}
-
-	private fun addJar(file: File, bundlePublisher: BundlePublisher) {
-		val binding = OsgibundlePartBinding(file)
-		addJavaBundlePartBinding(binding, bundlePublisher)
-	}
-
-	private fun addWar(file: File, bundlePublisher: BundlePublisher) {
-		val binding = WarbundlePartBinding(file)
-		addJavaBundlePartBinding(binding, bundlePublisher)
-	}
-
-	private fun addEba(file: File, bundlePublisher: BundlePublisher) {
-		val binding = EbabundlePartBinding(file)
-		addJavaBundlePartBinding(binding, bundlePublisher)
-	}
-
-	private fun addJavaBundlePartBinding(binding: AbstractJavaBundlePartBinding, bundlePublisher: BundlePublisher) {
-		try {
-			bundlePublisher.addResource(binding.toBundlePart(defaultJVMServer))
-		} catch (e: PublishException) {
-			throw GradleException("Error adding bundle resource for artifact `$name` : ${e.message} ")
-		}
-	}
-
-	private fun addStaticResourcesToBundle(bundlePublisher: BundlePublisher) {
-
+	private fun addNonJavaBundlePartsToBundle(bundlePublisher: BundlePublisher) {
+		logger.info("Adding non-Java-based bundle parts from '$RESOURCES_PATH'")
 		if (resourcesDirectory.isPresent) {
-			logger.lifecycle("Adding bundle parts from '$RESOURCES_PATH'")
 			val resourcesDirectoryPath = resourcesDirectory.get().asFile.toPath()
-			if (Files.isDirectory(resourcesDirectoryPath)) {
-				try {
-					File(resourcesDirectoryPath.toString())
-							.walk(FileWalkDirection.TOP_DOWN)
-							.filter { it.isFile }
-							.forEach {
-								try {
-									logger.lifecycle("Adding bundle part '${it.name}'")
-									bundlePublisher.addStaticResource(resourcesDirectoryPath.relativize(it.toPath())) {
-										Files.newInputStream(it.toPath())
-									}
-								} catch (e: PublishException) {
-									throw GradleException("Failure adding bundle part '${it.name}' : ${e.message}", e)
+			try {
+				File(resourcesDirectoryPath.toString())
+						.walk(FileWalkDirection.TOP_DOWN)
+						.filter { it.isFile }
+						.forEach { file ->
+							try {
+								logger.lifecycle("Adding non-Java-based bundle part: '${file.name}'")
+								bundlePublisher.addStaticResource(resourcesDirectoryPath.relativize(file.toPath())) {
+									Files.newInputStream(file.toPath())
 								}
+							} catch (e: PublishException) {
+								throw GradleException("Failure adding non-Java-based bundle part: '${file.name}' : ${e.message}", e)
 							}
-				} catch (e: IOException) {
-					throw GradleException("Failure adding bundle parts", e)
-				}
-			} else {
-				throw GradleException("Resources folder path '$resourcesDirectoryPath' is not a directory")
+						}
+			} catch (e: IOException) {
+				throw GradleException("Failure adding non-Java-based bundle parts", e)
 			}
 		} else {
-			logger.info("No resources folder '$RESOURCES_PATH' to search for bundle parts")
+			logger.info("No non-Java-based bundle parts to add, because resources directory '$RESOURCES_PATH' does not exist")
 		}
 	}
 }
