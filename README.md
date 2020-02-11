@@ -116,6 +116,9 @@ To use the plugin, clone or download the GitHub repository. Then create a separa
     ```
 1. To include CICS resource definition bundleparts like FILE or URIMAP, put the bundlepart files in the src/main/resources directory. Files in this directory will be included within the output CICS bundle, and supported types will have a <define> element added to the CICS bundle's cics.xml.
 1. Invoke the `build` task in your build. It builds the CICS bundle with its contained bundleparts, and packages it as a zip file.
+    ```
+    ./gradlew build
+    ```
 
 ## Deploy a CICS bundle
 Deploying your bundle to CICS requires extra configuration in CICS, as described in [Pre-requisites](https://github.com/IBM/cics-bundle-gradle#pre-requisites).
@@ -142,6 +145,9 @@ Also ensure a BUNDLE definition for this CICS bundle has already been created in
     * `cicsplex` - The name of the CICSplex that the target region belongs to.
     * `region` - The name of the region that the bundle should be installed to.  
 1. Invoke the `deployCICSBundle` task in your build to deploy the bundle to the target CICSplex and region.
+    ```
+    ./gradlew deployCICSBundle
+    ```
 
 ## Contributing
 
