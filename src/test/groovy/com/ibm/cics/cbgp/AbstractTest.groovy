@@ -13,49 +13,129 @@
  */
 package com.ibm.cics.cbgp
 
+import com.github.tomakehurst.wiremock.junit.WireMockRule
+import org.apache.commons.io.FileUtils
 import org.gradle.testkit.runner.BuildResult
 import org.gradle.testkit.runner.GradleRunner
-import org.gradle.testkit.runner.TaskOutcome
 import org.junit.Rule
-import org.junit.rules.TemporaryFolder
 import spock.lang.Specification
 
 import java.lang.management.ManagementFactory
 
+import static com.github.tomakehurst.wiremock.core.WireMockConfiguration.wireMockConfig
+
 abstract class AbstractTest extends Specification {
 
 	@Rule
-	public TemporaryFolder testProjectDir = new TemporaryFolder()
-	protected File settingsFile
-	protected File buildFile
+	public WireMockRule wireMockRule = new WireMockRule(wireMockConfig().dynamicPort())
+
 	protected boolean isDebug = ManagementFactory.getRuntimeMXBean().getInputArguments().toString().indexOf("-agentlib:jdwp") > 0
 
-	private defaultTask
+	protected String rootProjectName
+	protected File rootProjectDir
+	protected String bundleProjectName
+	protected File bundleProjectDir
+	protected String projectVersion = "1.0.0"
+	protected String gradlePropertiesFilename = "gradle.properties"
 
-	def commonSetup(String defaultTask) {
-		this.defaultTask = defaultTask
+	/**
+	 * Set to false and set username and password in gradle.properties
+	 * if you want to deploy to CICSEX56 for real.
+	 */
+	protected boolean wireMock = true
+	protected String url
+
+	def setup() {
 		ExpandoMetaClass.disableGlobally()
-		settingsFile = testProjectDir.newFile('settings.gradle')
-		buildFile = testProjectDir.newFile('build.gradle')
+		if (wireMock) {
+			WireMock.setupWiremock()
+			url = "http://localhost:${wireMockRule.port()}"
+		} else {
+			url = "https://cicsex56.hursley.ibm.com:28951"
+		}
 	}
 
-	def cleanup() {
-		def tempFolder = new File(buildFile.parent)
-		assert tempFolder.deleteDir(): "Failed to clean-up test folder '$tempFolder'"
+	def getTestName() {
+		return "$specificationContext.currentIteration.name"
 	}
 
-	protected def runGradleAndFail() {
-		return runGradle([defaultTask], true)
+	protected def getBundleNameAndVersion() {
+		return "${bundleProjectName}-${projectVersion}"
 	}
 
-	// Run the gradle build with defaults and print the test output
-	protected def runGradle(List args = [defaultTask], boolean failExpected = false) {
+	protected static def getFileInDir(File directory, String fileName) {
+		return new File(directory.path + "/$fileName")
+	}
+
+	protected def getBuildFile() {
+		return getFileInDir(bundleProjectDir, "build.gradle")
+	}
+
+	protected def getGradlePropertiesFile() {
+		return getFileInDir(bundleProjectDir, "gradle.properties")
+	}
+
+	protected def getResourcesDir() {
+		return getFileInDir(bundleProjectDir, BuildBundleTask.RESOURCES_PATH)
+	}
+
+	protected def getBuildDir() {
+		return getFileInDir(bundleProjectDir, "build")
+	}
+
+	protected def getDistributionsDir() {
+		return getFileInDir(buildDir, "distributions")
+	}
+
+	protected def getArchiveFile() {
+		return getFileInDir(distributionsDir, "${bundleNameAndVersion}.zip")
+	}
+
+	protected def getBundleBuildDir() {
+		return getFileInDir(buildDir, "${bundleNameAndVersion}")
+	}
+
+	protected def getManifestFile() {
+		return getFileInDir(bundleBuildDir, "META-INF/cics.xml")
+	}
+
+	protected def copyTestProject() {
+
+		File srcFile = new File("build/resources/test/$rootProjectName")
+		File destFile = new File("build/test-projects/$testName/$rootProjectName")
+		FileUtils.copyDirectory(srcFile, destFile)
+		rootProjectDir = destFile
+		if (bundleProjectName == rootProjectName) {
+			bundleProjectDir = rootProjectDir
+		} else {
+			bundleProjectDir = getFileInDir(rootProjectDir, bundleProjectName)
+		}
+		copyGradleProperties()
+	}
+
+	protected def copyGradleProperties() {
+		File srcFile = new File("build/resources/test/$gradlePropertiesFilename")
+		File destFile = gradlePropertiesFile
+		FileUtils.copyFile(srcFile, destFile)
+	}
+
+	protected def runGradleAndSucceed(List args) {
+		return runGradle(args, false)
+	}
+
+	protected def runGradleAndFail(List args) {
+		return runGradle(args, true)
+	}
+
+	// Run the gradle build and print the test output
+	private def runGradle(List args, boolean failExpected) {
 		def result
 		args.add("--stacktrace")
 		args.add("--info")
+		args.add("-Purl=$url".toString())
 		GradleRunner gradleRunner = GradleRunner
 				.create()
-				.withProjectDir(testProjectDir.root)
+				.withProjectDir(rootProjectDir)
 				.withArguments(args)
 				.withPluginClasspath()
 				.withDebug(isDebug)
@@ -66,116 +146,98 @@ abstract class AbstractTest extends Specification {
 		} else {
 			result = gradleRunner.buildAndFail()
 		}
-		printRunOutput(result)
+		printOutput(result)
 		return result
 	}
 
-	private void printRunOutput(BuildResult result) {
-		def title = "\n----- '$specificationContext.currentIteration.name' output: -----"
-		println(title)
-		println(result.output)
-		println('-' * title.length())
-		println()
-	}
-
-	protected def checkResults(BuildResult result, List resultStrings, List outputFiles, TaskOutcome outcome) {
-		printTemporaryFileTree()
-		resultStrings.each {
-			assert result.output.contains(it): "Missing output string '$it'"
-		}
-		outputFiles.each {
-			assert getFileInBuildOutputFolder(it).exists(): "Missing output file '${it.toString()}'"
-		}
-		result.task(":$defaultTask").outcome == outcome
-	}
-
-	protected def checkManifest(List manifestStringsExpected) {
-		def manifestFile = getFileInBuildOutputFolder('cics-bundle-gradle-1.0.0-SNAPSHOT/META-INF/cics.xml')
-		assert manifestFile.exists(): "Unable to find cics.xml"
-		def lines = manifestFile.readLines()
-		manifestStringsExpected.each { searchString ->
-			def found = lines.find { line ->
-				if (line.contains(searchString)) {
-					return true
-				}
-			}
-			if (!found) assert false: "cics.xml is missing : '$searchString'"
-		}
-	}
-
-	protected def checkManifestDoesNotContain(List manifestStringsUndesired) {
-		def manifestFile = getFileInBuildOutputFolder('cics-bundle-gradle-1.0.0-SNAPSHOT/META-INF/cics.xml')
-		assert manifestFile.exists(): "Unable to find cics.xml"
-		def lines = manifestFile.readLines()
-		manifestStringsUndesired.each { searchString ->
-			lines.each { line ->
-				if (line.contains(searchString)) {
-					assert false: "cics.xml contains unwanted data : '$searchString'"
-				}
-			}
-		}
-	}
-
-// Print out the file tree after the test excluding hidden files.
-// Print out cics.xml if found
-	protected void printTemporaryFileTree() {
-		def tempFolder = new File(buildFile.parent)
-		def manifestFilename = ""
-
-		def title = "\n----- '$specificationContext.currentIteration.name' Output file tree: $tempFolder -----"
-		println(title)
-		int prefixSize = tempFolder.toString().size() + 1
-		tempFolder.traverse {
-			def pathString = it.path.toString()
-			if (!pathString.contains("/.")) {
-				println('   ' + pathString.substring(prefixSize))
-			}
-			if (pathString.endsWith("cics.xml")) {
-				manifestFilename = pathString
-			}
-		}
-
-		if (!manifestFilename.isEmpty()) {
-			println("\ncics.xml contains\n-----------------")
-			def lnum = 1
-			new File(manifestFilename).eachLine {
-				line ->
-					def prtnum = String.format("%03d", lnum)
-					println "   $prtnum: $line"
-					lnum++
-			}
-			println("end of cics.xml\n")
-		}
-		println('-' * title.length())
-		println()
-	}
-
-	protected File getFileInBuildOutputFolder(String fileName) {
-		return new File(buildFile.parent + '/build/' + fileName)
-	}
-
-	protected def copyBundlePartsToResources(String source_folder) {
-		return copyBundlePartToResources(source_folder, null)
-	}
-
 	/**
-	 * Copy a file from test data directory into the project under test.
-	 * @param source_folder Test data directory
-	 * @param source_file File to copy, or null to copy everything in the directory.
+	 * Print the Gradle build output, the list of files in the test project excluding hidden files, and the contents
+	 * of cics.xml if it exists.
+	 * @param result
 	 */
-	protected def copyBundlePartToResources(String source_folder, String source_file) {
-		// Copy the bundle part(s) into the test build
-		def pluginClasspathResource = getClass().classLoader.findResource(source_folder)
-		if (pluginClasspathResource == null) {
-			throw new IllegalStateException("Did not find $source_file resource in $source_folder directory.")
-		}
-		def root = new File(pluginClasspathResource.path).parent
-		new AntBuilder().copy(todir: (buildFile.parent + "/src/main/resources/")) {
-			fileset(dir: (root + "/" + source_folder).toString()) {
-				if (source_file != null) {
-					include(name: source_file)
-				}
+	private void printOutput(BuildResult result) {
+
+		printGradleOutput(result)
+		printFileTree()
+		printManifestContents()
+	}
+
+	private void printGradleOutput(BuildResult result) {
+
+		println("----- '$testName' Gradle output: -----")
+		println()
+		println(result.output)
+		println("----- End Gradle output -----")
+		println()
+	}
+
+	private void printFileTree() {
+
+		println("----- '$testName' File tree: $rootProjectDir -----")
+		println()
+		rootProjectDir.traverse { file ->
+			def path = rootProjectDir.relativePath(file)
+			if (!path.contains("/.")) {
+				println('   ' + path)
 			}
 		}
+		println()
+		println("----- End File tree -----")
+		println()
+	}
+
+	private void printManifestContents() {
+
+		def manifestFile = getManifestFile()
+		if (manifestFile.exists()) {
+			println("----- '$testName' cics.xml: -----")
+			println()
+			def lineNumber = 1
+			manifestFile.eachLine { line ->
+				def lineNumber3Digits = String.format("%03d", lineNumber)
+				println "   $lineNumber3Digits: $line"
+				lineNumber++
+			}
+			println()
+			println("----- End cics.xml -----")
+			println()
+		}
+	}
+
+	protected static checkBuildOutputStrings(BuildResult result, List<String> expectedOutputStrings) {
+		expectedOutputStrings.each { expectedOutputString ->
+			assert result.output.contains(expectedOutputString): "Missing output string '$expectedOutputString'"
+		}
+	}
+
+	protected checkBuildOutputFiles(List<String> expectedOutputFiles) {
+		expectedOutputFiles.each { expectedOutputFile ->
+			assert getFileInDir(getBundleBuildDir(), expectedOutputFile).exists(): "Missing output file '${expectedOutputFile}'"
+		}
+	}
+
+	protected checkManifest(List<String> expectedManifestStrings, boolean failIfFound = false) {
+		def manifestFile = getManifestFile()
+		assert manifestFile.exists(): "Unable to find cics.xml"
+		def lines = manifestFile.readLines()
+		expectedManifestStrings.each { expectedManifestString ->
+			def found = lines.find { line ->
+				return line.contains(expectedManifestString)
+			}
+			if (found && failIfFound) {
+				assert false: "cics.xml contains unwanted data : '$expectedManifestString'"
+			}
+			if (!found && !failIfFound) {
+				assert false: "cics.xml is missing : '$expectedManifestString'"
+			}
+		}
+	}
+
+	protected checkManifestDoesNotContain(List<String> manifestStringsUndesired) {
+		checkManifest(manifestStringsUndesired, true)
+	}
+
+	protected void checkBundleArchiveFile() {
+		assert archiveFile.exists(): "Missing archive file '${archiveFile.getPath()}'"
 	}
 }
