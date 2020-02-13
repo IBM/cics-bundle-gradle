@@ -79,7 +79,7 @@ repositories {
 defaultTasks("build")
 
 dependencies {
-    implementation("com.ibm.cics:cics-bundle-common:0.0.3-SNAPSHOT")
+    implementation("com.ibm.cics:cics-bundle-common:1.0.0")
     testImplementation("junit:junit:4.12")
     testImplementation("org.spockframework:spock-core:1.1-groovy-2.4") {
         exclude(module =  "groovy-all")
