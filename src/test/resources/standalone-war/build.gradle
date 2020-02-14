@@ -1,0 +1,31 @@
+plugins {
+    id 'war'
+    id 'com.ibm.cics.bundle' version '0.0.1-SNAPSHOT'
+}
+
+version '1.0.0'
+
+sourceCompatibility = 1.8
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    providedCompile 'javax.servlet:javax.servlet-api:3.1.0'
+    cicsBundle files(war)
+}
+
+cicsBundle {
+    defaultJVMServer = project.defaultJVMServer
+
+    url = project.url
+    cicsplex = project.cicsplex
+    region = project.region
+    bunddef = 'GRADLESW'
+    csdgroup = project.csdgroup
+
+    username = project.username
+    password = project.password
+    insecure = project.insecure
+}

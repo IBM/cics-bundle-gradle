@@ -1,0 +1,6 @@
+rootProject.name = 'multi-project'
+
+include 'multi-bundle'
+include 'multi-osgi'
+include 'multi-war'
+include 'multi-ear'

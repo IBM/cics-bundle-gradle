@@ -23,7 +23,6 @@ import java.net.URI
 open class DeployBundleTask : DefaultTask() {
 
 	companion object {
-		const val MISSING_CONFIG = "Missing or empty deploy configuration"
 		const val MISSING_CICSPLEX = "Specify cicsplex for deploy"
 		const val MISSING_REGION = "Specify region for deploy"
 		const val MISSING_BUNDDEF = "Specify bundle definition name for deploy"
@@ -31,23 +30,22 @@ open class DeployBundleTask : DefaultTask() {
 		const val MISSING_URL = "Specify url for deploy"
 		const val MISSING_USERNAME = "Specify username for deploy"
 		const val MISSING_PASSWORD = "Specify password for deploy"
-		const val PLEASE_SPECIFY = "Please specify deploy configuration"
+		const val PLEASE_SPECIFY = "Please specify deploy configuration in build.gradle."
 
 		val DEPLOY_CONFIG_EXCEPTION =
-			PLEASE_SPECIFY + """\
+			PLEASE_SPECIFY + """
 
 			Example:
-				 ${BundlePlugin.BUNDLE_EXTENSION_NAME} {
+				${BundlePlugin.BUNDLE_EXTENSION_NAME} {
 					cicsplex = 'MYPLEX'
-					region   = 'MYEGION'
+					region   = 'MYREGION'
 					bunddef  = 'MYDEF'
 					csdgroup = 'MYGROUP'
-					url      = 'myserver.site.domain.com'
-					username = my_username      // Define my_username in gradle.properties
-					password = my_password      // Define my_password in gradle.properties      
-				} 
-				  
-				All items must be completed.
+					url      = 'https://hostname.com:port'
+					username = my_username
+					password = my_password 
+				}
+			All items must be completed.
 			""".trimIndent()
 	}
 
@@ -93,42 +91,34 @@ open class DeployBundleTask : DefaultTask() {
 	private fun validateBundleExtension() {
 		var blockValid = true
 
-		if (cicsplex.length +
-				region.length +
-				bunddef.length +
-				csdgroup.length == 0) {
-			logger.error(MISSING_CONFIG)
+		// Validate block items exist, no check on content
+		if (cicsplex.isEmpty()) {
+			logger.error(MISSING_CICSPLEX)
 			blockValid = false
-		} else {
-			// Validate block items exist, no check on content
-			if (cicsplex.isEmpty()) {
-				logger.error(MISSING_CICSPLEX)
-				blockValid = false
-			}
-			if (region.isEmpty()) {
-				logger.error(MISSING_REGION)
-				blockValid = false
-			}
-			if (bunddef.isEmpty()) {
-				logger.error(MISSING_BUNDDEF)
-				blockValid = false
-			}
-			if (csdgroup.isEmpty()) {
-				logger.error(MISSING_CSDGROUP)
-				blockValid = false
-			}
-			if (url.isEmpty()) {
-				logger.error(MISSING_URL)
-				blockValid = false
-			}
-			if (username.isEmpty()) {
-				logger.error(MISSING_USERNAME)
-				blockValid = false
-			}
-			if (password.isEmpty()) {
-				logger.error(MISSING_PASSWORD)
-				blockValid = false
-			}
+		}
+		if (region.isEmpty()) {
+			logger.error(MISSING_REGION)
+			blockValid = false
+		}
+		if (bunddef.isEmpty()) {
+			logger.error(MISSING_BUNDDEF)
+			blockValid = false
+		}
+		if (csdgroup.isEmpty()) {
+			logger.error(MISSING_CSDGROUP)
+			blockValid = false
+		}
+		if (url.isEmpty()) {
+			logger.error(MISSING_URL)
+			blockValid = false
+		}
+		if (username.isEmpty()) {
+			logger.error(MISSING_USERNAME)
+			blockValid = false
+		}
+		if (password.isEmpty()) {
+			logger.error(MISSING_PASSWORD)
+			blockValid = false
 		}
 
 		// Throw exception if anything is wrong in the extension block

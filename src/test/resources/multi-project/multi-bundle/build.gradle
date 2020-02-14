@@ -1,0 +1,36 @@
+plugins {
+	id 'com.ibm.cics.bundle' version '0.0.1-SNAPSHOT'
+}
+
+version '1.0.0'
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    // Local Java-based bundle parts in a separate project
+    cicsBundle project(path: ':multi-osgi', configuration: 'archives')
+    cicsBundle project(path: ':multi-war', configuration: 'archives')
+    cicsBundle project(path: ':multi-ear', configuration: 'archives')
+
+    // Remote Java-based bundle parts in Maven Central
+    cicsBundle(group: 'org.codehaus.cargo', name: 'simple-bundle', version: '1.7.7', ext: 'jar')
+    cicsBundle(group: 'org.codehaus.cargo', name: 'simple-war', version: '1.7.7', ext: 'war')
+    cicsBundle(group: 'org.codehaus.cargo', name: 'simple-ear', version: '1.7.7', ext: 'ear')
+    cicsBundle(group: 'org.apache.aries.samples.twitter', name: 'org.apache.aries.samples.twitter.eba', version: '1.0.0', ext: 'eba')
+}
+
+cicsBundle {
+    defaultJVMServer = project.defaultJVMServer
+
+    url = project.url
+    cicsplex = project.cicsplex
+    region = project.region
+    bunddef = 'GRADLEM'
+    csdgroup = project.csdgroup
+
+    username = project.username
+    password = project.password
+    insecure = project.insecure
+}

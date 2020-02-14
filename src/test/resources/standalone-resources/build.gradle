@@ -1,0 +1,19 @@
+plugins {
+    id 'com.ibm.cics.bundle' version '0.0.1-SNAPSHOT'
+}
+
+version '1.0.0'
+
+cicsBundle {
+    defaultJVMServer = project.defaultJVMServer
+
+    url = project.url
+    cicsplex = project.cicsplex
+    region = project.region
+    bunddef = 'GRADLESR'
+    csdgroup = project.csdgroup
+
+    username = project.username
+    password = project.password
+    insecure = project.insecure
+}

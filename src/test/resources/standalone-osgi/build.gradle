@@ -1,0 +1,41 @@
+plugins {
+    id 'java'
+    id 'osgi'
+    id 'com.ibm.cics.bundle' version '0.0.1-SNAPSHOT'
+}
+
+version '1.0.0'
+
+sourceCompatibility = 1.8
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    implementation (group: 'com.ibm.cics', name: 'com.ibm.cics.server', version: '1.700.1-5.5-PH11872')
+    cicsBundle files(jar)
+}
+
+jar {
+    manifest {
+        attributes(
+                'Bundle-SymbolicName': 'com.ibm.cics.standalone-osgi',
+                'CICS-MainClass': 'examples.hello.HelloCICSWorld, examples.hello.HelloWorld'
+        )
+    }
+}
+
+cicsBundle {
+    defaultJVMServer = project.defaultJVMServer
+
+    url = project.url
+    cicsplex = project.cicsplex
+    region = project.region
+    bunddef = 'GRADLESO'
+    csdgroup = project.csdgroup
+
+    username = project.username
+    password = project.password
+    insecure = project.insecure
+}

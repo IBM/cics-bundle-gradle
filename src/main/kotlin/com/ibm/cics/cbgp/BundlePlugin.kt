@@ -82,6 +82,9 @@ class BundlePlugin : Plugin<Project> {
 
 			// Wire output of package task to input of deploy task, by default
 			deployTaskProvider.get().inputFile.set(packageTaskProvider.get().outputFile)
+
+			// Never skip the deploy task, even if nothing has changed, because we can't know whether the bundle needs redeploying in CICS.
+			deployTaskProvider.get().outputs.upToDateWhen { false }
 		}
 
 		// Add the bundle zip to the 'archives' configuration so it can be consumed by other projects
