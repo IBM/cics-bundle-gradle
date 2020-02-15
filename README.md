@@ -3,7 +3,8 @@
 A collection of Gradle plugins and utilities that can be used to build CICS bundles, ready to be installed into CICS TS.
 
 This project contains:
-  The CICS bundle Gradle plugin (`com.ibm.cics.bundle`), a Gradle plugin that can build CICS bundles, include selected bundle parts, and deploy them to CICS.
+  * The CICS bundle Gradle plugin (`com.ibm.cics.bundle`), a Gradle plugin that can build CICS bundles, include selected bundle parts, and deploy them to CICS.
+  * `samples`, a collection of samples that show different ways of using this plugin.
 
 ## Supported bundle part types
 The CICS bundle Gradle plugin supports building CICS bundles that contain the following bundle parts:
@@ -13,7 +14,7 @@ The CICS bundle Gradle plugin supports building CICS bundles that contain the fo
  * Web Archive (WAR)
  * Enterprise Archive (EAR)
  * Enterprise Bundle Archive (EBA)
- 
+
 **Non-Java-based bundle parts**
  * EPADAPTER
  * EPADAPTERSET
@@ -60,9 +61,9 @@ Their dependencies are as follows:
 
 ## Configure the CICS bundle Gradle plugin
 To use the plugin, you may either:
- * Add the CICS bundle configuration into an existing Gradle Java project, such as a WAR project. This will give you a single standalone project containing both the Java application and the CICS bundle configuration.
- * Create a separate Gradle module to contain the CICS bundle configuration. This will give you a multi-part project where the CICS bundle configuration is kept separate from the Java application.
- 
+ * Add the CICS bundle configuration into an existing Gradle Java project, such as a WAR project. This will give you a single standalone project containing both the Java application and the CICS bundle configuration. The [Multi-part project sample (`gradle-multipart-sample`)](https://github.com/IBM/cics-bundle-gradle/tree/master/samples/gradle-multipart-sample) shows this case.
+ * Create a separate Gradle module to contain the CICS bundle configuration. This will give you a multi-part project where the CICS bundle configuration is kept separate from the Java application. The [Standalone project sample (`gradle-war-sample`)](https://github.com/IBM/cics-bundle-gradle/tree/master/samples/gradle-war-sample) shows this case.
+
 In either case, configure the Gradle module as follows:
 
 1. Add the plugin id to your `build.gradle`.
@@ -157,6 +158,14 @@ Also ensure a BUNDLE definition for this CICS bundle has already been created in
     ```
     ./gradlew deployCICSBundle
     ```
+
+## Samples
+Use of this plugin will vary depending on what you’re starting with and the structure of your project, for example, whether you'd like to create a separate Gradle module for the bundle configuration or you'd like to include it into your existing module. We have included some samples to demonstrate the different methods.  
+[Multi-part project sample (`gradle-multipart-sample`)](https://github.com/IBM/cics-bundle-gradle/tree/master/samples/gradle-multipart-sample)    
+This sample is the quickest way to try the plugin out if you don't already have a Gradle project. It shows how to configure a multi-part Gradle project to build and deploy a CICS bundle, with a separate module to contain bundle configurations. The sample has a parent Gradle project that contains a local and a remote JAVA project as child modules. It also contains a CICS child module that wraps the other two modules into a CICS bundle and deploys the built bundle to CICS. A `README` is included in the sample with detailed instructions.
+
+[Standalone project sample (`gradle-war-sample`)](https://github.com/IBM/cics-bundle-gradle/tree/master/samples/gradle-war-sample)  
+If you already have a Gradle module and want to add extra configuration to it for quick use of the plugin, check out this sample. It shows you how to configure an existing WAR project to build a CICS bundle. You can either copy and paste the configuration to your WAR project or import the full sample to see how it works. A `README` is included in the sample with detailed instructions.
 
 ## Contributing
 

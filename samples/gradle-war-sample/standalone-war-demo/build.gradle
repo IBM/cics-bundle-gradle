@@ -1,0 +1,36 @@
+plugins {
+    id 'com.ibm.cics.bundle' version '0.0.1-SNAPSHOT'
+    id 'war'
+}
+
+group 'com.ibm.cics'
+version '1.0.0'
+
+repositories {
+    mavenCentral()
+}
+
+sourceCompatibility = 1.8
+
+repositories {
+    mavenCentral()
+}
+
+cicsBundle {
+    defaultJVMServer = 'MYJVMSRVR'
+    cicsplex = 'MYPLEX'
+    region   = 'MYREGION'
+    bunddef  = 'MYBUN'
+    csdgroup = 'MYGROUP'
+    url      = 'myserver.site.domain.com:1234'
+    username = project.cicsUser    // Define my_username in gradle.properties file
+    password = project.cicsPass   // Define my_password in gradle.properties file
+}
+
+dependencies {
+    testCompile group: 'junit', name: 'junit', version: '4.12'
+    providedCompile 'javax.servlet:javax.servlet-api:3.1.0'
+    compileOnly 'com.ibm.cics:com.ibm.cics.server:1.700.0-5.5-PH10453'
+    compileOnly 'javax.annotation:jsr250-api:1.0'
+    cicsBundle files(war) //specify the name of the task which produces the bundle part archive
+}
