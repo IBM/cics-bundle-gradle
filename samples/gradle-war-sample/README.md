@@ -7,7 +7,7 @@ Your system programmer should create a BUNDLE definition in CSD and tell you the
 So for this sample, if your system programmer configured bundles-directory as `/u/someuser/bundles/`, the BUNDLEDIR would be `/u/someuser/bundles/standalone-war-demo_1.0.0`.
 
 # Using the sample
-There are 2 ways to use this sample. Option 1 is to use the whole sample as-is, for example, if you want to try this out before using it with an existing Maven project. Option 2 is to extend an existing Gradle project of packaging type war, which you’d like to package and install as a CICS bundle.
+There are 2 ways to use this sample. Option 1 is to use the whole sample as-is, for example, if you want to try this out before using it with an existing Gradle project. Option 2 is to extend an existing Gradle WAR project, which you’d like to package and install as a CICS bundle.
 
 ## Option 1: import the full sample
 [Clone the repository](https://github.com/IBM/cics-bundle-gradle.git) and import the sample, `samples/gradle-war-sample`, into your IDE.  

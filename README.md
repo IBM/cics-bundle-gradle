@@ -61,8 +61,8 @@ Their dependencies are as follows:
 
 ## Configure the CICS bundle Gradle plugin
 To use the plugin, you may either:
- * Add the CICS bundle configuration into an existing Gradle Java project, such as a WAR project. This will give you a single standalone project containing both the Java application and the CICS bundle configuration. The [Multi-part project sample (`gradle-multipart-sample`)](https://github.com/IBM/cics-bundle-gradle/tree/master/samples/gradle-multipart-sample) shows this case.
- * Create a separate Gradle module to contain the CICS bundle configuration. This will give you a multi-part project where the CICS bundle configuration is kept separate from the Java application. The [Standalone project sample (`gradle-war-sample`)](https://github.com/IBM/cics-bundle-gradle/tree/master/samples/gradle-war-sample) shows this case.
+ * Add the CICS bundle configuration into an existing Gradle Java project, such as a WAR project. This will give you a single standalone project containing both the Java application and the CICS bundle configuration. The [Standalone project sample (`gradle-war-sample`)](https://github.com/IBM/cics-bundle-gradle/tree/master/samples/gradle-war-sample) shows this case.  
+ * Create a separate Gradle module to contain the CICS bundle configuration. This will give you a multi-part project where the CICS bundle configuration is kept separate from the Java application. The [Multi-part project sample (`gradle-multipart-sample`)](https://github.com/IBM/cics-bundle-gradle/tree/master/samples/gradle-multipart-sample) shows this case.  
 
 In either case, configure the Gradle module as follows:
 
