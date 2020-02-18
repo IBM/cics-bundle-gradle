@@ -25,13 +25,13 @@ open class PackageBundleTask : Zip() {
 	 * Set the build directory as a task input. This will be linked to the output of the build task.
 	 */
 	@InputDirectory
-	var inputDirectory: DirectoryProperty = project.objects.directoryProperty()
+	val inputDirectory: DirectoryProperty = project.objects.directoryProperty()
 
 	/**
 	 * Set the zip archive file as a task output. This will be linked to the input of the deploy task.
 	 */
 	@OutputFile
-	var outputFile: RegularFileProperty = project.objects.fileProperty()
+	val outputFile: RegularFileProperty = project.objects.fileProperty()
 
 	init {
 		// Tell the task which directory to zip up

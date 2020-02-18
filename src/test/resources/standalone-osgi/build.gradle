@@ -27,15 +27,17 @@ jar {
 }
 
 cicsBundle {
-    defaultJVMServer = project.defaultJVMServer
-
-    url = project.url
-    cicsplex = project.cicsplex
-    region = project.region
-    bunddef = 'GRADLESO'
-    csdgroup = project.csdgroup
-
-    username = project.username
-    password = project.password
-    insecure = project.insecure
+    build {
+        defaultJVMServer = project.defaultJVMServer
+    }
+    deploy {
+        url = project.url
+        cicsplex = project.cicsplex
+        region = project.region
+        bunddef = 'GRADLESO'
+        csdgroup = project.csdgroup
+        username = project.username
+        password = project.password
+        insecure = project.insecure
+    }
 }

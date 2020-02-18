@@ -50,7 +50,7 @@ Tasks | Description
 Their dependencies are as follows:
 ```
 :build
-+--- :assemble
+\--- :assemble
      \--- :packageCICSBundle
           \--- :buildCICSBundle
 
@@ -121,7 +121,9 @@ In either case, configure the Gradle module as follows:
 1. If you have included any Java-based bundle parts, add the `cicsBundle` extension block to define the default JVM server that they will use.
     ```gradle
     cicsBundle {
-        defaultJVMServer = 'MYJVMS'
+        build {
+            defaultJVMServer = 'MYJVMS'
+        }
     }
     ```
 1. To include non-Java-based bundle parts, put the bundle part files in the src/main/resources directory. Files in this directory will be automatically included in the CICS bundle, and supported types will have a <define> element added to the CICS bundle's cics.xml.
@@ -138,13 +140,15 @@ Also ensure a BUNDLE definition for this CICS bundle has already been created in
 1. In the CICS bundle module's `build.gradle`, add settings to the `cicsBundle` extension block for the deploy destination.
     ```gradle
     cicsBundle {
-        cicsplex = 'MYPLEX'
-        region   = 'MYEGION'
-        bunddef  = 'MYDEF'
-        csdgroup = 'MYGROUP'
-        url      = 'myserver.site.domain.com:1234'
-        username = myUsername
-        password = myPassword
+        deploy {
+            cicsplex = 'MYPLEX'
+            region   = 'MYEGION'
+            bunddef  = 'MYDEF'
+            csdgroup = 'MYGROUP'
+            url      = 'myserver.site.domain.com:1234'
+            username = myUsername
+            password = myPassword
+        }
     }
     ```
     Edit the code snippet above to match your CICS configuration:

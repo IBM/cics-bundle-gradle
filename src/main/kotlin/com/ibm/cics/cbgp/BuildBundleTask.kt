@@ -40,26 +40,26 @@ open class BuildBundleTask : DefaultTask() {
 	@Internal
 	val bundleExtension = project.extensions.getByName(BundlePlugin.BUNDLE_EXTENSION_NAME) as BundleExtension
 	@Input
-	var defaultJVMServer = bundleExtension.defaultJVMServer
+	val defaultJVMServer = bundleExtension.build.defaultJVMServer
 
 	/**
 	 * Set the cicsBundle dependency configuration as a task input.
 	 */
 	@InputFiles
-	var cicsBundleConfig: Configuration = project.configurations.getByName(BundlePlugin.BUNDLE_DEPENDENCY_CONFIGURATION_NAME)
+	val cicsBundleConfig: Configuration = project.configurations.getByName(BundlePlugin.BUNDLE_DEPENDENCY_CONFIGURATION_NAME)
 
 	/**
 	 * Set the resources directory as an optional task input.
 	 */
 	@InputDirectory
 	@Optional
-	var resourcesDirectory: DirectoryProperty = project.objects.directoryProperty()
+	val resourcesDirectory: DirectoryProperty = project.objects.directoryProperty()
 
 	/**
 	 * Set the build output directory as a task output. This will be linked to the input of the package task.
 	 */
 	@OutputDirectory
-	var outputDirectory: DirectoryProperty = project.objects.directoryProperty()
+	val outputDirectory: DirectoryProperty = project.objects.directoryProperty()
 
 	@TaskAction
 	fun buildCICSBundle() {
@@ -121,12 +121,6 @@ open class BuildBundleTask : DefaultTask() {
 		if (resolved.files.isEmpty()) {
 			logger.info("No Java-based bundle parts found in '${BundlePlugin.BUNDLE_DEPENDENCY_CONFIGURATION_NAME}' dependency configuration")
 			return
-		}
-
-		resolved.files.forEach {
-			if (!VALID_DEPENDENCY_FILE_EXTENSIONS.contains(it.extension)) {
-				logger.error("Unsupported file extension '${it.extension}' for Java-based bundle part '${it.name}'. Supported extensions are: $VALID_DEPENDENCY_FILE_EXTENSIONS.")
-			}
 		}
 
 		resolved.files.toTypedArray().forEach { file ->
