@@ -20,7 +20,7 @@ When the parent project is built, all its children will also be built.
 
 To build all modules and package the bundle parts into a zipped CICS bundle, change to the `gradle-bundle-demo` directory and run:
 ```
-./graldew build
+./gradlew build
 ```
 
 To package and deploy the built bundle to your CICS region, run:

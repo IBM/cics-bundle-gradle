@@ -55,27 +55,27 @@ open class DeployBundleTask : DefaultTask() {
 	@Internal
 	val bundleExtension = project.extensions.getByName(BundlePlugin.BUNDLE_EXTENSION_NAME) as BundleExtension
 	@Input
-	var cicsplex = bundleExtension.cicsplex
+	val cicsplex = bundleExtension.deploy.cicsplex
 	@Input
-	var region = bundleExtension.region
+	val region = bundleExtension.deploy.region
 	@Input
-	var bunddef = bundleExtension.bunddef
+	val bunddef = bundleExtension.deploy.bunddef
 	@Input
-	var csdgroup = bundleExtension.csdgroup
+	val csdgroup = bundleExtension.deploy.csdgroup
 	@Input
-	var url = bundleExtension.url
+	val url = bundleExtension.deploy.url
 	@Input
-	var username = bundleExtension.username
+	val username = bundleExtension.deploy.username
 	@Input
-	var password = bundleExtension.password
+	val password = bundleExtension.deploy.password
 	@Input
-	var insecure = bundleExtension.insecure
+	val insecure = bundleExtension.deploy.insecure
 
 	/**
 	 * Set the bundle archive file as a task input. This will be linked to the output of the package task.
 	 */
 	@InputFile
-	var inputFile: RegularFileProperty = project.objects.fileProperty()
+	val inputFile: RegularFileProperty = project.objects.fileProperty()
 
 	@TaskAction
 	fun deployCICSBundle() {

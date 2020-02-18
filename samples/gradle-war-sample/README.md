@@ -18,14 +18,18 @@ Edit the variables in the `cicsBundle` block of the `standalone-war-demo/build.g
 If you have an existing Java Gradle project, add the snippet shown below to the `cicsBundle` and `dependencies` sections of your `build.gradle` and edit the variables as needed. Your Gradle project should now resemble the sample.
 ```gradle
 cicsBundle {
-    defaultJVMServer = 'MYJVMSRVR'
-    cicsplex = 'MYPLEX'
-    region   = 'MYREGION'
-    bunddef  = 'MYBUND'
-    csdgroup = 'MYGROUP'
-    url      = 'myserver.site.domain.com:1234'
-    username = project.cicsUser    // Define my_username in gradle.properties file
-    password = project.cicsPass   // Define my_password in gradle.properties file
+    build {
+        defaultJVMServer = 'MYJVMSRVR'
+    }
+    deploy {
+        cicsplex = 'MYPLEX'
+        region   = 'MYREGION'
+        bunddef  = 'MYBUND'
+        csdgroup = 'MYGROUP'
+        url      = 'myserver.site.domain.com:1234'
+        username = project.cicsUser    // Define my_username in gradle.properties file
+        password = project.cicsPass   // Define my_password in gradle.properties file
+    }
 }
 ```  
 ```gradle
@@ -37,7 +41,7 @@ dependencies {
 # Build
 To build all projects and package the bundle part into a zipped CICS bundle, change to the `gradle-war-sample` directory and run:
 ```
-./graldew build
+./gradlew build
 ```
 
 To package and deploy the built bundle to your CICS region, run:

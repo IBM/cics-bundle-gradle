@@ -1,13 +1,17 @@
 package com.ibm.cics.cbgp
 
+import org.gradle.api.Action
+
 open class BundleExtension {
-	var defaultJVMServer = "MYJVMS"
-	var cicsplex = ""
-	var region = ""
-	var bunddef = ""
-	var csdgroup = ""
-	var url = ""
-	var username = ""
-	var password = ""
-	var insecure = false
+
+	val build: BundleBuildExtension = BundleBuildExtension()
+	val deploy: BundleDeployExtension = BundleDeployExtension()
+
+	fun build(action: Action<in BundleBuildExtension>) {
+		action.execute(build)
+	}
+
+	fun deploy(action: Action<in BundleDeployExtension>) {
+		action.execute(deploy)
+	}
 }

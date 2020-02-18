@@ -17,14 +17,18 @@ repositories {
 }
 
 cicsBundle {
-    defaultJVMServer = 'MYJVMSRVR'
-    cicsplex = 'MYPLEX'
-    region   = 'MYREGION'
-    bunddef  = 'MYBUN'
-    csdgroup = 'MYGROUP'
-    url      = 'myserver.site.domain.com:1234'
-    username = project.cicsUser    // Define my_username in gradle.properties file
-    password = project.cicsPass   // Define my_password in gradle.properties file
+    build {
+        defaultJVMServer = 'MYJVMSRVR'
+    }
+    deploy {
+        cicsplex = 'MYPLEX'
+        region   = 'MYREGION'
+        bunddef  = 'MYBUN'
+        csdgroup = 'MYGROUP'
+        url      = 'myserver.site.domain.com:1234'
+        username = project.cicsUser    // Define my_username in gradle.properties file
+        password = project.cicsPass   // Define my_password in gradle.properties file
+    }
 }
 
 dependencies {
