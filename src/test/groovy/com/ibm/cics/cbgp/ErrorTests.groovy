@@ -37,16 +37,14 @@ class ErrorTests extends AbstractTest {
 		def result = runGradleAndFail([BundlePlugin.DEPLOY_TASK_NAME])
 
 		then:
-		checkBuildOutputStrings(result, ["Unsupported file extension 'har' for Java-based bundle part 'simple-har-1.7.7.har'"])
+		checkBuildOutputStrings(result, ["Unsupported file extension 'har' for Java-based bundle part 'simple-har-1.7.7.har'. Supported extensions are: [ear, jar, war, eba]."])
 	}
 
 	@Unroll
-	def "Test deploy config missing #propertiesToRemove"(List<String> propertiesToRemove, List<String> expectedMessages) {
-
-		println("----- $testName with properties: $propertiesToRemove -----")
+	def "Test cicsBundle config missing #propertiesToRemove"(List<String> propertiesToRemove, List<String> expectedMessages) {
 
 		given:
-		rootProjectName = bundleProjectName = "empty"
+		rootProjectName = bundleProjectName = "standalone-war"
 
 		copyTestProject()
 
@@ -66,13 +64,14 @@ class ErrorTests extends AbstractTest {
 		// Parameterize test so the same test can be used for various combinations of properties
 		where:
 		propertiesToRemove | expectedMessages
-		["url"]      | [DeployBundleTask.MISSING_URL, DeployBundleTask.PLEASE_SPECIFY]
-		["cicsplex"] | [DeployBundleTask.MISSING_CICSPLEX, DeployBundleTask.PLEASE_SPECIFY]
-		["region"]   | [DeployBundleTask.MISSING_REGION, DeployBundleTask.PLEASE_SPECIFY]
-		["bunddef"]  | [DeployBundleTask.MISSING_BUNDDEF, DeployBundleTask.PLEASE_SPECIFY]
-		["csdgroup"] | [DeployBundleTask.MISSING_CSDGROUP, DeployBundleTask.PLEASE_SPECIFY]
-		["username"] | [DeployBundleTask.MISSING_USERNAME, DeployBundleTask.PLEASE_SPECIFY]
-		["password"] | [DeployBundleTask.MISSING_PASSWORD, DeployBundleTask.PLEASE_SPECIFY]
-		["url", "cicsplex", "region", "bunddef", "csdgroup", "username", "password"] | [DeployBundleTask.MISSING_URL, DeployBundleTask.MISSING_CICSPLEX, DeployBundleTask.MISSING_REGION, DeployBundleTask.MISSING_BUNDDEF, DeployBundleTask.MISSING_CSDGROUP, DeployBundleTask.MISSING_USERNAME, DeployBundleTask.MISSING_PASSWORD, DeployBundleTask.PLEASE_SPECIFY]
+		["defaultJVMServer"] | [AbstractJavaBundlePartBinding.JVMSERVER_EXCEPTION]
+		["url"]              | [DeployBundleTask.MISSING_URL, DeployBundleTask.DEPLOY_CONFIG_EXCEPTION]
+		["cicsplex"]         | [DeployBundleTask.MISSING_CICSPLEX, DeployBundleTask.DEPLOY_CONFIG_EXCEPTION]
+		["region"]           | [DeployBundleTask.MISSING_REGION, DeployBundleTask.DEPLOY_CONFIG_EXCEPTION]
+		["bunddef"]          | [DeployBundleTask.MISSING_BUNDDEF, DeployBundleTask.DEPLOY_CONFIG_EXCEPTION]
+		["csdgroup"]         | [DeployBundleTask.MISSING_CSDGROUP, DeployBundleTask.DEPLOY_CONFIG_EXCEPTION]
+		["username"]         | [DeployBundleTask.MISSING_USERNAME, DeployBundleTask.DEPLOY_CONFIG_EXCEPTION]
+		["password"]         | [DeployBundleTask.MISSING_PASSWORD, DeployBundleTask.DEPLOY_CONFIG_EXCEPTION]
+		["url", "cicsplex", "region", "bunddef", "csdgroup", "username", "password"] | [DeployBundleTask.MISSING_URL, DeployBundleTask.MISSING_CICSPLEX, DeployBundleTask.MISSING_REGION, DeployBundleTask.MISSING_BUNDDEF, DeployBundleTask.MISSING_CSDGROUP, DeployBundleTask.MISSING_USERNAME, DeployBundleTask.MISSING_PASSWORD, DeployBundleTask.DEPLOY_CONFIG_EXCEPTION]
 	}
 }

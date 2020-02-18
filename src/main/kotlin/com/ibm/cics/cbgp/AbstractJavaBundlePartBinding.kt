@@ -17,6 +17,19 @@ import org.gradle.api.GradleException
 import java.io.File
 
 abstract class AbstractJavaBundlePartBinding(file: File) : AbstractBundlePartBinding(file) {
+
+	companion object {
+		val JVMSERVER_EXCEPTION = """
+			Please specify defaultJVMServer in build.gradle.
+			Example:
+				${BundlePlugin.BUNDLE_EXTENSION_NAME} {
+					build {
+						defaultJVMServer = 'MYJVMS'
+					}
+				}
+			""".trimIndent()
+	}
+
 	var name: String = ""
 	var jvmserver: String = ""
 
@@ -27,7 +40,9 @@ abstract class AbstractJavaBundlePartBinding(file: File) : AbstractBundlePartBin
 		}
 		if (jvmserver.isEmpty()) {
 			jvmserver = defaultJVMServer
+			if (jvmserver.isEmpty()) {
+				throw GradleException(JVMSERVER_EXCEPTION)
+			}
 		}
 	}
 }
-
