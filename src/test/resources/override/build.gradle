@@ -1,0 +1,55 @@
+plugins {
+	id 'com.ibm.cics.bundle' version '0.0.1-SNAPSHOT'
+}
+
+version '1.0.0'
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    cicsBundle files('files/simple-bundle-1.7.7.blah')
+    cicsBundle files('files/simple-war-1.7.7.blah')
+    cicsBundle files('files/simple-ear-1.7.7.blah')
+    cicsBundle files('files/org.apache.aries.samples.twitter.eba-1.0.0.blah')
+}
+
+cicsBundle {
+    defaultJVMServer = project.defaultJVMServer
+
+    url = project.url
+    cicsplex = project.cicsplex
+    region = project.region
+    bunddef = 'GRADLEO'
+    csdgroup = project.csdgroup
+
+    username = project.username
+    password = project.password
+    insecure = project.insecure
+
+    override {
+        filename = 'simple-bundle-1.7.7.blah'
+        name = 'new-osgi'
+        jvmserver = 'NEWJVMS'
+        extension = 'jar'
+    }
+    override {
+        filename = 'simple-war-1.7.7.blah'
+        name = 'new-war'
+        jvmserver = 'NEWJVMS'
+        extension = 'war'
+    }
+    override {
+        filename = 'simple-ear-1.7.7.blah'
+        name = 'new-ear'
+        jvmserver = 'NEWJVMS'
+        extension = 'ear'
+    }
+    override {
+        filename = 'org.apache.aries.samples.twitter.eba-1.0.0.blah'
+        name = 'new-eba'
+        jvmserver = 'NEWJVMS'
+        extension = 'eba'
+    }
+}

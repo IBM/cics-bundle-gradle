@@ -113,7 +113,7 @@ class GoldenPathTests extends AbstractTest {
 
 		copyTestProject()
 
-		when:\
+		when:
 		runGradleAndSucceed([BundlePlugin.DEPLOY_TASK_NAME])
 
 		then:

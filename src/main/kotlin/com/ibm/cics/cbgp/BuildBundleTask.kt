@@ -123,22 +123,29 @@ open class BuildBundleTask : DefaultTask() {
 			return
 		}
 
-		resolved.files.forEach {
-			if (!VALID_DEPENDENCY_FILE_EXTENSIONS.contains(it.extension)) {
-				logger.error("Unsupported file extension '${it.extension}' for Java-based bundle part '${it.name}'. Supported extensions are: $VALID_DEPENDENCY_FILE_EXTENSIONS.")
-			}
-		}
-
 		resolved.files.toTypedArray().forEach { file ->
 			logger.lifecycle("Adding Java-based bundle part: '$file'")
+
+			// Check whether any override values have been set for this bundle part
+			var override: BundlePartOverride? = null
+			for (anOverride in bundleExtension.overrides) {
+				if (anOverride.filename == file.name) {
+					override = anOverride
+				}
+			}
+
+			val fileExtension = override?.extension ?: file.extension
 			val binding: AbstractJavaBundlePartBinding
-			when (file.extension) {
+			when (fileExtension) {
 				"jar" -> binding = OsgibundlePartBinding(file)
 				"war" -> binding = WarbundlePartBinding(file)
 				"ear" -> binding = EarbundlePartBinding(file)
 				"eba" -> binding = EbabundlePartBinding(file)
 				else -> throw GradleException("Unsupported file extension '${file.extension}' for Java-based bundle part '${file.name}'. Supported extensions are: $VALID_DEPENDENCY_FILE_EXTENSIONS.")
 			}
+			binding.name = override?.name ?: binding.name
+			binding.jvmserver = override?.jvmserver ?: binding.jvmserver
+
 			try {
 				bundlePublisher.addResource(binding.toBundlePart(defaultJVMServer))
 			} catch (e: PublishException) {
