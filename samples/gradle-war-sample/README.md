@@ -26,7 +26,6 @@ cicsBundle {
     url      = 'myserver.site.domain.com:1234'
     username = project.cicsUser    // Define my_username in gradle.properties file
     password = project.cicsPass   // Define my_password in gradle.properties file
-    insecure = true
 }
 ```  
 ```gradle
