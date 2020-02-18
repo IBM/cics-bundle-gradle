@@ -30,11 +30,9 @@ open class DeployBundleTask : DefaultTask() {
 		const val MISSING_URL = "Specify url for deploy"
 		const val MISSING_USERNAME = "Specify username for deploy"
 		const val MISSING_PASSWORD = "Specify password for deploy"
-		const val PLEASE_SPECIFY = "Please specify deploy configuration in build.gradle."
 
-		val DEPLOY_CONFIG_EXCEPTION =
-			PLEASE_SPECIFY + """
-
+		val DEPLOY_CONFIG_EXCEPTION = """
+			Please specify deploy configuration in build.gradle.
 			Example:
 				${BundlePlugin.BUNDLE_EXTENSION_NAME} {
 					deploy {

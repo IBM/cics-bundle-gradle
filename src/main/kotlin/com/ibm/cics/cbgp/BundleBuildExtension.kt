@@ -1,5 +1,5 @@
 package com.ibm.cics.cbgp
 
 open class BundleBuildExtension {
-	var defaultJVMServer = "MYJVMS"
+	var defaultJVMServer = ""
 }
