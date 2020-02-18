@@ -1,0 +1,26 @@
+plugins {
+    id 'com.ibm.cics.bundle' version '0.0.1-SNAPSHOT'
+}
+
+group 'com.ibm.cics'
+version '1.0.0'
+
+repositories {
+    mavenCentral()
+}
+
+cicsBundle {
+    defaultJVMServer = 'MYJVMSRVR'
+    cicsplex = 'MYPLEX'
+    region   = 'MYREGION'
+    bunddef  = 'MYBUN'
+    csdgroup = 'MYGROUP'
+    url      = 'myserver.site.domain.com:1234'
+    username = project.cicsUser    // Define my_username in gradle.properties file
+    password = project.cicsPass   // Define my_password in gradle.properties file
+}
+
+dependencies {
+    cicsBundle group: 'org.codehaus.cargo', name: 'simple-war', version: '1.7.7', ext: 'war'
+    cicsBundle project(path:':gradle-war-demo', configuration: 'archives')
+}
