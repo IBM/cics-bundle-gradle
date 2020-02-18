@@ -140,13 +140,15 @@ Also ensure a BUNDLE definition for this CICS bundle has already been created in
 1. In the CICS bundle module's `build.gradle`, add settings to the `cicsBundle` extension block for the deploy destination.
     ```gradle
     cicsBundle {
-        cicsplex = 'MYPLEX'
-        region   = 'MYEGION'
-        bunddef  = 'MYDEF'
-        csdgroup = 'MYGROUP'
-        url      = 'myserver.site.domain.com:1234'
-        username = myUsername
-        password = myPassword
+        deploy {
+            cicsplex = 'MYPLEX'
+            region   = 'MYEGION'
+            bunddef  = 'MYDEF'
+            csdgroup = 'MYGROUP'
+            url      = 'myserver.site.domain.com:1234'
+            username = myUsername
+            password = myPassword
+        }
     }
     ```
     Edit the code snippet above to match your CICS configuration:

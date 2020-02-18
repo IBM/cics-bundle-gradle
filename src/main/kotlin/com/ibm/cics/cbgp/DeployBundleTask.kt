@@ -37,13 +37,15 @@ open class DeployBundleTask : DefaultTask() {
 
 			Example:
 				${BundlePlugin.BUNDLE_EXTENSION_NAME} {
-					cicsplex = 'MYPLEX'
-					region   = 'MYREGION'
-					bunddef  = 'MYDEF'
-					csdgroup = 'MYGROUP'
-					url      = 'https://hostname.com:port'
-					username = my_username
-					password = my_password 
+					deploy {
+						cicsplex = 'MYPLEX'
+						region   = 'MYREGION'
+						bunddef  = 'MYDEF'
+						csdgroup = 'MYGROUP'
+						url      = 'https://hostname.com:port'
+						username = my_username
+						password = my_password 
+					}
 				}
 			All items must be completed.
 			""".trimIndent()
