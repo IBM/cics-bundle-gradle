@@ -9,6 +9,8 @@ if [ "$TRAVIS_BRANCH" = 'master' ] && [ "$TRAVIS_PULL_REQUEST" == 'false' ]; the
   -Dorg.gradle.project.signing.secretKeyRingFile="$GPG_SECRET_KEYRING_FILE" \
   -Dorg.gradle.project.ossrhUser="$OSSRH_USERNAME" \
   -Dorg.gradle.project.ossrhPassword="$OSSRH_PASSWORD" \
+  -Dorg.gradle.project.gradle.publish.key="$key" \
+  -Dorg.gradle.project.gradle.publish.secret="$secret" \
    build publishAll
 # Otherwise just build and test
 else

@@ -28,13 +28,6 @@ val onlyIfSnapshot: (PublishToMavenRepository).() -> Unit = {
     this.onlyIf { !isReleaseVersion }
 }
 
-// Only publish to Gradle plugin portal if a release
-tasks.publishPlugins{ enabled = isReleaseVersion }
-
-// Only publish to Sonatype Snapshots if a snapshot
-tasks.withType<org.gradle.api.publish.maven.tasks.PublishToMavenRepository>().configureEach { onlyIfSnapshot }
-tasks.withType<org.gradle.api.publish.maven.tasks.GenerateMavenPom>().configureEach { onlyIfSnapshot }
-
 gradlePlugin {
     plugins {
         register("com.ibm.cics.bundle") {
@@ -88,6 +81,9 @@ dependencies {
 }
 
 tasks.register("publishAll") {
-    dependsOn("publishPlugins")
-    dependsOn("publish")
+    if (isReleaseVersion) {
+        dependsOn("publishPlugins") // Publish to Gradle Plugin Portal
+    } else {
+        dependsOn("publish") // Publish to repositories defined in 'repositories' extension
+    }
 }
