@@ -11,8 +11,11 @@ if [ "$TRAVIS_BRANCH" = 'master' ] && [ "$TRAVIS_PULL_REQUEST" == 'false' ]; the
   -Dorg.gradle.project.ossrhPassword="$OSSRH_PASSWORD" \
   -Dorg.gradle.project.gradle.publish.key="$key" \
   -Dorg.gradle.project.gradle.publish.secret="$secret" \
-   build publishAll
+   build publishAll \
+   --info
 # Otherwise just build and test
 else
-  ./gradlew build
+  ./gradlew \
+  build \
+  --info
 fi
