@@ -1,4 +1,4 @@
-# cics-bundle-gradle
+# CICS bundle Gradle plugin (`com.ibm.cics.bundle`)
 
 A collection of Gradle plugins and utilities that can be used to build CICS bundles, ready to be installed into CICS TS.
 
@@ -69,7 +69,7 @@ In either case, configure the Gradle module as follows:
 1. Add the plugin id to your `build.gradle`.
     ```gradle
     plugins {
-        id 'com.ibm.cics.bundle' version '0.0.1-SNAPSHOT'
+        id 'com.ibm.cics.bundle' version '0.0.1'
     }
     ```
 1. If using a snapshot version of the plugin, add the snapshot repository to your `settings.gradle`, so Gradle can find the plugin.
