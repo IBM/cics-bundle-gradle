@@ -22,7 +22,7 @@ plugins {
 }
 
 group = "com.ibm.cics"
-version = "0.0.1"
+version = "0.0.2-SNAPSHOT"
 val isReleaseVersion by extra(!version.toString().endsWith("SNAPSHOT"))
 val onlyIfSnapshot: (PublishToMavenRepository).() -> Unit = {
     this.onlyIf { !isReleaseVersion }
