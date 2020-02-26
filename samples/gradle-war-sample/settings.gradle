@@ -1,12 +1,3 @@
-pluginManagement {
-    repositories {
-        maven {
-            name = "Sonatype Snapshots"
-            url = uri("https://oss.sonatype.org/content/repositories/snapshots")
-        }
-        gradlePluginPortal() // Needed for the plugin's own dependencies
-    }
-}
 rootProject.name = 'gradle-war-sample'
 include 'standalone-war-demo'
 
