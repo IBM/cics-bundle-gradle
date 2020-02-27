@@ -24,7 +24,7 @@ abstract class AbstractJavaBundlePartBinding(file: File) : AbstractBundlePartBin
 			Example:
 				${BundlePlugin.BUNDLE_EXTENSION_NAME} {
 					build {
-						defaultJVMServer = 'MYJVMS'
+						defaultJVMServer = 'DFHWLP'
 					}
 				}
 			""".trimIndent()

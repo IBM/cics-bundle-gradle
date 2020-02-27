@@ -122,7 +122,7 @@ In either case, configure the Gradle module as follows:
     ```gradle
     cicsBundle {
         build {
-            defaultJVMServer = 'MYJVMS'
+            defaultJVMServer = 'DFHWLP'
         }
     }
     ```
