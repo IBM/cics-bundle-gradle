@@ -161,7 +161,8 @@ Also ensure a BUNDLE definition for this CICS bundle has already been created in
 1. Invoke the `deployCICSBundle` task in your build to deploy the bundle to the target CICSplex and region.
     ```
     ./gradlew deployCICSBundle
-    ```
+    ```  
+    If you run into an `unable to find valid certification path to requested target` error during deployment, see [Troubleshooting](#troubleshooting) for a fix.
 
 ## Samples
 Use of this plugin will vary depending on what you’re starting with and the structure of your project, for example, whether you'd like to create a separate Gradle module for the bundle configuration or you'd like to include it into your existing module. We have included some samples to demonstrate the different methods.  
@@ -170,6 +171,28 @@ This sample is the quickest way to try the plugin out if you don't already have 
 
 [Standalone project sample (`gradle-war-sample`)](https://github.com/IBM/cics-bundle-gradle/tree/master/samples/gradle-war-sample)  
 If you already have a Gradle module and want to add extra configuration to it for quick use of the plugin, check out this sample. It shows you how to configure an existing WAR project to build a CICS bundle. You can either copy and paste the configuration to your WAR project or import the full sample to see how it works. A `README` is included in the sample with detailed instructions.
+
+## Troubleshooting
+### `unable to find valid certification path to requested target` during deployment
+**Why does it happen?**  
+You may run into this error when deploying your CICS bundle.
+```
+sun.security.validator.ValidatorException: PKIX path building failed:
+sun.security.provider.certpath.SunCertPathBuilderException: unable to find valid certification path to requested target
+```
+It indicates an issue with establishing a trusted connection over TLS/SSL to the remote server (CICS bundle deployment API). It may happen when you are using a self-signed certificate or a certificate that's issued by an internal certificate authority, or that the certificate is not added to the trusted certificate list of your JVM.
+
+**How to resolve it?**  
+You have two ways of resolving this issue:
+1. **Recommended** Obtain the server certificate(s) and add it/them to the trusted certificate list of your JVM:  
+For security consideration, you may still want the TLS/SSL checking to be enabled. In this case, follow the instructions in [How do I import a certificate into the truststore](https://backstage.forgerock.com/knowledge/kb/article/a94909995) to trust the server's certificate, supplying your server's information. More information about the commands involved is listed below:
+    * [openssl s_client](https://www.openssl.org/docs/man1.1.0/man1/openssl-s_client.html)
+    * [openssl x509](https://www.openssl.org/docs/man1.1.0/man1/openssl-x509.html)
+    * [Certificate encoding & extensions](https://support.ssl.com/Knowledgebase/Article/View/19/0/der-vs-crt-vs-cer-vs-pem-certificates-and-how-to-convert-them)
+
+1. Disable TLS/SSL certificate checking:  
+Add `insecure = true` to the `deploy` configuration of your bundle's `build.gradle` (See snippet in Step 1 of [Deploy a CICS bundle](#deploy-a-cics-bundle)).  
+**Note:** Trusting all certificates can pose a security issue for your environment.
 
 ## Contributing
 

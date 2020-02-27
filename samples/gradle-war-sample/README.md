@@ -49,5 +49,7 @@ To package and deploy the built bundle to your CICS region, run:
 ./gradlew deployCICSBundle
 ```
 
+If you run into an `unable to find valid certification path to requested target` error during deployment, uncommenting the `insecure = true` line in the bundle project's `build.gradle` is a quick fix but it poses security concerns by disabling TLS/SSL checking for certificates. For recommended solutions in real use, refer to [Troubleshooting](https://github.com/IBM/cics-bundle-gradle#troubleshooting). 
+
 # What's next
 Visit the servlet (http://myserver.site.domain.com:1234/standalone-war-demo-1.0.0 if you used our sample as-is) to see what you published.
