@@ -11,7 +11,7 @@ repositories {
 
 cicsBundle {
     build {
-        defaultJVMServer = 'MYJVMSRVR'
+        defaultJVMServer = 'DFHWLP'
     }
     deploy {
         cicsplex = 'MYPLEX'
