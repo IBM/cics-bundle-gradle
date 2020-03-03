@@ -12,10 +12,12 @@ if [ "$TRAVIS_BRANCH" = 'master' ] && [ "$TRAVIS_PULL_REQUEST" == 'false' ]; the
   -Dorg.gradle.project.gradle.publish.key="$key" \
   -Dorg.gradle.project.gradle.publish.secret="$secret" \
    build publishAll \
-   --info
+   --info \
+   --stacktrace
 # Otherwise just build and test
 else
   ./gradlew \
   build \
-  --info
+   --info \
+   --stacktrace
 fi
