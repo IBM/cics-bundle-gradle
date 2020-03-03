@@ -18,15 +18,13 @@ plugins {
     id("java-gradle-plugin")
     id("maven-publish")
     id("com.gradle.plugin-publish") version "0.10.1"
+    id("signing")
     `kotlin-dsl`
 }
 
 group = "com.ibm.cics"
 version = "0.0.2-SNAPSHOT"
 val isReleaseVersion by extra(!version.toString().endsWith("SNAPSHOT"))
-val onlyIfSnapshot: (PublishToMavenRepository).() -> Unit = {
-    this.onlyIf { !isReleaseVersion }
-}
 
 gradlePlugin {
     plugins {
@@ -48,14 +46,29 @@ pluginBundle {
 val ossrhUser: String? by project
 val ossrhPassword: String? by project
 
+signing {
+    sign(publishing.publications)
+}
+
 publishing {
     repositories {
-        maven {
-            name = "Sonatype Snapshots"
-            url = uri("https://oss.sonatype.org/content/repositories/snapshots")
-            credentials {
-                username = ossrhUser
-                password = ossrhPassword
+        if (isReleaseVersion) {
+            maven {
+                name = "OSSRH"
+                url = uri("https://oss.sonatype.org/service/local/staging/deploy/maven2/")
+                credentials {
+                    username = ossrhUser
+                    password = ossrhPassword
+                }
+            }
+        } else {
+            maven {
+                name = "Sonatype Snapshots"
+                url = uri("https://oss.sonatype.org/content/repositories/snapshots")
+                credentials {
+                    username = ossrhUser
+                    password = ossrhPassword
+                }
             }
         }
     }
@@ -82,8 +95,7 @@ dependencies {
 
 tasks.register("publishAll") {
     if (isReleaseVersion) {
-        dependsOn("publishPlugins") // Publish to Gradle Plugin Portal
-    } else {
-        dependsOn("publish") // Publish to repositories defined in 'repositories' extension
+        dependsOn("publishPlugins") // Publish to Gradle Plugin Portal if a release
     }
+    dependsOn("publish") // Publish to Sonatype Snapshots or Central Staging, defined in 'publishing' extension
 }
