@@ -23,7 +23,7 @@ plugins {
 }
 
 group = "com.ibm.cics"
-version = "0.0.2"
+version = "0.0.3-SNAPSHOT"
 val isReleaseVersion by extra(!version.toString().endsWith("SNAPSHOT"))
 
 gradlePlugin {
