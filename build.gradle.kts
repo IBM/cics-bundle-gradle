@@ -63,7 +63,7 @@ publishing {
             }
         } else {
             maven {
-                name = "Sonatype Snapshots"
+                name = "SonatypeSnapshots"
                 url = uri("https://oss.sonatype.org/content/repositories/snapshots")
                 credentials {
                     username = ossrhUser
@@ -76,7 +76,7 @@ publishing {
 
 repositories {
     maven {
-        name = "Sonatype Snapshots"
+        name = "SonatypeSnapshots"
         url = uri("https://oss.sonatype.org/content/repositories/snapshots")
     }
     mavenCentral()
