@@ -47,6 +47,7 @@ val ossrhUser: String? by project
 val ossrhPassword: String? by project
 
 signing {
+    setRequired { !gradle.taskGraph.hasTask(":publishToMavenLocal") }
     sign(publishing.publications)
 }
 
