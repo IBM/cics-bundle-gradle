@@ -77,7 +77,7 @@ In either case, configure the Gradle module as follows:
     pluginManagement {
         repositories {
             maven {
-                name = "Sonatype Snapshots"
+                name = "SonatypeSnapshots"
                 url = uri("https://oss.sonatype.org/content/repositories/snapshots")
             }
             gradlePluginPortal() // Needed for the plugin's own dependencies.
