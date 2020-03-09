@@ -15,19 +15,18 @@ package com.ibm.cics.cbgp
 
 import com.ibm.cics.bundle.parts.BundleResource
 import org.gradle.api.GradleException
+import org.gradle.api.artifacts.Dependency
 import java.io.File
 
-abstract class AbstractBundlePartBinding(var file: File) {
+abstract class AbstractBundlePartBinding() {
 
-	@Throws(GradleException::class)
-	fun toBundlePart(defaultJVMServer: String): BundleResource {
-		applyDefaults(defaultJVMServer)
-		return toBundlePartImpl()
-	}
+	// The dependency object
+	lateinit var dependency: Dependency
 
-	@Throws(GradleException::class)
-	protected abstract fun applyDefaults(defaultJVMServer: String)
+	// The file that the dependency resolves to
+	lateinit var file: File
 
-	@Throws(GradleException::class)
-	protected abstract fun toBundlePartImpl(): BundleResource
+	abstract fun applyDefaults(defaultJVMServer: String)
+
+	abstract fun toBundlePart(): BundleResource
 }

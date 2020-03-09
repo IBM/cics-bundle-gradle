@@ -15,6 +15,9 @@ package com.ibm.cics.cbgp
 
 import spock.lang.Unroll
 
+/**
+ * Test golden path scenarios where valid bundles build successfully.
+ */
 class GoldenPathTests extends AbstractTest {
 
 	def "Test empty bundle"() {
@@ -113,7 +116,7 @@ class GoldenPathTests extends AbstractTest {
 
 		copyTestProject()
 
-		when:\
+		when:
 		runGradleAndSucceed([BundlePlugin.DEPLOY_TASK_NAME])
 
 		then:

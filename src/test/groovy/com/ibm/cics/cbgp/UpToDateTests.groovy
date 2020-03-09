@@ -17,6 +17,11 @@ import org.apache.commons.io.FileUtils
 
 import java.nio.charset.Charset
 
+/**
+ * When re-running a build, Gradle uses Task Inputs to determine which tasks need to be re-run and which are up-to-date.
+ * If a Task Input has changed since the last build then that task will be re-run. Check that this works correctly for a
+ * variety of changes.
+ */
 class UpToDateTests extends AbstractTest {
 
 	def "Test build up-to-date"() {
@@ -87,6 +92,35 @@ class UpToDateTests extends AbstractTest {
 			fileLine.replaceAll("\\s", "").startsWith("defaultJVMServer=")
 		}
 		Collections.replaceAll(fileLines, lineToReplace, "defaultJVMServer = 'NEW'")
+		FileUtils.writeLines(buildFile, fileLines)
+		result = runGradleAndSucceed([BundlePlugin.BUILD_TASK_NAME])
+
+		then:
+		checkBuildOutputStrings(result, [
+				"Task ':buildCICSBundle' is not up-to-date"
+		])
+
+		println("----- '$testName' - Add bundle part with extra config -----")
+		when:
+		buildFile << """
+		dependencies {
+			cicsBundleWar(dependency: cicsBundle(group: 'org.codehaus.cargo', name: 'simple-war', version: '1.7.7', ext: 'war'), name: 'new-war-module')
+		}
+		""".stripIndent()
+		result = runGradleAndSucceed([BundlePlugin.BUILD_TASK_NAME])
+
+		then:
+		checkBuildOutputStrings(result, [
+				"Task ':buildCICSBundle' is not up-to-date"
+		])
+
+		println("----- '$testName' - Change bundle part with extra config -----")
+		when:
+		fileLines = FileUtils.readLines(buildFile, Charset.defaultCharset())
+		lineToReplace = fileLines.find() { fileLine ->
+			fileLine.replaceAll("\\s", "").startsWith("cicsBundleWar")
+		}
+		Collections.replaceAll(fileLines, lineToReplace, lineToReplace.replace('new-war-module', 'blah'))
 		FileUtils.writeLines(buildFile, fileLines)
 		result = runGradleAndSucceed([BundlePlugin.BUILD_TASK_NAME])
 

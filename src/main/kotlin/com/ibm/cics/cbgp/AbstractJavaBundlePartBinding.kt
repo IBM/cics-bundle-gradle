@@ -16,7 +16,7 @@ package com.ibm.cics.cbgp
 import org.gradle.api.GradleException
 import java.io.File
 
-abstract class AbstractJavaBundlePartBinding(file: File) : AbstractBundlePartBinding(file) {
+abstract class AbstractJavaBundlePartBinding() : AbstractBundlePartBinding() {
 
 	companion object {
 		val JVMSERVER_EXCEPTION = """
@@ -44,5 +44,16 @@ abstract class AbstractJavaBundlePartBinding(file: File) : AbstractBundlePartBin
 				throw GradleException(JVMSERVER_EXCEPTION)
 			}
 		}
+	}
+
+	fun extraConfigAsString(): String {
+		val map = LinkedHashMap<String, String>()
+		if (name.isNotEmpty()) {
+			map["name"] = name
+		}
+		if (jvmserver.isNotEmpty()) {
+			map["jvmserver"] = jvmserver
+		}
+		return map.toString()
 	}
 }

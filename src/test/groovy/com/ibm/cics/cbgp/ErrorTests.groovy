@@ -18,6 +18,9 @@ import spock.lang.Unroll
 
 import java.nio.charset.Charset
 
+/**
+ * Test error path scenarios where invalid bundles fail to build and return appropriate error messages.
+ */
 class ErrorTests extends AbstractTest {
 
 	def "Test unsupported bundle part extension"() {

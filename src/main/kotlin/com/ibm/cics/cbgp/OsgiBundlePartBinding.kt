@@ -19,7 +19,7 @@ import org.gradle.api.GradleException
 import java.io.File
 import java.io.IOException
 
-class OsgibundlePartBinding(file: File) : AbstractJavaBundlePartBinding(file) {
+class OsgiBundlePartBinding() : AbstractJavaBundlePartBinding() {
 
 	var symbolicName: String? = ""
 	var osgiVersion: String? = ""
@@ -50,9 +50,7 @@ class OsgibundlePartBinding(file: File) : AbstractJavaBundlePartBinding(file) {
 		}
 	}
 
-	@Throws(GradleException::class)
-	override fun toBundlePartImpl(): BundleResource {
-
+	override fun toBundlePart(): BundleResource {
 		return OsgiBundlePart(
 				name,
 				symbolicName,

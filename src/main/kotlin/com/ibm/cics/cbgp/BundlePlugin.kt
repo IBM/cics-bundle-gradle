@@ -18,6 +18,8 @@ import org.gradle.api.Project
 import org.gradle.api.internal.artifacts.dsl.LazyPublishArtifact
 import org.gradle.api.internal.plugins.DefaultArtifactPublicationSet
 import org.gradle.api.plugins.BasePlugin
+import org.gradle.kotlin.dsl.closureOf
+import org.gradle.kotlin.dsl.extra
 
 class BundlePlugin : Plugin<Project> {
 	companion object {
@@ -26,6 +28,11 @@ class BundlePlugin : Plugin<Project> {
 		const val DEPLOY_TASK_NAME = "deployCICSBundle"
 		const val BUNDLE_EXTENSION_NAME = "cicsBundle"
 		const val BUNDLE_DEPENDENCY_CONFIGURATION_NAME = "cicsBundle"
+		const val EXTRA_CONFIG_EXTENSION_NAME = "extraConfig"
+		const val OSGI_METHOD_NAME = "cicsBundleOsgi"
+		const val WAR_METHOD_NAME = "cicsBundleWar"
+		const val EAR_METHOD_NAME = "cicsBundleEar"
+		const val EBA_METHOD_NAME = "cicsBundleEba"
 	}
 
 	override fun apply(project: Project) {
@@ -35,6 +42,13 @@ class BundlePlugin : Plugin<Project> {
 
 		// Create cicsBundle extension
 		project.extensions.create(BUNDLE_EXTENSION_NAME, BundleExtension::class.java)
+
+		// Create extra config extension and delegate some DSL methods to it. This lets us put these methods at the project level, rather than have to have them nested under the extension.
+		val extraConfigExtension = project.extensions.create(EXTRA_CONFIG_EXTENSION_NAME, ExtraConfigExtension::class.java)
+		project.extra.set(OSGI_METHOD_NAME, closureOf<Any> { extraConfigExtension.cicsBundleOsgi(this) })
+		project.extra.set(WAR_METHOD_NAME, closureOf<Any> { extraConfigExtension.cicsBundleWar(this) })
+		project.extra.set(EAR_METHOD_NAME, closureOf<Any> { extraConfigExtension.cicsBundleEar(this) })
+		project.extra.set(EBA_METHOD_NAME, closureOf<Any> { extraConfigExtension.cicsBundleEba(this) })
 
 		// Define cicsBundle dependency configuration
 		project.configurations.register(BUNDLE_DEPENDENCY_CONFIGURATION_NAME) {
