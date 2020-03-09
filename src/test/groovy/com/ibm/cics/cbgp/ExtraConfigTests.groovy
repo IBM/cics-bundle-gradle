@@ -37,6 +37,7 @@ class ExtraConfigTests extends AbstractTest {
         def warNameOverrideFile = "new-war-file"
         def earNameOverrideFile = "new-ear-file"
         def ebaNameOverrideFile = "new-eba-file"
+        def jvmserverOriginal = "BLAH"
         def jvmserverOverride = "EYUCMCIJ"
 
         // Use the multi-project but add some more files and overwrite the build.gradle.
@@ -79,6 +80,17 @@ class ExtraConfigTests extends AbstractTest {
                 "${ebaNameOverrideFile}.eba",
                 "${ebaNameOverrideFile}.ebabundle"
         ])
+
+        checkFileContains(getFileInDir(bundleBuildDir, "${osgiNameOverrideModule}.osgibundle"), ["<osgibundle jvmserver=\"${jvmserverOverride}\" symbolicname=\"org.codehaus.cargo.simple-bundle\" version=\"1.7.7\"/>"])
+        checkFileContains(getFileInDir(bundleBuildDir, "${warNameOverrideModule}.warbundle"), ["<warbundle jvmserver=\"${jvmserverOriginal}\" symbolicname=\"${warNameOverrideModule}\"/>"])
+        checkFileContains(getFileInDir(bundleBuildDir, "${earNameOverrideModule}.earbundle"), ["<earbundle jvmserver=\"${jvmserverOriginal}\" symbolicname=\"${earNameOverrideModule}\"/>"])
+        checkFileContains(getFileInDir(bundleBuildDir, "${osgiNameOverrideProject}.osgibundle"), ["<osgibundle jvmserver=\"${jvmserverOverride}\" symbolicname=\"com.ibm.cics.multi-osgi\" version=\"1.0.0\"/>"])
+        checkFileContains(getFileInDir(bundleBuildDir, "${warNameOverrideProject}.warbundle"), ["<warbundle jvmserver=\"${jvmserverOriginal}\" symbolicname=\"${warNameOverrideProject}\"/>"])
+        checkFileContains(getFileInDir(bundleBuildDir, "${earNameOverrideProject}.earbundle"), ["<earbundle jvmserver=\"${jvmserverOriginal}\" symbolicname=\"${earNameOverrideProject}\"/>"])
+        checkFileContains(getFileInDir(bundleBuildDir, "${osgiNameOverrideFile}.osgibundle"), ["<osgibundle jvmserver=\"${jvmserverOverride}\" symbolicname=\"org.codehaus.cargo.simple-bundle\" version=\"1.7.7\"/>"])
+        checkFileContains(getFileInDir(bundleBuildDir, "${warNameOverrideFile}.warbundle"), ["<warbundle jvmserver=\"${jvmserverOriginal}\" symbolicname=\"${warNameOverrideFile}\"/>"])
+        checkFileContains(getFileInDir(bundleBuildDir, "${earNameOverrideFile}.earbundle"), ["<earbundle jvmserver=\"${jvmserverOriginal}\" symbolicname=\"${earNameOverrideFile}\"/>"])
+        checkFileContains(getFileInDir(bundleBuildDir, "${ebaNameOverrideFile}.ebabundle"), ["<ebabundle jvmserver=\"${jvmserverOriginal}\" symbolicname=\"${ebaNameOverrideFile}\"/>"])
 
         checkManifest([
                 "<define name=\"${osgiNameOverrideModule}\" path=\"${osgiNameOverrideModule}.osgibundle\" type=\"http://www.ibm.com/xmlns/prod/cics/bundle/OSGIBUNDLE\"/>",

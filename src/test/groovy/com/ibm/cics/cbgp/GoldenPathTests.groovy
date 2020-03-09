@@ -42,7 +42,6 @@ class GoldenPathTests extends AbstractTest {
 		checkBuildOutputFiles(["META-INF/cics.xml"])
 
 		checkManifest(["<manifest xmlns=\"http://www.ibm.com/xmlns/prod/cics/bundle\" bundleMajorVer=\"1\" bundleMicroVer=\"0\" bundleMinorVer=\"0\" bundleRelease=\"0\" bundleVersion=\"1\" id=\"$bundleProjectName\">"])
-		checkManifestDoesNotContain(["<define "])
 
 		checkBundleArchiveFile()
 	}
@@ -50,9 +49,9 @@ class GoldenPathTests extends AbstractTest {
 	@Unroll
 	def "Test standalone #type project"(String type) {
 
-		String projectName = null
-		String archiveExtension = null
-		String bindingExtension = null
+		def projectName = null
+		def archiveExtension = null
+		def bindingExtension = null
 		switch(type) {
 			case "osgi":
 				projectName = "standalone-osgi"
@@ -77,6 +76,7 @@ class GoldenPathTests extends AbstractTest {
 		rootProjectName = bundleProjectName = projectName
 
 		copyTestProject()
+		def jvmserver = gradleProperties.getProperty("defaultJVMServer")
 
 		when:
 		runGradleAndSucceed([BundlePlugin.DEPLOY_TASK_NAME])
@@ -86,6 +86,12 @@ class GoldenPathTests extends AbstractTest {
 				"${bundleNameAndVersion}.${archiveExtension}",
 				"${bundleNameAndVersion}.${bindingExtension}"
 		])
+
+        if (type == "osgi") {
+            checkFileContains(getFileInDir(bundleBuildDir, "${bundleNameAndVersion}.${bindingExtension}") , ["<${bindingExtension} jvmserver=\"${jvmserver}\" symbolicname=\"com.ibm.cics.standalone-osgi\" version=\"1.0.0\"/>"])
+        } else {
+            checkFileContains(getFileInDir(bundleBuildDir, "${bundleNameAndVersion}.${bindingExtension}") , ["<${bindingExtension} jvmserver=\"${jvmserver}\" symbolicname=\"${bundleNameAndVersion}\"/>"])
+        }
 
 		checkManifest([
 				"<define name=\"${bundleNameAndVersion}\" path=\"${bundleNameAndVersion}.${bindingExtension}\" type=\"http://www.ibm.com/xmlns/prod/cics/bundle/${bindingExtension.toUpperCase()}\"/>"
@@ -115,6 +121,7 @@ class GoldenPathTests extends AbstractTest {
 		def remoteEbaNameAndVersion = "org.apache.aries.samples.twitter.eba-1.0.0"
 
 		copyTestProject()
+		def jvmserver = gradleProperties.getProperty("defaultJVMServer")
 
 		when:
 		runGradleAndSucceed([BundlePlugin.DEPLOY_TASK_NAME])
@@ -136,6 +143,14 @@ class GoldenPathTests extends AbstractTest {
 				"${remoteEbaNameAndVersion}.eba",
 				"${remoteEbaNameAndVersion}.ebabundle"
 		])
+
+		checkFileContains(getFileInDir(bundleBuildDir, "${localOsgiNameAndVersion}.osgibundle"), ["<osgibundle jvmserver=\"${jvmserver}\" symbolicname=\"com.ibm.cics.multi-osgi\" version=\"1.0.0\"/>"])
+		checkFileContains(getFileInDir(bundleBuildDir, "${localWarNameAndVersion}.warbundle"), ["<warbundle jvmserver=\"${jvmserver}\" symbolicname=\"${localWarNameAndVersion}\"/>"])
+		checkFileContains(getFileInDir(bundleBuildDir, "${localEarNameAndVersion}.earbundle"), ["<earbundle jvmserver=\"${jvmserver}\" symbolicname=\"${localEarNameAndVersion}\"/>"])
+		checkFileContains(getFileInDir(bundleBuildDir, "${remoteOsgiNameAndVersion}.osgibundle"), ["<osgibundle jvmserver=\"${jvmserver}\" symbolicname=\"org.codehaus.cargo.simple-bundle\" version=\"1.7.7\"/>"])
+		checkFileContains(getFileInDir(bundleBuildDir, "${remoteWarNameAndVersion}.warbundle"), ["<warbundle jvmserver=\"${jvmserver}\" symbolicname=\"${remoteWarNameAndVersion}\"/>"])
+		checkFileContains(getFileInDir(bundleBuildDir, "${remoteEarNameAndVersion}.earbundle"), ["<earbundle jvmserver=\"${jvmserver}\" symbolicname=\"${remoteEarNameAndVersion}\"/>"])
+		checkFileContains(getFileInDir(bundleBuildDir, "${remoteEbaNameAndVersion}.ebabundle"), ["<ebabundle jvmserver=\"${jvmserver}\" symbolicname=\"${remoteEbaNameAndVersion}\"/>"])
 
 		checkManifest([
 				"<define name=\"${localOsgiNameAndVersion}\" path=\"${localOsgiNameAndVersion}.osgibundle\" type=\"http://www.ibm.com/xmlns/prod/cics/bundle/OSGIBUNDLE\"/>",
@@ -178,6 +193,8 @@ class GoldenPathTests extends AbstractTest {
 				"TSQAdapter.epadapter",
 				"URIMP011.urimap"
 		])
+
+		checkFileContains(getFileInDir(bundleBuildDir, "PROGDEF1.program"), ["<?xml version=\"1.0\" encoding=\"UTF-8\"?><cicsdefinitionprogram xmlns=\"http://www.ibm.com/xmlns/prod/CICS/smw2int\" description=\"Demo program definition\" jvm=\"NO\" name=\"PROGDEF1\"/>"])
 
 		checkManifest([
 				"<define name=\"FILEDEFA\" path=\"FILEDEFA.file\" type=\"http://www.ibm.com/xmlns/prod/cics/bundle/FILE\"/>",

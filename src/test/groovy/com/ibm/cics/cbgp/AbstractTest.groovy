@@ -83,6 +83,14 @@ abstract class AbstractTest extends Specification {
 		return getFileInDir(bundleProjectDir, "gradle.properties")
 	}
 
+	protected def getGradleProperties() {
+		Properties properties = new Properties()
+		gradlePropertiesFile.withInputStream {
+			properties.load(it)
+		}
+		return properties
+	}
+
 	protected def getResourcesDir() {
 		return getFileInDir(bundleProjectDir, BuildBundleTask.RESOURCES_PATH)
 	}
@@ -224,25 +232,21 @@ abstract class AbstractTest extends Specification {
 		}
 	}
 
-	protected checkManifest(List<String> expectedManifestStrings, boolean failIfFound = false) {
-		def manifestFile = getManifestFile()
-		assert manifestFile.exists(): "Unable to find cics.xml"
-		def lines = manifestFile.readLines()
-		expectedManifestStrings.each { expectedManifestString ->
+	protected static checkFileContains(File file, List<String> expectedStrings) {
+		assert file.exists(): "Unable to find ${file.name}"
+		def lines = file.readLines()
+		expectedStrings.each { expectedString ->
 			def found = lines.find { line ->
-				return line.contains(expectedManifestString)
+				return line.contains(expectedString)
 			}
-			if (found && failIfFound) {
-				assert false: "cics.xml contains unwanted data : '$expectedManifestString'"
-			}
-			if (!found && !failIfFound) {
-				assert false: "cics.xml is missing : '$expectedManifestString'"
+			if (!found) {
+				assert false: "${file.name} is missing : '$expectedString'"
 			}
 		}
 	}
 
-	protected checkManifestDoesNotContain(List<String> manifestStringsUndesired) {
-		checkManifest(manifestStringsUndesired, true)
+	protected checkManifest(List<String> expectedStrings) {
+		checkFileContains(manifestFile, expectedStrings)
 	}
 
 	protected void checkBundleArchiveFile() {
