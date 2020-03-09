@@ -18,10 +18,9 @@ import com.ibm.cics.bundle.parts.WarBundlePart
 import org.gradle.api.GradleException
 import java.io.File
 
-class WarbundlePartBinding(file: File) : AbstractJavaBundlePartBinding(file) {
+class WarBundlePartBinding() : AbstractJavaBundlePartBinding() {
 
-	@Throws(GradleException::class)
-	override fun toBundlePartImpl(): BundleResource {
+	override fun toBundlePart(): BundleResource {
 		return WarBundlePart(
 				name,
 				jvmserver,

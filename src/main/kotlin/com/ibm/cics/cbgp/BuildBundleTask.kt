@@ -19,6 +19,9 @@ import org.apache.commons.io.FileUtils
 import org.gradle.api.DefaultTask
 import org.gradle.api.GradleException
 import org.gradle.api.artifacts.Configuration
+import org.gradle.api.artifacts.Dependency
+import org.gradle.api.artifacts.ProjectDependency
+import org.gradle.api.artifacts.ResolvedConfiguration
 import org.gradle.api.file.DirectoryProperty
 import org.gradle.api.tasks.*
 import org.gradle.util.VersionNumber
@@ -41,6 +44,14 @@ open class BuildBundleTask : DefaultTask() {
 	val bundleExtension = project.extensions.getByName(BundlePlugin.BUNDLE_EXTENSION_NAME) as BundleExtension
 	@Input
 	val defaultJVMServer = bundleExtension.build.defaultJVMServer
+
+	/**
+	 * Set parameters from the extraConfig extension as task inputs.
+	 */
+	@Internal
+	val extraConfigExtension = project.extensions.getByName(BundlePlugin.EXTRA_CONFIG_EXTENSION_NAME) as ExtraConfigExtension
+	@Input
+	val unused = extraConfigExtension.bundlePartsWithExtraConfig.hashCode()
 
 	/**
 	 * Set the cicsBundle dependency configuration as a task input.
@@ -68,7 +79,7 @@ open class BuildBundleTask : DefaultTask() {
 		// Delete existing output directory
 		val outputDirectoryFile = outputDirectory.get().asFile
 		if (outputDirectoryFile.exists()) {
-			logger.debug("Deleting $name output directory: $outputDirectoryFile")
+			logger.info("Deleting $name output directory: $outputDirectoryFile")
 			try {
 				FileUtils.deleteDirectory(outputDirectoryFile)
 			} catch (e: IOException) {
@@ -112,7 +123,7 @@ open class BuildBundleTask : DefaultTask() {
 	}
 
 	private fun addJavaBundlePartsToBundle(bundlePublisher: BundlePublisher) {
-		logger.info("Adding Java-based bundle parts from '${BundlePlugin.BUNDLE_DEPENDENCY_CONFIGURATION_NAME}' dependency configuration")
+		logger.lifecycle("Adding Java-based bundle parts from '${BundlePlugin.BUNDLE_DEPENDENCY_CONFIGURATION_NAME}' dependency configuration")
 		val resolved = cicsBundleConfig.resolvedConfiguration
 		if (resolved.hasError()) {
 			throw GradleException("Failed to resolve Java-based bundle parts from '${BundlePlugin.BUNDLE_DEPENDENCY_CONFIGURATION_NAME}' dependency configuration")
@@ -123,18 +134,27 @@ open class BuildBundleTask : DefaultTask() {
 			return
 		}
 
+		val extraConfigMap = createExtraConfigMap()
+
 		resolved.files.toTypedArray().forEach { file ->
 			logger.lifecycle("Adding Java-based bundle part: '$file'")
-			val binding: AbstractJavaBundlePartBinding
-			when (file.extension) {
-				"jar" -> binding = OsgibundlePartBinding(file)
-				"war" -> binding = WarbundlePartBinding(file)
-				"ear" -> binding = EarbundlePartBinding(file)
-				"eba" -> binding = EbabundlePartBinding(file)
-				else -> throw GradleException("Unsupported file extension '${file.extension}' for Java-based bundle part '${file.name}'. Supported extensions are: $VALID_DEPENDENCY_FILE_EXTENSIONS.")
+
+			// If extra config has been provided for this bundle part then use it
+			var binding: AbstractJavaBundlePartBinding? = extraConfigMap[file.name]
+			if (binding == null) {
+				when (file.extension) {
+					"jar" -> binding = OsgiBundlePartBinding()
+					"war" -> binding = WarBundlePartBinding()
+					"ear" -> binding = EarBundlePartBinding()
+					"eba" -> binding = EbaBundlePartBinding()
+					else -> throw GradleException("Unsupported file extension '${file.extension}' for Java-based bundle part '${file.name}'. Supported extensions are: $VALID_DEPENDENCY_FILE_EXTENSIONS.")
+				}
 			}
+			binding.file = file
+			binding.applyDefaults(defaultJVMServer)
+
 			try {
-				bundlePublisher.addResource(binding.toBundlePart(defaultJVMServer))
+				bundlePublisher.addResource(binding.toBundlePart())
 			} catch (e: PublishException) {
 				throw GradleException("Failure adding Java-based bundle part '${binding.name}' : ${e.message}", e)
 			}
@@ -142,8 +162,26 @@ open class BuildBundleTask : DefaultTask() {
 		return
 	}
 
+	/**
+	 * Create a map of bundle part filename to a bundle part binding containing it's extra configuration.
+	 */
+	private fun createExtraConfigMap(): Map<String, AbstractJavaBundlePartBinding> {
+		val extraConfigMap = HashMap<String, AbstractJavaBundlePartBinding>()
+		extraConfigExtension.bundlePartsWithExtraConfig.forEach { bundlePartWithExtraConfig ->
+			// Get the resolved filenames for the dependency by assigning it to a temporary configuration
+			val temp: Configuration = project.configurations.create("cicsBundleTemp")
+			temp.dependencies.add(bundlePartWithExtraConfig.dependency)
+			temp.resolvedConfiguration.files.toTypedArray().forEach { file ->
+				logger.lifecycle("Extra configuration found for Java-based bundle part: '${file.name}': ${bundlePartWithExtraConfig.extraConfigAsString()}")
+				extraConfigMap[file.name] = bundlePartWithExtraConfig
+			}
+			project.configurations.remove(temp)
+		}
+		return extraConfigMap
+	}
+
 	private fun addNonJavaBundlePartsToBundle(bundlePublisher: BundlePublisher) {
-		logger.info("Adding non-Java-based bundle parts from '$RESOURCES_PATH'")
+		logger.lifecycle("Adding non-Java-based bundle parts from '$RESOURCES_PATH'")
 		if (resourcesDirectory.isPresent) {
 			val resourcesDirectoryPath = resourcesDirectory.get().asFile.toPath()
 			try {

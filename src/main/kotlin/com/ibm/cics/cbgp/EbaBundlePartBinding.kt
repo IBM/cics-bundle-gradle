@@ -18,10 +18,9 @@ import com.ibm.cics.bundle.parts.EbaBundlePart
 import org.gradle.api.GradleException
 import java.io.File
 
-class EbabundlePartBinding(file: File) : AbstractJavaBundlePartBinding(file) {
+class EbaBundlePartBinding() : AbstractJavaBundlePartBinding() {
 
-	@Throws(GradleException::class)
-	override fun toBundlePartImpl(): BundleResource {
+	override fun toBundlePart(): BundleResource {
 		return EbaBundlePart(
 				name,
 				jvmserver,

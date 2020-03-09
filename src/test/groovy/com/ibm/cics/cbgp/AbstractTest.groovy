@@ -67,6 +67,14 @@ abstract class AbstractTest extends Specification {
 		return new File(directory.path + "/$fileName")
 	}
 
+	protected static def getTestResourcesDir() {
+		return new File("build/resources/test")
+	}
+
+	protected static def getTestProjectsDir() {
+		return new File("build/test-projects")
+	}
+
 	protected def getBuildFile() {
 		return getFileInDir(bundleProjectDir, "build.gradle")
 	}
@@ -101,8 +109,8 @@ abstract class AbstractTest extends Specification {
 
 	protected def copyTestProject() {
 
-		File srcFile = new File("build/resources/test/$rootProjectName")
-		File destFile = new File("build/test-projects/$testName/$rootProjectName")
+		File srcFile = getFileInDir(testResourcesDir, rootProjectName)
+		File destFile = getFileInDir(testProjectsDir, "$testName/$rootProjectName")
 		FileUtils.copyDirectory(srcFile, destFile)
 		rootProjectDir = destFile
 		if (bundleProjectName == rootProjectName) {
@@ -114,7 +122,7 @@ abstract class AbstractTest extends Specification {
 	}
 
 	protected def copyGradleProperties() {
-		File srcFile = new File("build/resources/test/$gradlePropertiesFilename")
+		File srcFile = getFileInDir(testResourcesDir, gradlePropertiesFilename)
 		File destFile = gradlePropertiesFile
 		FileUtils.copyFile(srcFile, destFile)
 	}
