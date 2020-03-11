@@ -32,7 +32,7 @@ class ErrorTests extends AbstractTest {
 
 		buildFile << """
 		dependencies {
-			cicsBundle(group: 'org.codehaus.cargo', name: 'simple-har', version: '1.7.7', ext: 'har')
+			cicsBundlePart(group: 'org.codehaus.cargo', name: 'simple-har', version: '1.7.7', ext: 'har')
 		}
 		""".stripIndent()
 
@@ -44,7 +44,7 @@ class ErrorTests extends AbstractTest {
 	}
 
 	@Unroll
-	def "Test cicsBundle config missing #propertiesToRemove"(List<String> propertiesToRemove, List<String> expectedMessages) {
+	def "Test cicsBundle extension missing #propertiesToRemove"(List<String> propertiesToRemove, List<String> expectedMessages) {
 
 		given:
 		rootProjectName = bundleProjectName = "standalone-war"

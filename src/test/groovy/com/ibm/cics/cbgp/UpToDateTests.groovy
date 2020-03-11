@@ -53,7 +53,7 @@ class UpToDateTests extends AbstractTest {
 		when:
 		buildFile << """
 		dependencies {
-			cicsBundle(group: 'org.codehaus.cargo', name: 'simple-bundle', version: '1.7.7', ext: 'jar')
+			cicsBundlePart(group: 'org.codehaus.cargo', name: 'simple-bundle', version: '1.7.7', ext: 'jar')
 		}
 		""".stripIndent()
 		result = runGradleAndSucceed([BundlePlugin.BUILD_TASK_NAME])
@@ -104,7 +104,7 @@ class UpToDateTests extends AbstractTest {
 		when:
 		buildFile << """
 		dependencies {
-			cicsBundleWar(dependency: cicsBundle(group: 'org.codehaus.cargo', name: 'simple-war', version: '1.7.7', ext: 'war'), name: 'new-war-module')
+			cicsBundleWar(dependency: cicsBundlePart(group: 'org.codehaus.cargo', name: 'simple-war', version: '1.7.7', ext: 'war'), name: 'new-war-module')
 		}
 		""".stripIndent()
 		result = runGradleAndSucceed([BundlePlugin.BUILD_TASK_NAME])

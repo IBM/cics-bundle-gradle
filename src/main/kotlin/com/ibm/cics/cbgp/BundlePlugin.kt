@@ -27,7 +27,7 @@ class BundlePlugin : Plugin<Project> {
 		const val PACKAGE_TASK_NAME = "packageCICSBundle"
 		const val DEPLOY_TASK_NAME = "deployCICSBundle"
 		const val BUNDLE_EXTENSION_NAME = "cicsBundle"
-		const val BUNDLE_DEPENDENCY_CONFIGURATION_NAME = "cicsBundle"
+		const val BUNDLE_DEPENDENCY_CONFIGURATION_NAME = "cicsBundlePart"
 		const val EXTRA_CONFIG_EXTENSION_NAME = "extraConfig"
 		const val OSGI_METHOD_NAME = "cicsBundleOsgi"
 		const val WAR_METHOD_NAME = "cicsBundleWar"
@@ -50,7 +50,7 @@ class BundlePlugin : Plugin<Project> {
 		project.extra.set(EAR_METHOD_NAME, closureOf<Any> { extraConfigExtension.cicsBundleEar(this) })
 		project.extra.set(EBA_METHOD_NAME, closureOf<Any> { extraConfigExtension.cicsBundleEba(this) })
 
-		// Define cicsBundle dependency configuration
+		// Define cicsBundlePart dependency configuration
 		project.configurations.register(BUNDLE_DEPENDENCY_CONFIGURATION_NAME) {
 			this.description = "Dependencies that constitute Java-based bundle parts that should be included in this CICS bundle."
 			this.isVisible = false

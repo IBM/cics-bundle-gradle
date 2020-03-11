@@ -14,7 +14,7 @@ repositories {
 
 dependencies {
     implementation (group: 'com.ibm.cics', name: 'com.ibm.cics.server', version: '1.700.1-5.5-PH11872')
-    cicsBundle files(jar)
+    cicsBundlePart files(jar)
 }
 
 jar {
