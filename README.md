@@ -164,6 +164,40 @@ Also ensure a BUNDLE definition for this CICS bundle has already been created in
     ```  
     If you run into an `unable to find valid certification path to requested target` error during deployment, see [Troubleshooting](#troubleshooting) for a fix.
 
+## Advanced configuration
+When adding Java-based bundle parts to your CICS bundle, the following defaults will be used:
+* The `name` of the bundle part will be equal to the file name.
+* The `jvmserver` of the bundle part will be equal to the vaule of the `defaultJVMServer` property in the `cicsBundle` extension.
+* The type of the bundle part will be determined by the file extension, e.g. a `.jar` extension will result in an OSGi bundle part.
+
+For the majority of users, these defaults will be sufficient. However, for advanced users, any of the defaults can be overriden with specific values by wrapping your `cicsBundlePart` dependency declaration inside one of the following types:
+* `cicsBundleOsgi`
+* `cicsBundleWar`
+* `cicsBundleEar`
+* `cicsBundleEba`
+
+You may use either the closure syntax or map syntax to specify the values:
+```gradle
+dependencies {
+    // Closure syntax
+    cicsBundleWar {
+        // Specify dependency as normal using any of the usual notations.
+        dependency = cicsBundlePart 'org.codehaus.cargo:simple-war:1.7.7@war'
+        // Changes the name from 'simple-war' to 'new-name'.
+        name = 'new-name'
+        // Changes the jvmserver from 'DFHWLP' to 'NEWJVMS'.
+        jvmserver = 'NEWJVMS'
+    }
+    // Map syntax
+    cicsBundleWar(dependency: cicsBundlePart('org.codehaus.cargo:simple-war:1.7.7@war'), name: 'new-name', jvmserver: 'NEWJVMS')
+}
+cicsBundle {
+    build {
+        defaultJVMServer = 'DFHWLP'
+    }
+}
+```
+ 
 ## Samples
 Use of this plugin will vary depending on what you’re starting with and the structure of your project, for example, whether you'd like to create a separate Gradle module for the bundle configuration or you'd like to include it into your existing module. We have included some samples to demonstrate the different methods.  
 [Multi-part project sample (`gradle-multipart-sample`)](https://github.com/IBM/cics-bundle-gradle/tree/master/samples/gradle-multipart-sample)    
