@@ -34,7 +34,7 @@ cicsBundle {
 ```  
 ```gradle
 dependencies {
-    cicsBundle files(war) //specify the name of the task which produces the bundle part archive
+    cicsBundlePart files(war) //specify the name of the task which produces the bundle part archive
 }
 ```
 

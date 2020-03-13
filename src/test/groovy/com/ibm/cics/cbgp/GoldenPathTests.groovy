@@ -35,7 +35,7 @@ class GoldenPathTests extends AbstractTest {
 				"(Gradle 5.0)",
 				"Task :buildCICSBundle",
 				"Task :packageCICSBundle",
-				"No Java-based bundle parts found in 'cicsBundle' dependency configuration",
+				"No Java-based bundle parts found in 'cicsBundlePart' dependency configuration",
 				"No non-Java-based bundle parts to add, because resources directory 'src/main/resources' does not exist"
 		])
 

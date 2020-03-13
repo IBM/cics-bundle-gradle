@@ -10,15 +10,15 @@ repositories {
 
 dependencies {
     // Local Java-based bundle parts in a separate project
-    cicsBundle project(path: ':multi-osgi', configuration: 'archives')
-    cicsBundle project(path: ':multi-war', configuration: 'archives')
-    cicsBundle project(path: ':multi-ear', configuration: 'archives')
+    cicsBundlePart project(path: ':multi-osgi', configuration: 'archives')
+    cicsBundlePart project(path: ':multi-war', configuration: 'archives')
+    cicsBundlePart project(path: ':multi-ear', configuration: 'archives')
 
     // Remote Java-based bundle parts in Maven Central
-    cicsBundle(group: 'org.codehaus.cargo', name: 'simple-bundle', version: '1.7.7', ext: 'jar')
-    cicsBundle(group: 'org.codehaus.cargo', name: 'simple-war', version: '1.7.7', ext: 'war')
-    cicsBundle(group: 'org.codehaus.cargo', name: 'simple-ear', version: '1.7.7', ext: 'ear')
-    cicsBundle(group: 'org.apache.aries.samples.twitter', name: 'org.apache.aries.samples.twitter.eba', version: '1.0.0', ext: 'eba')
+    cicsBundlePart(group: 'org.codehaus.cargo', name: 'simple-bundle', version: '1.7.7', ext: 'jar')
+    cicsBundlePart(group: 'org.codehaus.cargo', name: 'simple-war', version: '1.7.7', ext: 'war')
+    cicsBundlePart(group: 'org.codehaus.cargo', name: 'simple-ear', version: '1.7.7', ext: 'ear')
+    cicsBundlePart(group: 'org.apache.aries.samples.twitter', name: 'org.apache.aries.samples.twitter.eba', version: '1.0.0', ext: 'eba')
 }
 
 cicsBundle {

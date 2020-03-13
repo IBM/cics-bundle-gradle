@@ -42,7 +42,7 @@ It can deploy CICS bundles containing any bundle parts.
 
 Tasks | Description
 --|--
-`buildCICSBundle`| Builds a CICS bundle.<br/>Java-based bundle parts are added using the `cicsBundle` dependency configuration.<br/>Non-Java-based bundle parts are automatically added from the src/main/resources folder of your project.
+`buildCICSBundle`| Builds a CICS bundle.<br/>Java-based bundle parts are added using the `cicsBundlePart` dependency configuration.<br/>Non-Java-based bundle parts are automatically added from the src/main/resources folder of your project.
 `packageCICSBundle`| Packages the built CICS bundle into a zipped archive.
 `deployCICSBundle`| Deploys the packaged CICS bundle to CICS on z/OS, installs and enables it.
 `build` | Performs a full build of the project, including assembling all artifacts and running all tests. **You only need to call the `build` task when building or packaging your CICS bundles as it depends on those tasks.**
@@ -90,26 +90,26 @@ In either case, configure the Gradle module as follows:
     ```gradle
     version '1.0.0'
     ```
-1. Add Java-based bundle parts to the bundle by adding them to the `dependencies` block using the `cicsBundle` configuration.
+1. Add Java-based bundle parts to the bundle by adding them to the `dependencies` block using the `cicsBundlePart` configuration.
     * If using the standalone project option: To include the bundle part produced by the project, use the `files` notation, and specify the name of the task which produces the bundle part archive, e.g. `jar`, `war`, or `ear`.
         ```gradle
         dependencies {
-            cicsBundle files(war)
+            cicsBundlePart files(war)
         }
         ```
     * If using the multi-part project option: To include a bundle part produced by a separate Gradle module, use the `project` notation with the `archives` configuration, and specify the path to the module.
         ```gradle
         dependencies {
-            cicsBundle project(path: ':path-to-other-module', configuration: 'archives')
+            cicsBundlePart project(path: ':path-to-other-module', configuration: 'archives')
         }
         ```
     * To include a bundle part hosted in a remote repository such as Maven Central, use the default `module` notation, using any of the permitted formats.
         ```gradle
         dependencies {
             // Map notation
-            cicsBundle group: 'org.codehaus.cargo', name: 'simple-war', version: '1.7.7', ext: 'war'
+            cicsBundlePart group: 'org.codehaus.cargo', name: 'simple-war', version: '1.7.7', ext: 'war'
             // String notation
-            cicsBundle 'org.codehaus.cargo:simple-war:1.7.7@war'
+            cicsBundlePart 'org.codehaus.cargo:simple-war:1.7.7@war'
         }
         ```
         Then specify the repository to use to retrieve the remote bundle part.

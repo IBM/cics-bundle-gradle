@@ -19,9 +19,6 @@ import org.apache.commons.io.FileUtils
 import org.gradle.api.DefaultTask
 import org.gradle.api.GradleException
 import org.gradle.api.artifacts.Configuration
-import org.gradle.api.artifacts.Dependency
-import org.gradle.api.artifacts.ProjectDependency
-import org.gradle.api.artifacts.ResolvedConfiguration
 import org.gradle.api.file.DirectoryProperty
 import org.gradle.api.tasks.*
 import org.gradle.util.VersionNumber
@@ -54,10 +51,10 @@ open class BuildBundleTask : DefaultTask() {
 	val unused = extraConfigExtension.bundlePartsWithExtraConfig.hashCode()
 
 	/**
-	 * Set the cicsBundle dependency configuration as a task input.
+	 * Set the cicsBundlePart dependency configuration as a task input.
 	 */
 	@InputFiles
-	val cicsBundleConfig: Configuration = project.configurations.getByName(BundlePlugin.BUNDLE_DEPENDENCY_CONFIGURATION_NAME)
+	val cicsBundlePartConfig: Configuration = project.configurations.getByName(BundlePlugin.BUNDLE_DEPENDENCY_CONFIGURATION_NAME)
 
 	/**
 	 * Set the resources directory as an optional task input.
@@ -124,7 +121,7 @@ open class BuildBundleTask : DefaultTask() {
 
 	private fun addJavaBundlePartsToBundle(bundlePublisher: BundlePublisher) {
 		logger.lifecycle("Adding Java-based bundle parts from '${BundlePlugin.BUNDLE_DEPENDENCY_CONFIGURATION_NAME}' dependency configuration")
-		val resolved = cicsBundleConfig.resolvedConfiguration
+		val resolved = cicsBundlePartConfig.resolvedConfiguration
 		if (resolved.hasError()) {
 			throw GradleException("Failed to resolve Java-based bundle parts from '${BundlePlugin.BUNDLE_DEPENDENCY_CONFIGURATION_NAME}' dependency configuration")
 		}

@@ -9,18 +9,18 @@ repositories {
 }
 
 dependencies {
-    cicsBundleOsgi(dependency: cicsBundle(group: 'org.codehaus.cargo', name: 'simple-bundle', version: '1.7.7', ext: 'jar'), name: 'new-osgi-module', jvmserver: 'EYUCMCIJ')
-    cicsBundleWar(dependency: cicsBundle(group: 'org.codehaus.cargo', name: 'simple-war', version: '1.7.7', ext: 'war'), name: 'new-war-module')
-    cicsBundleEar(dependency: cicsBundle(group: 'org.codehaus.cargo', name: 'simple-ear', version: '1.7.7', ext: 'ear'), name: 'new-ear-module')
+    cicsBundleOsgi(dependency: cicsBundlePart(group: 'org.codehaus.cargo', name: 'simple-bundle', version: '1.7.7', ext: 'jar'), name: 'new-osgi-module', jvmserver: 'EYUCMCIJ')
+    cicsBundleWar(dependency: cicsBundlePart(group: 'org.codehaus.cargo', name: 'simple-war', version: '1.7.7', ext: 'war'), name: 'new-war-module')
+    cicsBundleEar(dependency: cicsBundlePart(group: 'org.codehaus.cargo', name: 'simple-ear', version: '1.7.7', ext: 'ear'), name: 'new-ear-module')
 
-    cicsBundleOsgi(dependency: cicsBundle(project(path: ':multi-osgi', configuration: 'archives')), name: 'new-osgi-project', jvmserver: 'EYUCMCIJ')
-    cicsBundleWar(dependency: cicsBundle(project(path: ':multi-war', configuration: 'archives')), name: 'new-war-project')
-    cicsBundleEar(dependency: cicsBundle(project(path: ':multi-ear', configuration: 'archives')), name: 'new-ear-project')
+    cicsBundleOsgi(dependency: cicsBundlePart(project(path: ':multi-osgi', configuration: 'archives')), name: 'new-osgi-project', jvmserver: 'EYUCMCIJ')
+    cicsBundleWar(dependency: cicsBundlePart(project(path: ':multi-war', configuration: 'archives')), name: 'new-war-project')
+    cicsBundleEar(dependency: cicsBundlePart(project(path: ':multi-ear', configuration: 'archives')), name: 'new-ear-project')
 
-    cicsBundleOsgi(dependency: cicsBundle(files('files/simple-bundle-1.7.7.blah')), name: 'new-osgi-file', jvmserver: 'EYUCMCIJ')
-    cicsBundleWar(dependency: cicsBundle(files('files/simple-war-1.7.7.blah')), name: 'new-war-file')
-    cicsBundleEar(dependency: cicsBundle(files('files/simple-ear-1.7.7.blah')), name: 'new-ear-file')
-    cicsBundleEba(dependency: cicsBundle(files('files/org.apache.aries.samples.twitter.eba-1.0.0.blah')), name: 'new-eba-file')
+    cicsBundleOsgi(dependency: cicsBundlePart(files('files/simple-bundle-1.7.7.blah')), name: 'new-osgi-file', jvmserver: 'EYUCMCIJ')
+    cicsBundleWar(dependency: cicsBundlePart(files('files/simple-war-1.7.7.blah')), name: 'new-war-file')
+    cicsBundleEar(dependency: cicsBundlePart(files('files/simple-ear-1.7.7.blah')), name: 'new-ear-file')
+    cicsBundleEba(dependency: cicsBundlePart(files('files/org.apache.aries.samples.twitter.eba-1.0.0.blah')), name: 'new-eba-file')
 }
 
 cicsBundle {
