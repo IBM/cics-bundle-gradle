@@ -4,6 +4,8 @@ set -x
 # If this is a master build then publish
 if [ "$TRAVIS_BRANCH" = 'master' ] && [ "$TRAVIS_PULL_REQUEST" == 'false' ]; then
   ./gradlew \
+  -Dorg.gradle.internal.http.connectionTimeout=120000 \
+  -Dorg.gradle.internal.http.socketTimeout=120000 \
   -Dorg.gradle.project.signing.keyId="$GPG_KEY_NAME" \
   -Dorg.gradle.project.signing.password="$GPG_PASSPHRASE" \
   -Dorg.gradle.project.signing.secretKeyRingFile="$GPG_SECRET_KEYRING_FILE" \
