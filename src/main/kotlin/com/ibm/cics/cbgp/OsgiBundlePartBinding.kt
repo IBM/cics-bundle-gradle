@@ -35,7 +35,7 @@ class OsgiBundlePartBinding() : AbstractJavaBundlePartBinding() {
 			 */
 			symbolicName = OsgiBundlePart.getBundleSymbolicName(file)
 			if (symbolicName == null) {
-				throw GradleException("No value found for mandatory OSGi bundle header 'Bundle-SymbolicName' in manifest file: $file")
+				throw GradleException("No value found for mandatory OSGi bundle header 'Bundle-SymbolicName' in 'META-INF/MANIFEST.MF' in: '$file'")
 			}
 
 			/**
@@ -46,7 +46,7 @@ class OsgiBundlePartBinding() : AbstractJavaBundlePartBinding() {
 				osgiVersion = "0.0.0"
 			}
 		} catch (e: IOException) {
-			throw GradleException("Error reading OSGi bundle headers from manifest file: $file", e)
+			throw GradleException("Error reading OSGi bundle headers in 'META-INF/MANIFEST.MF' in: '$file'", e)
 		}
 	}
 
