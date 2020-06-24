@@ -1,0 +1,25 @@
+plugins {
+    id 'java'
+    id 'osgi'
+}
+
+version '1.0.0'
+
+sourceCompatibility = 1.8
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    implementation (group: 'com.ibm.cics', name: 'com.ibm.cics.server', version: '1.700.1-5.5-PH11872')
+}
+
+jar {
+    manifest {
+        attributes(
+                'Bundle-SymbolicName': 'com.ibm.cics.multi-ear-osgi',
+                'CICS-MainClass': 'examples.hello.HelloCICSWorld, examples.hello.HelloWorld'
+        )
+    }
+}

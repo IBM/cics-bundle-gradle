@@ -6,7 +6,7 @@ version '1.0.0'
 
 cicsBundle {
     build {
-        defaultJVMServer = project.defaultJVMServer
+        defaultJVMServer = project.jvmsWlp
     }
     deploy {
         url = project.url

@@ -21,7 +21,7 @@ class WireMock extends AbstractTest {
 		stubFor(
 			post(urlEqualTo("/managedcicsbundles"))
 				.withMultipartRequestBody(aMultipart().withName("cicsplex").withBody(equalTo("CICSEX56")))
-				.withMultipartRequestBody(aMultipart().withName("region").withBody(equalTo("IYCWEMW2")))
+				.withMultipartRequestBody(aMultipart().withName("region").withBody(equalTo("IYCWEMM1")))
 				.withMultipartRequestBody(aMultipart().withName("bunddef").withBody(matching("GRADLE.*")))
 				.withMultipartRequestBody(aMultipart().withName("csdgroup").withBody(equalTo("GRADLE")))
 				.withMultipartRequestBody(aMultipart().withName("bundle"))

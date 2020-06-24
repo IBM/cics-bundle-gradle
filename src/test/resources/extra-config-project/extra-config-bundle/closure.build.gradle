@@ -10,42 +10,42 @@ repositories {
 
 dependencies {
     cicsBundleOsgi {
-        dependency = cicsBundlePart(group: 'org.codehaus.cargo', name: 'simple-bundle', version: '1.7.7', ext: 'jar')
+        dependency = cicsBundlePart(group: 'org.codehaus.cargo', name: 'simple-bundle', version: '1.7.0', ext: 'jar')
         name = 'new-osgi-module'
-        jvmserver = 'EYUCMCIJ'
+        jvmserver = project.jvmsOsgi
     }
     cicsBundleWar {
-        dependency = cicsBundlePart(group: 'org.codehaus.cargo', name: 'simple-war', version: '1.7.7', ext: 'war')
+        dependency = cicsBundlePart(group: 'org.codehaus.cargo', name: 'simple-war', version: '1.7.0', ext: 'war')
         name = 'new-war-module'
     }
     cicsBundleEar {
-        dependency = cicsBundlePart(group: 'org.codehaus.cargo', name: 'simple-ear', version: '1.7.7', ext: 'ear')
+        dependency = cicsBundlePart(group: 'org.codehaus.cargo', name: 'simple-ear', version: '1.7.0', ext: 'ear')
         name = 'new-ear-module'
     }
     cicsBundleOsgi {
-        dependency = cicsBundlePart project(path: ':multi-osgi', configuration: 'archives')
+        dependency = cicsBundlePart project(path: ':extra-config-osgi', configuration: 'archives')
         name = 'new-osgi-project'
-        jvmserver = 'EYUCMCIJ'
+        jvmserver = project.jvmsOsgi
     }
     cicsBundleWar {
-        dependency = cicsBundlePart project(path: ':multi-war', configuration: 'archives')
+        dependency = cicsBundlePart project(path: ':extra-config-war', configuration: 'archives')
         name = 'new-war-project'
     }
     cicsBundleEar {
-        dependency = cicsBundlePart project(path: ':multi-ear', configuration: 'archives')
+        dependency = cicsBundlePart project(path: ':extra-config-ear', configuration: 'archives')
         name = 'new-ear-project'
     }
     cicsBundleOsgi {
-        dependency = cicsBundlePart files('files/simple-bundle-1.7.7.blah')
+        dependency = cicsBundlePart files('files/standalone-osgi-1.0.1.blah')
         name = 'new-osgi-file'
-        jvmserver = 'EYUCMCIJ'
+        jvmserver = project.jvmsOsgi
     }
     cicsBundleWar {
-        dependency = cicsBundlePart files('files/simple-war-1.7.7.blah')
+        dependency = cicsBundlePart files('files/standalone-war-1.0.1.blah')
         name = 'new-war-file'
     }
     cicsBundleEar {
-        dependency = cicsBundlePart files('files/simple-ear-1.7.7.blah')
+        dependency = cicsBundlePart files('files/standalone-ear-1.0.1.blah')
         name = 'new-ear-file'
     }
     cicsBundleEba {
@@ -56,7 +56,7 @@ dependencies {
 
 cicsBundle {
     build {
-        defaultJVMServer = 'BLAH'
+        defaultJVMServer = project.jvmsWlp
     }
     deploy {
         url = project.url

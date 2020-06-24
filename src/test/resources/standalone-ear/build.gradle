@@ -18,7 +18,7 @@ dependencies {
 
 cicsBundle {
     build {
-        defaultJVMServer = project.defaultJVMServer
+        defaultJVMServer = project.jvmsWlp
     }
     deploy {
         url = project.url

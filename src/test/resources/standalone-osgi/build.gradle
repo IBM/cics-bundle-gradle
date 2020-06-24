@@ -28,7 +28,7 @@ jar {
 
 cicsBundle {
     build {
-        defaultJVMServer = project.defaultJVMServer
+        defaultJVMServer = project.jvmsOsgi
     }
     deploy {
         url = project.url
