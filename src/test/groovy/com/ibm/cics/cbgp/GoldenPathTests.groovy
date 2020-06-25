@@ -76,7 +76,8 @@ class GoldenPathTests extends AbstractTest {
 		rootProjectName = bundleProjectName = projectName
 
 		copyTestProject()
-		def jvmserver = gradleProperties.getProperty("defaultJVMServer")
+		def jvmsWlp = gradleProperties.getProperty("jvmsWlp")
+		def jvmsOsgi = gradleProperties.getProperty("jvmsOsgi")
 
 		when:
 		runGradleAndSucceed([BundlePlugin.DEPLOY_TASK_NAME])
@@ -88,9 +89,9 @@ class GoldenPathTests extends AbstractTest {
 		])
 
         if (type == "osgi") {
-            checkFileContains(getFileInDir(bundleBuildDir, "${bundleNameAndVersion}.${bindingExtension}") , ["<${bindingExtension} jvmserver=\"${jvmserver}\" symbolicname=\"com.ibm.cics.standalone-osgi\" version=\"1.0.0\"/>"])
+            checkFileContains(getFileInDir(bundleBuildDir, "${bundleNameAndVersion}.${bindingExtension}") , ["<${bindingExtension} jvmserver=\"${jvmsOsgi}\" symbolicname=\"com.ibm.cics.standalone-osgi\" version=\"1.0.0\"/>"])
         } else {
-            checkFileContains(getFileInDir(bundleBuildDir, "${bundleNameAndVersion}.${bindingExtension}") , ["<${bindingExtension} jvmserver=\"${jvmserver}\" symbolicname=\"${bundleNameAndVersion}\"/>"])
+            checkFileContains(getFileInDir(bundleBuildDir, "${bundleNameAndVersion}.${bindingExtension}") , ["<${bindingExtension} jvmserver=\"${jvmsWlp}\" symbolicname=\"${bundleNameAndVersion}\"/>"])
         }
 
 		checkManifest([
@@ -115,13 +116,14 @@ class GoldenPathTests extends AbstractTest {
 		def localOsgiNameAndVersion = "multi-osgi-${projectVersion}"
 		def localWarNameAndVersion = "multi-war-${projectVersion}"
 		def localEarNameAndVersion = "multi-ear-${projectVersion}"
-		def remoteOsgiNameAndVersion = "simple-bundle-1.7.7"
-		def remoteWarNameAndVersion = "simple-war-1.7.7"
-		def remoteEarNameAndVersion = "simple-ear-1.7.7"
+		def remoteOsgiNameAndVersion = "simple-bundle-1.7.0"
+		def remoteWarNameAndVersion = "simple-war-1.7.0"
+		def remoteEarNameAndVersion = "simple-ear-1.7.0"
 		def remoteEbaNameAndVersion = "org.apache.aries.samples.twitter.eba-1.0.0"
 
 		copyTestProject()
-		def jvmserver = gradleProperties.getProperty("defaultJVMServer")
+		def jvmsWlp = gradleProperties.getProperty("jvmsWlp")
+		def jvmsOsgi = gradleProperties.getProperty("jvmsOsgi")
 
 		when:
 		runGradleAndSucceed([BundlePlugin.DEPLOY_TASK_NAME])
@@ -144,13 +146,13 @@ class GoldenPathTests extends AbstractTest {
 				"${remoteEbaNameAndVersion}.ebabundle"
 		])
 
-		checkFileContains(getFileInDir(bundleBuildDir, "${localOsgiNameAndVersion}.osgibundle"), ["<osgibundle jvmserver=\"${jvmserver}\" symbolicname=\"com.ibm.cics.multi-osgi\" version=\"1.0.0\"/>"])
-		checkFileContains(getFileInDir(bundleBuildDir, "${localWarNameAndVersion}.warbundle"), ["<warbundle jvmserver=\"${jvmserver}\" symbolicname=\"${localWarNameAndVersion}\"/>"])
-		checkFileContains(getFileInDir(bundleBuildDir, "${localEarNameAndVersion}.earbundle"), ["<earbundle jvmserver=\"${jvmserver}\" symbolicname=\"${localEarNameAndVersion}\"/>"])
-		checkFileContains(getFileInDir(bundleBuildDir, "${remoteOsgiNameAndVersion}.osgibundle"), ["<osgibundle jvmserver=\"${jvmserver}\" symbolicname=\"org.codehaus.cargo.simple-bundle\" version=\"1.7.7\"/>"])
-		checkFileContains(getFileInDir(bundleBuildDir, "${remoteWarNameAndVersion}.warbundle"), ["<warbundle jvmserver=\"${jvmserver}\" symbolicname=\"${remoteWarNameAndVersion}\"/>"])
-		checkFileContains(getFileInDir(bundleBuildDir, "${remoteEarNameAndVersion}.earbundle"), ["<earbundle jvmserver=\"${jvmserver}\" symbolicname=\"${remoteEarNameAndVersion}\"/>"])
-		checkFileContains(getFileInDir(bundleBuildDir, "${remoteEbaNameAndVersion}.ebabundle"), ["<ebabundle jvmserver=\"${jvmserver}\" symbolicname=\"${remoteEbaNameAndVersion}\"/>"])
+		checkFileContains(getFileInDir(bundleBuildDir, "${localOsgiNameAndVersion}.osgibundle"), ["<osgibundle jvmserver=\"${jvmsOsgi}\" symbolicname=\"com.ibm.cics.multi-osgi\" version=\"1.0.0\"/>"])
+		checkFileContains(getFileInDir(bundleBuildDir, "${localWarNameAndVersion}.warbundle"), ["<warbundle jvmserver=\"${jvmsWlp}\" symbolicname=\"${localWarNameAndVersion}\"/>"])
+		checkFileContains(getFileInDir(bundleBuildDir, "${localEarNameAndVersion}.earbundle"), ["<earbundle jvmserver=\"${jvmsWlp}\" symbolicname=\"${localEarNameAndVersion}\"/>"])
+		checkFileContains(getFileInDir(bundleBuildDir, "${remoteOsgiNameAndVersion}.osgibundle"), ["<osgibundle jvmserver=\"${jvmsOsgi}\" symbolicname=\"org.codehaus.cargo.simple-bundle\" version=\"1.7.0\"/>"])
+		checkFileContains(getFileInDir(bundleBuildDir, "${remoteWarNameAndVersion}.warbundle"), ["<warbundle jvmserver=\"${jvmsWlp}\" symbolicname=\"${remoteWarNameAndVersion}\"/>"])
+		checkFileContains(getFileInDir(bundleBuildDir, "${remoteEarNameAndVersion}.earbundle"), ["<earbundle jvmserver=\"${jvmsWlp}\" symbolicname=\"${remoteEarNameAndVersion}\"/>"])
+		checkFileContains(getFileInDir(bundleBuildDir, "${remoteEbaNameAndVersion}.ebabundle"), ["<ebabundle jvmserver=\"${jvmsWlp}\" symbolicname=\"${remoteEbaNameAndVersion}\"/>"])
 
 		checkManifest([
 				"<define name=\"${localOsgiNameAndVersion}\" path=\"${localOsgiNameAndVersion}.osgibundle\" type=\"http://www.ibm.com/xmlns/prod/cics/bundle/OSGIBUNDLE\"/>",

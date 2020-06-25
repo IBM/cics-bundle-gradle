@@ -25,8 +25,8 @@ class ExtraConfigTests extends AbstractTest {
     def "Test extra config with #syntax syntax"(String syntax) {
 
         given:
-        rootProjectName = "multi-project"
-        bundleProjectName = "multi-bundle"
+        rootProjectName = "extra-config-project"
+        bundleProjectName = "extra-config-bundle"
         def osgiNameOverrideModule = "new-osgi-module"
         def warNameOverrideModule = "new-war-module"
         def earNameOverrideModule = "new-ear-module"
@@ -37,25 +37,24 @@ class ExtraConfigTests extends AbstractTest {
         def warNameOverrideFile = "new-war-file"
         def earNameOverrideFile = "new-ear-file"
         def ebaNameOverrideFile = "new-eba-file"
-        def jvmserverOriginal = "BLAH"
-        def jvmserverOverride = "EYUCMCIJ"
 
-        // Use the multi-project but add some more files and overwrite the build.gradle.
         copyTestProject()
-        File srcFile = getFileInDir(testResourcesDir, "extra-config/files")
-        File destFile = getFileInDir(bundleProjectDir, "files")
-        FileUtils.copyDirectory(srcFile, destFile)
-        srcFile = getFileInDir(testResourcesDir, "extra-config/${syntax}.build.gradle")
-        destFile = buildFile
+
+        // Use different build.gradle depending on syntax.
+        File srcFile = getFileInDir(bundleProjectDir, "${syntax}.build.gradle")
+        File destFile = buildFile
         FileUtils.copyFile(srcFile, destFile)
+
+        def jvmserverOriginal = gradleProperties.getProperty("jvmsWlp")
+        def jvmserverOverride = gradleProperties.getProperty("jvmsOsgi")
 
         when:
         def result = runGradleAndSucceed([BundlePlugin.DEPLOY_TASK_NAME])
 
         then:
         checkBuildOutputStrings(result, [
-                "Extra configuration found for Java-based bundle part: 'multi-osgi-1.0.0.jar': {name=$osgiNameOverrideProject, jvmserver=$jvmserverOverride}",
-                "Extra configuration found for Java-based bundle part: 'multi-war-1.0.0.war': {name=$warNameOverrideProject}"
+                "Extra configuration found for Java-based bundle part: 'extra-config-osgi-1.0.0.jar': {name=$osgiNameOverrideProject, jvmserver=$jvmserverOverride}",
+                "Extra configuration found for Java-based bundle part: 'extra-config-war-1.0.0.war': {name=$warNameOverrideProject}"
         ])
 
         checkBuildOutputFiles([
@@ -81,13 +80,13 @@ class ExtraConfigTests extends AbstractTest {
                 "${ebaNameOverrideFile}.ebabundle"
         ])
 
-        checkFileContains(getFileInDir(bundleBuildDir, "${osgiNameOverrideModule}.osgibundle"), ["<osgibundle jvmserver=\"${jvmserverOverride}\" symbolicname=\"org.codehaus.cargo.simple-bundle\" version=\"1.7.7\"/>"])
+        checkFileContains(getFileInDir(bundleBuildDir, "${osgiNameOverrideModule}.osgibundle"), ["<osgibundle jvmserver=\"${jvmserverOverride}\" symbolicname=\"org.codehaus.cargo.simple-bundle\" version=\"1.7.0\"/>"])
         checkFileContains(getFileInDir(bundleBuildDir, "${warNameOverrideModule}.warbundle"), ["<warbundle jvmserver=\"${jvmserverOriginal}\" symbolicname=\"${warNameOverrideModule}\"/>"])
         checkFileContains(getFileInDir(bundleBuildDir, "${earNameOverrideModule}.earbundle"), ["<earbundle jvmserver=\"${jvmserverOriginal}\" symbolicname=\"${earNameOverrideModule}\"/>"])
-        checkFileContains(getFileInDir(bundleBuildDir, "${osgiNameOverrideProject}.osgibundle"), ["<osgibundle jvmserver=\"${jvmserverOverride}\" symbolicname=\"com.ibm.cics.multi-osgi\" version=\"1.0.0\"/>"])
+        checkFileContains(getFileInDir(bundleBuildDir, "${osgiNameOverrideProject}.osgibundle"), ["<osgibundle jvmserver=\"${jvmserverOverride}\" symbolicname=\"com.ibm.cics.extra-config-osgi\" version=\"1.0.0\"/>"])
         checkFileContains(getFileInDir(bundleBuildDir, "${warNameOverrideProject}.warbundle"), ["<warbundle jvmserver=\"${jvmserverOriginal}\" symbolicname=\"${warNameOverrideProject}\"/>"])
         checkFileContains(getFileInDir(bundleBuildDir, "${earNameOverrideProject}.earbundle"), ["<earbundle jvmserver=\"${jvmserverOriginal}\" symbolicname=\"${earNameOverrideProject}\"/>"])
-        checkFileContains(getFileInDir(bundleBuildDir, "${osgiNameOverrideFile}.osgibundle"), ["<osgibundle jvmserver=\"${jvmserverOverride}\" symbolicname=\"org.codehaus.cargo.simple-bundle\" version=\"1.7.7\"/>"])
+        checkFileContains(getFileInDir(bundleBuildDir, "${osgiNameOverrideFile}.osgibundle"), ["<osgibundle jvmserver=\"${jvmserverOverride}\" symbolicname=\"com.ibm.cics.standalone-osgi\" version=\"1.0.1\"/>"])
         checkFileContains(getFileInDir(bundleBuildDir, "${warNameOverrideFile}.warbundle"), ["<warbundle jvmserver=\"${jvmserverOriginal}\" symbolicname=\"${warNameOverrideFile}\"/>"])
         checkFileContains(getFileInDir(bundleBuildDir, "${earNameOverrideFile}.earbundle"), ["<earbundle jvmserver=\"${jvmserverOriginal}\" symbolicname=\"${earNameOverrideFile}\"/>"])
         checkFileContains(getFileInDir(bundleBuildDir, "${ebaNameOverrideFile}.ebabundle"), ["<ebabundle jvmserver=\"${jvmserverOriginal}\" symbolicname=\"${ebaNameOverrideFile}\"/>"])

@@ -1,0 +1,8 @@
+rootProject.name = 'extra-config-project'
+
+include 'extra-config-bundle'
+include 'extra-config-osgi'
+include 'extra-config-war'
+include 'extra-config-ear'
+include 'extra-config-ear-osgi'
+include 'extra-config-ear-war'
