@@ -29,8 +29,6 @@ import java.nio.file.Files
 open class BuildBundleTask : DefaultTask() {
 
 	companion object {
-
-		const val RESOURCES_PATH = "src/main/resources"
 		val VALID_DEPENDENCY_FILE_EXTENSIONS = listOf("ear", "jar", "war", "eba")
 	}
 
@@ -41,6 +39,8 @@ open class BuildBundleTask : DefaultTask() {
 	val bundleExtension = project.extensions.getByName(BundlePlugin.BUNDLE_EXTENSION_NAME) as BundleExtension
 	@Input
 	val defaultJVMServer = bundleExtension.build.defaultJVMServer
+	@Input
+	val bundlePartsDirectory = "src/main/${bundleExtension.build.bundlePartsDirectory}"
 
 	/**
 	 * Set parameters from the extraConfig extension as task inputs.
@@ -178,7 +178,7 @@ open class BuildBundleTask : DefaultTask() {
 	}
 
 	private fun addNonJavaBundlePartsToBundle(bundlePublisher: BundlePublisher) {
-		logger.lifecycle("Adding non-Java-based bundle parts from '$RESOURCES_PATH'")
+		logger.lifecycle("Adding non-Java-based bundle parts from '$bundlePartsDirectory'")
 		if (resourcesDirectory.isPresent) {
 			val resourcesDirectoryPath = resourcesDirectory.get().asFile.toPath()
 			try {
@@ -199,7 +199,7 @@ open class BuildBundleTask : DefaultTask() {
 				throw GradleException("Failure adding non-Java-based bundle parts", e)
 			}
 		} else {
-			logger.info("No non-Java-based bundle parts to add, because resources directory '$RESOURCES_PATH' does not exist")
+			logger.info("No non-Java-based bundle parts to add, because resources directory '$bundlePartsDirectory' does not exist")
 		}
 	}
 }

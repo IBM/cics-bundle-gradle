@@ -13,7 +13,10 @@
  */
 package com.ibm.cics.cbgp
 
+import org.apache.commons.io.FileUtils
 import spock.lang.Unroll
+
+import java.nio.charset.Charset
 
 /**
  * Test golden path scenarios where valid bundles build successfully.
@@ -36,7 +39,7 @@ class GoldenPathTests extends AbstractTest {
 				"Task :buildCICSBundle",
 				"Task :packageCICSBundle",
 				"No Java-based bundle parts found in 'cicsBundlePart' dependency configuration",
-				"No non-Java-based bundle parts to add, because resources directory 'src/main/resources' does not exist"
+				"No non-Java-based bundle parts to add, because resources directory 'src/main/bundleParts' does not exist"
 		])
 
 		checkBuildOutputFiles(["META-INF/cics.xml"])
@@ -184,8 +187,6 @@ class GoldenPathTests extends AbstractTest {
 				"EPADSET1.epadapterset",
 				"FILEDEFA.file",
 				"LIBDEF1.library",
-				"META-INF",
-				"META-INF/cics.xml",
 				"PACKSET1.packageset",
 				"POLDEM1.policy",
 				"PROGDEF1.program",
@@ -214,5 +215,20 @@ class GoldenPathTests extends AbstractTest {
 		])
 
 		checkBundleArchiveFile()
+
+		// Add config to use a different location for bundle parts
+		when:
+		buildFile << """
+		cicsBundle {
+			build {
+				bundlePartsDirectory = 'bundleParts2'
+			}
+		}
+		""".stripIndent()
+
+		runGradleAndSucceed([BundlePlugin.DEPLOY_TASK_NAME])
+
+		then:
+		checkBuildOutputFiles(["PROGDEF2.program"])
 	}
 }

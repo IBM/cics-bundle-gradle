@@ -53,7 +53,7 @@ class UpToDateTests extends AbstractTest {
 		when:
 		buildFile << """
 		dependencies {
-			cicsBundlePart(group: 'org.codehaus.cargo', name: 'simple-bundle', version: '1.7.7', ext: 'jar')
+			cicsBundlePart(group: 'org.codehaus.cargo', name: 'simple-bundle', version: '1.7.0', ext: 'jar')
 		}
 		""".stripIndent()
 		result = runGradleAndSucceed([BundlePlugin.BUILD_TASK_NAME])
@@ -65,8 +65,8 @@ class UpToDateTests extends AbstractTest {
 
 		println("----- '$testName' - Add non-Java-based bundle part -----")
 		when:
-		File srcFile = getFileInDir(bundleProjectDir, "resources")
-		File destFile = resourcesDir
+		File srcFile = getFileInDir(bundleProjectDir, "bundleParts")
+		File destFile = getFileInDir(bundleProjectDir, "src/main/bundleParts")
 		FileUtils.moveDirectory(srcFile, destFile)
 		result = runGradleAndSucceed([BundlePlugin.BUILD_TASK_NAME])
 
@@ -100,11 +100,27 @@ class UpToDateTests extends AbstractTest {
 				"Task ':buildCICSBundle' is not up-to-date"
 		])
 
+		println("----- '$testName' - Change bundlePartsDirectory -----")
+		when:
+		buildFile << """
+		cicsBundle {
+			build {
+				bundlePartsDirectory = 'bundleParts2'
+			}
+		}
+		""".stripIndent()
+		result = runGradleAndSucceed([BundlePlugin.BUILD_TASK_NAME])
+
+		then:
+		checkBuildOutputStrings(result, [
+				"Task ':buildCICSBundle' is not up-to-date"
+		])
+
 		println("----- '$testName' - Add bundle part with extra config -----")
 		when:
 		buildFile << """
 		dependencies {
-			cicsBundleWar(dependency: cicsBundlePart(group: 'org.codehaus.cargo', name: 'simple-war', version: '1.7.7', ext: 'war'), name: 'new-war-module')
+			cicsBundleWar(dependency: cicsBundlePart(group: 'org.codehaus.cargo', name: 'simple-war', version: '1.7.0', ext: 'war'), name: 'new-war-module')
 		}
 		""".stripIndent()
 		result = runGradleAndSucceed([BundlePlugin.BUILD_TASK_NAME])

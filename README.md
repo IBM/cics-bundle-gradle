@@ -118,7 +118,18 @@ In either case, configure the Gradle module as follows:
             mavenCentral()
         }
         ```
-1. If you have included any Java-based bundle parts, add the `cicsBundle` extension block to define the default JVM server that they will use.
+1. Add the `cicsBundle` extension block to your `build.gradle`. This is where you will supply additional configuration properties for the plugin. There are separate sub-blocks for `build` and `deploy` properties.
+    ```gradle
+    cicsBundle {
+        build {
+            ...
+        }
+        deploy {
+            ...
+        }
+    }
+    ```
+1. If you have included any Java-based bundle parts, update the `cicsBundle` extension to define the default JVM server that they will use.
     ```gradle
     cicsBundle {
         build {
@@ -126,7 +137,14 @@ In either case, configure the Gradle module as follows:
         }
     }
     ```
-1. To include non-Java-based bundle parts, put the bundle part files in the src/main/resources directory. Files in this directory will be automatically included in the CICS bundle, and supported types will have a <define> element added to the CICS bundle's cics.xml.
+1. To include non-Java-based bundle parts, put the bundle part files in the `src/main/bundleParts` directory. Files in this directory will be automatically included in the CICS bundle, and supported types will have a <define> element added to the CICS bundle's cics.xml. The location of this directory can be configured in the `cicsBundle` extension. The configured directory is relative to `src/main/`.
+    ```gradle
+    cicsBundle {
+        build {
+            bundlePartsDirectory = 'myBundleParts'
+        }
+    }
+    ```
 1. Invoke the `build` task in your build. It builds the CICS bundle with its contained bundle parts, and packages it as a zip file.
     ```
     ./gradlew build
@@ -135,7 +153,7 @@ In either case, configure the Gradle module as follows:
 ## Deploy a CICS bundle
 Deploying your bundle to CICS requires extra configuration in CICS, as described in [Pre-requisites](https://github.com/IBM/cics-bundle-gradle#pre-requisites).
 
-Also ensure a BUNDLE definition for this CICS bundle has already been created in the CSD. You can ask your system admin to do this and pass you the CSD group and name of the definition. The bundle directory of the BUNDLE definition should be set as follows to match your CICS bundle:`<bundle_deploy_root>/<bundle_id>_<bundle_version>`.
+Also ensure a BUNDLE definition for this CICS bundle has already been created in the CSD. You can ask your system admin to do this and pass you the CSD group and name of the definition. The bundle directory of the BUNDLE definition should be set as follows to match your CICS bundle: `<bundle_deploy_root>/<bundle_id>_<bundle_version>`.
 
 1. In the CICS bundle module's `build.gradle`, add settings to the `cicsBundle` extension block for the deploy destination.
     ```gradle
