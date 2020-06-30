@@ -1,5 +1,5 @@
 # Standalone project sample (gradle-war-sample)
-This sample shows how you can configure an existing WAR project to build a CICS bundle. The `standalone-war-demo` directory would be your existing WAR project in a Gralde project. The WAR project is configured (in `standalone-war-demo/build.gradle`) to package its generated WAR as a bundle part into a CICS bundle and deploy the bundle to CICS.
+This sample shows how you can configure an existing WAR project to build a CICS bundle. The `standalone-war-demo` directory would be your existing WAR project in a Gradle project. The WAR project is configured (in `standalone-war-demo/build.gradle`) to package its generated WAR as a bundle part into a CICS bundle and deploy the bundle to CICS.
 
 # Set Up
 Have your system programmer create your BUNDLE definition in CSD.
@@ -24,11 +24,13 @@ cicsBundle {
     deploy {
         cicsplex = 'MYPLEX'
         region   = 'MYREGION'
-        bunddef  = 'MYBUND'
+        bunddef  = 'MYBUN'
         csdgroup = 'MYGROUP'
         url      = 'myserver.site.domain.com:1234'
-        username = project.cicsUser    // Define my_username in gradle.properties file
-        password = project.cicsPass   // Define my_password in gradle.properties file
+        username = project.cicsUser    // Define cicsUser in gradle.properties file
+        password = project.cicsPass   // Define cicsPass in gradle.properties file
+        // Caution: uncomment the line below to disable TLS/SSL checking for certificates
+        //insecure = true
     }
 }
 ```  
