@@ -18,7 +18,7 @@ Edit the variables in the `cicsBundle` block of the `gradle-bundle-demo/build.gr
 
 When the parent project is built, all its children will also be built.
 
-To build all modules and package the bundle parts into a zipped CICS bundle, change to the `gradle-bundle-demo` directory and run:
+To build all modules and package the bundle parts into a zipped CICS bundle, change to the `gradle-multipart-sample` directory and run:
 ```
 ./gradlew build
 ```
