@@ -81,8 +81,8 @@ class BundlePlugin : Plugin<Project> {
 			// Set build directory to build/<name>-<version>, by default
 			buildTaskProvider.get().outputDirectory.set(project.layout.buildDirectory.dir("${project.name}-${project.version}"))
 
-			// Set resources directory to src/main/resources, by default
-			val resources = project.layout.projectDirectory.dir(BuildBundleTask.RESOURCES_PATH)
+			// Set resources directory to configured location, by default
+			val resources = project.layout.projectDirectory.dir(buildTaskProvider.get().bundlePartsDirectory)
 			// Gradle will fail the build if we set a task input to a directory that doesn't exist
 			if (resources.asFile.exists()) {
 				buildTaskProvider.get().resourcesDirectory.set(resources)

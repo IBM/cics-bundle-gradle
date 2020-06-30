@@ -91,10 +91,6 @@ abstract class AbstractTest extends Specification {
 		return properties
 	}
 
-	protected def getResourcesDir() {
-		return getFileInDir(bundleProjectDir, BuildBundleTask.RESOURCES_PATH)
-	}
-
 	protected def getBuildDir() {
 		return getFileInDir(bundleProjectDir, "build")
 	}
