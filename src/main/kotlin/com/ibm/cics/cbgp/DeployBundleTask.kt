@@ -67,7 +67,7 @@ open class DeployBundleTask : DefaultTask() {
 	@Input
 	val username = bundleExtension.deploy.username
 	@Input
-	val password = bundleExtension.deploy.password
+	val password = bundleExtension.deploy.password.toCharArray()
 	@Input
 	val insecure = bundleExtension.deploy.insecure
 
