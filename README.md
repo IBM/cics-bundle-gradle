@@ -69,7 +69,7 @@ In either case, configure the Gradle module as follows:
 1. Add the plugin id to your `build.gradle`.
     ```gradle
     plugins {
-        id 'com.ibm.cics.bundle' version '1.0.0'
+        id 'com.ibm.cics.bundle' version '1.0.1'
     }
     ```
 1. If using a snapshot version of the plugin, add the snapshot repository to your `settings.gradle`, so Gradle can find the plugin.
