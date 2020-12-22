@@ -1,6 +1,25 @@
+<!--
+Editing notes:
+The table of contents is manually created and relies on the wording of the headings. Check for broken links when updating headings.
+-->
+
 # CICS bundle Gradle plugin (`com.ibm.cics.bundle`)
 
-A collection of Gradle plugins and utilities that can be used to build CICS bundles, ready to be installed into CICS TS.
+- [About this project](#cics-bundle-gradle-plugin-comibmcicsbundle)
+- The CICS bundle Gradle plugin
+  - [Supported bundle part types](#supported-bundle-part-types)
+  - [Prerequisites](#prerequisites)
+  - [Gradle tasks](#gradle-tasks)
+  - [Configure the plugin](#configure-the-cics-bundle-gradle-plugin)
+  - [Build and package a CICS bundle](#build-and-package-a-cics-bundle)
+  - [Deploy a CICS bundle](#deploy-a-cics-bundle)
+  - [Advanced configuration](#advanced-configuration)
+  - [Samples](#samples)
+  - [Troubleshooting](#troubleshooting)
+- [Contributing](#contributing)
+- [License](#license)
+
+This is a Gradle plugin that can be used to build CICS bundles, ready to be installed into CICS TS.
 
 This project contains:
   * The CICS bundle Gradle plugin (`com.ibm.cics.bundle`), a Gradle plugin that can build CICS bundles, include selected bundle parts, and deploy them to CICS. It's available from both the [Gradle Plugin Portal](https://plugins.gradle.org/plugin/com.ibm.cics.bundle) and [Maven Central](https://search.maven.org/artifact/com.ibm.cics.bundle/com.ibm.cics.bundle.gradle.plugin).
@@ -30,14 +49,14 @@ The CICS bundle Gradle plugin supports building CICS bundles that contain the fo
 
 It can deploy CICS bundles containing any bundle parts.
 
-## Pre-requisites
+## Prerequisites
  The plugin requires Gradle version 5 features and will not work correctly on earlier releases of Gradle.  
  If you're using the `deployCICSBundle` task, further configuration to CICS is required to make use of the CICS bundle deployment API (see the [CICS TS doc](https://www.ibm.com/support/knowledgecenter/en/SSGMCP_5.6.0/configuring/cmci/config-bundle-api.html) for details). Simply put, you'll need:  
  * A CICS region that is at CICS® TS V5.6 or later
  * The region to be configured as a WUI region for the CICSplex that contains the deployment target region
  * The WUI region to be configured to use the CMCI JVM server, including the CICS bundle deployment API
 
-## Gradle Tasks
+## Gradle tasks
  The CICS bundle Gradle plugin contributes the following gradle tasks in sequential order.
 
 Tasks | Description
@@ -250,6 +269,6 @@ Add `insecure = true` to the `deploy` configuration of your bundle's `build.grad
 
 We welcome contributions! Find out how in our [contribution guide](CONTRIBUTING.md).
 
-## Licence
+## License
 
 This project is licensed under the Eclipse Public License, Version 2.0.
