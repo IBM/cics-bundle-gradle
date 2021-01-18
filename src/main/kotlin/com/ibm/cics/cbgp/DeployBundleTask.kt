@@ -23,8 +23,6 @@ import java.net.URI
 open class DeployBundleTask : DefaultTask() {
 
 	companion object {
-		const val MISSING_CICSPLEX = "Specify cicsplex for deploy"
-		const val MISSING_REGION = "Specify region for deploy"
 		const val MISSING_BUNDDEF = "Specify bundle definition name for deploy"
 		const val MISSING_CSDGROUP = "Specify csd group for deploy"
 		const val MISSING_URL = "Specify url for deploy"
@@ -92,14 +90,6 @@ open class DeployBundleTask : DefaultTask() {
 		var blockValid = true
 
 		// Validate block items exist, no check on content
-		if (cicsplex.isEmpty()) {
-			logger.error(MISSING_CICSPLEX)
-			blockValid = false
-		}
-		if (region.isEmpty()) {
-			logger.error(MISSING_REGION)
-			blockValid = false
-		}
 		if (bunddef.isEmpty()) {
 			logger.error(MISSING_BUNDDEF)
 			blockValid = false

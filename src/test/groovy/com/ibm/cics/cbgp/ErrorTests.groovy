@@ -69,12 +69,10 @@ class ErrorTests extends AbstractTest {
 		propertiesToRemove | expectedMessages
 		["defaultJVMServer"] | [AbstractJavaBundlePartBinding.JVMSERVER_EXCEPTION]
 		["url"]              | [DeployBundleTask.MISSING_URL, DeployBundleTask.DEPLOY_CONFIG_EXCEPTION]
-		["cicsplex"]         | [DeployBundleTask.MISSING_CICSPLEX, DeployBundleTask.DEPLOY_CONFIG_EXCEPTION]
-		["region"]           | [DeployBundleTask.MISSING_REGION, DeployBundleTask.DEPLOY_CONFIG_EXCEPTION]
 		["bunddef"]          | [DeployBundleTask.MISSING_BUNDDEF, DeployBundleTask.DEPLOY_CONFIG_EXCEPTION]
 		["csdgroup"]         | [DeployBundleTask.MISSING_CSDGROUP, DeployBundleTask.DEPLOY_CONFIG_EXCEPTION]
 		["username"]         | [DeployBundleTask.MISSING_USERNAME, DeployBundleTask.DEPLOY_CONFIG_EXCEPTION]
 		["password"]         | [DeployBundleTask.MISSING_PASSWORD, DeployBundleTask.DEPLOY_CONFIG_EXCEPTION]
-		["url", "cicsplex", "region", "bunddef", "csdgroup", "username", "password"] | [DeployBundleTask.MISSING_URL, DeployBundleTask.MISSING_CICSPLEX, DeployBundleTask.MISSING_REGION, DeployBundleTask.MISSING_BUNDDEF, DeployBundleTask.MISSING_CSDGROUP, DeployBundleTask.MISSING_USERNAME, DeployBundleTask.MISSING_PASSWORD, DeployBundleTask.DEPLOY_CONFIG_EXCEPTION]
+		["url", "bunddef", "csdgroup", "username", "password"] | [DeployBundleTask.MISSING_URL, DeployBundleTask.MISSING_BUNDDEF, DeployBundleTask.MISSING_CSDGROUP, DeployBundleTask.MISSING_USERNAME, DeployBundleTask.MISSING_PASSWORD, DeployBundleTask.DEPLOY_CONFIG_EXCEPTION]
 	}
 }
