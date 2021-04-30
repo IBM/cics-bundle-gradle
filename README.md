@@ -54,7 +54,7 @@ The plugin requires Gradle version 5 features and will not work correctly on ear
 
 The plugin builds CICS bundles for any in-service version of CICS Transaction Server for z/OS (version 5.3 and later at the time of writing).
 
-However, if you're using the `deployCICSBundle` task of the plugin to deploy bundles to CICS, you must enable the CICS bundle deployment API. The CICS bundle deployment API is supported by the CMCI JVM server that must be set up in a WUI region (consult the [CICS TS doc](https://www.ibm.com/support/knowledgecenter/en/SSGMCP_5.6.0/configuring/cmci/config-bundle-api.html) for details).To use the `deployCICSBundle` task, make sure that:
+However, if you're using the `deployCICSBundle` task of the plugin to deploy bundles to CICS, you must enable the CICS bundle deployment API. The CICS bundle deployment API is supported by the CMCI JVM server that must be set up in a WUI region (consult the [CICS TS doc](https://www.ibm.com/docs/en/cics-ts/5.6?topic=succs-configuring-cmci-jvm-server-cics-bundle-deployment-api) for details).To use the `deployCICSBundle` task, make sure that:
  * You have a CICS region that is at CICS® TS V5.6 or later
  * This region is configured to be a WUI region for the CICSplex that contains the deployment target region
  * This WUI region is configured to use the CMCI JVM server, including the CICS bundle deployment API
