@@ -50,14 +50,17 @@ The CICS bundle Gradle plugin supports building CICS bundles that contain the fo
 It can deploy CICS bundles containing any bundle parts.
 
 ## Prerequisites
- The plugin requires Gradle version 5 features and will not work correctly on earlier releases of Gradle.  
- If you're using the `deployCICSBundle` task, further configuration to CICS is required to make use of the CICS bundle deployment API (see the [CICS TS doc](https://www.ibm.com/support/knowledgecenter/en/SSGMCP_5.6.0/configuring/cmci/config-bundle-api.html) for details). Simply put, you'll need:  
- * A CICS region that is at CICS® TS V5.6 or later
- * The region to be configured as a WUI region for the CICSplex that contains the deployment target region
- * The WUI region to be configured to use the CMCI JVM server, including the CICS bundle deployment API
+The plugin requires Gradle version 5 features and will not work correctly on earlier releases of Gradle.
+
+The plugin builds CICS bundles for any in-service version of CICS Transaction Server for z/OS (version 5.3 and later at the time of writing).
+
+However, if you're using the `deployCICSBundle` task of the plugin to deploy bundles to CICS, you must enable the CICS bundle deployment API. The CICS bundle deployment API is supported by the CMCI JVM server that must be set up in a WUI region (consult the [CICS TS doc](https://www.ibm.com/support/knowledgecenter/en/SSGMCP_5.6.0/configuring/cmci/config-bundle-api.html) for details).To use the `deployCICSBundle` task, make sure that:
+ * You have a CICS region that is at CICS® TS V5.6 or later
+ * This region is configured to be a WUI region for the CICSplex that contains the deployment target region
+ * This WUI region is configured to use the CMCI JVM server, including the CICS bundle deployment API
 
 ## Gradle tasks
- The CICS bundle Gradle plugin contributes the following gradle tasks in sequential order.
+The CICS bundle Gradle plugin contributes the following gradle tasks in sequential order.
 
 Tasks | Description
 --|--
