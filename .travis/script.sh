@@ -1,8 +1,8 @@
 #!/usr/bin/env bash
 set -x
 
-# If this is a master build then publish
-if [ "$TRAVIS_BRANCH" = 'master' ] && [ "$TRAVIS_PULL_REQUEST" == 'false' ]; then
+# If this is a main build then publish
+if [ "$TRAVIS_BRANCH" = 'main' ] && [ "$TRAVIS_PULL_REQUEST" == 'false' ]; then
   ./gradlew \
   -Dorg.gradle.internal.http.connectionTimeout=120000 \
   -Dorg.gradle.internal.http.socketTimeout=120000 \
