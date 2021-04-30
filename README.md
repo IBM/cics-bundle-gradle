@@ -272,6 +272,12 @@ Add `insecure = true` to the `deploy` configuration of your bundle's `build.grad
 
 We welcome contributions! Find out how in our [contribution guide](CONTRIBUTING.md).
 
+## Support
+
+The CICS bundle Gradle plugin is supported as part of the CICS Transaction Server for z/OS license. Problems can be raised as [IBM Support cases](https://www.ibm.com/mysupport/), and requests for enhancement can use the [RFE site](https://www.ibm.com/support/pages/open-and-vote-cics-rfe-request-enhancement).
+
+Equally, problems and enhancement requests can be raised here on GitHub, as [new issues](https://github.com/IBM/cics-bundle-gradle/issues/new).
+
 ## License
 
 This project is licensed under the Eclipse Public License, Version 2.0.
