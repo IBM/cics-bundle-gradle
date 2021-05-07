@@ -17,6 +17,7 @@ The table of contents is manually created and relies on the wording of the headi
   - [Samples](#samples)
   - [Troubleshooting](#troubleshooting)
 - [Contributing](#contributing)
+- [Support](#support)
 - [License](#license)
 
 This is a Gradle plugin that can be used to build CICS bundles, ready to be installed into CICS TS.
