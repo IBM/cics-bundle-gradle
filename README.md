@@ -186,7 +186,7 @@ Also ensure a BUNDLE definition for this CICS bundle has already been created in
             region   = 'MYEGION'
             bunddef  = 'MYDEF'
             csdgroup = 'MYGROUP'
-            url      = 'myserver.site.domain.com:1234'
+            url      = 'https://myserver.site.domain.com:1234'
             username = myUsername
             password = myPassword
         }
