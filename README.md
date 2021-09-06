@@ -55,10 +55,9 @@ The plugin requires Gradle version 5 features and will not work correctly on ear
 
 The plugin builds CICS bundles for any in-service version of CICS Transaction Server for z/OS (version 5.3 and later at the time of writing).
 
-However, if you're using the `deployCICSBundle` task of the plugin to deploy bundles to CICS, you must enable the CICS bundle deployment API. The CICS bundle deployment API is supported by the CMCI JVM server that must be set up in a WUI region (consult the [CICS TS doc](https://www.ibm.com/docs/en/cics-ts/5.6?topic=succs-configuring-cmci-jvm-server-cics-bundle-deployment-api) for details).To use the `deployCICSBundle` task, make sure that:
- * You have a CICS region that is at CICS® TS V5.6 or later
- * This region is configured to be a WUI region for the CICSplex that contains the deployment target region
- * This WUI region is configured to use the CMCI JVM server, including the CICS bundle deployment API
+However, if you're using the `deployCICSBundle` task of the plugin to deploy bundles to CICS, you must enable the CICS bundle deployment API. The CICS bundle deployment API is supported by the CMCI JVM server that must be set up in a WUI region or a single region to turn it into an SMSS. See the [CICS TS doc](https://www.ibm.com/docs/en/cics-ts/6.1_beta?topic=suc-configuring-cmci-jvm-server-cics-bundle-deployment-api) for details. To use the `deployCICSBundle` task, make sure that:
+ * For a CICSPlex SM environment, set up the CMCI JVM server in the WUI region of the CICSplex that contains the deployment target region. The WUI region must be at CICS TS 5.6 or later.  
+ * For a single CICS region environment (SMSS), set up the CMCI JVM server in the deployment target region. The region must be at CICS TS open beta or later. 
 
 ## Gradle tasks
 The CICS bundle Gradle plugin contributes the following gradle tasks in sequential order.
@@ -197,8 +196,8 @@ Also ensure a BUNDLE definition for this CICS bundle has already been created in
     * `username & password` - These are your credentials for CICS. You can pass these into the build in a variety of ways (see [Gradle User Guide](https://docs.gradle.org/current/userguide/build_environment.html)), or use other plugins for further encryption, such as the [gradle-credentials-plugin](https://github.com/etiennestuder/gradle-credentials-plugin).
     * `bunddef` - The name of the BUNDLE definition to be installed.
     * `csdgroup` - The name of the CSD group that contains the BUNDLE definition.
-    * `cicsplex` - The name of the CICSplex that the target region belongs to.
-    * `region` - The name of the region that the bundle should be installed to.  
+    * `cicsplex` - The name of the CICSplex that the target region belongs to. Not required for single region (SMSS) environments.
+    * `region` - The name of the region that the bundle should be installed to. Not required for single region (SMSS) environments. 
 1. Invoke the `deployCICSBundle` task in your build to deploy the bundle to the target CICSplex and region.
     ```
     ./gradlew deployCICSBundle

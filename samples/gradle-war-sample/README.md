@@ -12,10 +12,10 @@ There are 2 ways to use this sample. Option 1 is to use the whole sample as-is, 
 ## Option 1: import the full sample
 [Clone the repository](https://github.com/IBM/cics-bundle-gradle.git) and import the sample, `samples/gradle-war-sample`, into your IDE.  
 
-Edit the variables in the `cicsBundle` block of the `standalone-war-demo/build.gradle` file, to match the correct CMCI URL, CSD group, CICSplex, region and BUNDLE definition name for your environment, as well as supplying your CICS user ID and password.
+Edit the variables in the `cicsBundle` block of the `standalone-war-demo/build.gradle` file, to match the correct CMCI URL, CSD group, CICSplex, region and BUNDLE definition name for your environment, as well as supplying your CICS user ID and password. If you're deploying the bunlde into a single region environment (SMSS), remove the `cicsplex` and `region` fields.  
 
 ## Option 2: add to an existing Gradle project
-If you have an existing Java Gradle project, add the snippet shown below to the `cicsBundle` and `dependencies` sections of your `build.gradle` and edit the variables as needed. Your Gradle project should now resemble the sample.
+If you have an existing Java Gradle project, add the snippet shown below to the `cicsBundle` and `dependencies` sections of your `build.gradle` and edit the variables as needed. If you're deploying the bunlde into a single region environment (SMSS), remove the `cicsplex` and `region` fields. Your Gradle project should now resemble the sample.  
 ```gradle
 cicsBundle {
     build {
