@@ -14,7 +14,7 @@ So for this sample, if your system programmer configured bundles-directory as `/
 # Using the sample
 [Clone the repository](https://github.com/IBM/cics-bundle-gradle.git) and import the sample, `samples/gradle-multipart-sample`, into your IDE.
 
-Edit the variables in the `cicsBundle` block of the `gradle-bundle-demo/build.gradle` file, to match the correct CMCI URL, CSD group, CICSplex, region and BUNDLE definition name for your environment, as well as supplying your CICS user ID and password.
+Edit the variables in the `cicsBundle` block of the `gradle-bundle-demo/build.gradle` file, to match the correct CMCI URL, CSD group, CICSplex, region and BUNDLE definition name for your environment, as well as supplying your CICS user ID and password. If you're deploying the bundle into a single region environment (SMSS), remove the `cicsplex` and `region` fields.  
 
 When the parent project is built, all its children will also be built.
 
