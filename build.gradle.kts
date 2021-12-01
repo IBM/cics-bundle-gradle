@@ -91,11 +91,9 @@ dependencies {
     implementation("com.ibm.cics:cics-bundle-common:1.0.2")
     testImplementation("junit:junit:4.13.2")
     testImplementation("com.github.tomakehurst:wiremock-jre8:2.31.0")
-    testImplementation(localGroovy())
-    testImplementation("org.spockframework:spock-junit4:2.0-groovy-3.0")
-    testImplementation("org.spockframework:spock-core:2.0-groovy-3.0") {
-        exclude(module =  "groovy-all")
-    }
+    testImplementation(enforcedPlatform("org.spockframework:spock-bom:2.0-groovy-3.0"))
+    testImplementation("org.spockframework:spock-junit4")
+    testImplementation("org.spockframework:spock-core")
 }
 
 tasks.named<Test>("test") {
