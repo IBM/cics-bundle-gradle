@@ -15,7 +15,7 @@ package com.ibm.cics.cbgp
 
 import static com.github.tomakehurst.wiremock.client.WireMock.*
 
-class WireMock extends AbstractTest {
+class WireMock {
 
 	static void setupWiremock() {
 		stubFor(

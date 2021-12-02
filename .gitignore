@@ -3,4 +3,3 @@ build/
 \.idea/
 \.project
 \.settings/
-\.travis/signingkey.asc

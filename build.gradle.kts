@@ -46,6 +46,10 @@ val ossrhPassword: String? by project
 
 signing {
     setRequired { !gradle.taskGraph.hasTask(":publishToMavenLocal") }
+    val signingKeyId: String? by project
+    val signingKey: String? by project
+    val signingPassword: String? by project
+    useInMemoryPgpKeys(signingKeyId, signingKey, signingPassword)
     sign(publishing.publications)
 }
 
@@ -85,16 +89,22 @@ defaultTasks("build")
 
 dependencies {
     implementation("com.ibm.cics:cics-bundle-common:1.0.2")
-    testImplementation("junit:junit:4.12")
-    testImplementation("com.github.tomakehurst:wiremock-jre8:2.25.1")
-    testImplementation("org.spockframework:spock-core:1.1-groovy-2.4") {
-        exclude(module =  "groovy-all")
-    }
+    testImplementation("junit:junit:4.13.2")
+    testImplementation("com.github.tomakehurst:wiremock-jre8:2.31.0")
+    testImplementation(enforcedPlatform("org.spockframework:spock-bom:2.0-groovy-3.0"))
+    testImplementation("org.spockframework:spock-junit4")
+    testImplementation("org.spockframework:spock-core")
+}
+
+tasks.named<Test>("test") {
+    useJUnitPlatform()
 }
 
 tasks.register("publishAll") {
+    group = "publishing"
     if (isReleaseVersion) {
         dependsOn("publishPlugins") // Publish to Gradle Plugin Portal if a release
     }
     dependsOn("publish") // Publish to Sonatype Snapshots or Central Staging, defined in 'publishing' extension
 }
+

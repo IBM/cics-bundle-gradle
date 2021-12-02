@@ -72,7 +72,7 @@ class BundlePlugin : Plugin<Project> {
 		// Define deploy task
 		val deployTaskProvider = project.tasks.register(DEPLOY_TASK_NAME, DeployBundleTask::class.java) {
 			this.description = "Deploys a packaged CICS bundle to a CICS system."
-			this.group = BasePlugin.UPLOAD_GROUP
+			this.group = "upload"
 		}
 
 		// Configure tasks (projectsEvaluated ensures that this runs after values such as project.version are set)
