@@ -73,6 +73,10 @@ class ErrorTests extends AbstractTest {
 		["csdgroup"]         | [DeployBundleTask.MISSING_CSDGROUP, DeployBundleTask.DEPLOY_CONFIG_EXCEPTION]
 		["username"]         | [DeployBundleTask.MISSING_USERNAME, DeployBundleTask.DEPLOY_CONFIG_EXCEPTION]
 		["password"]         | [DeployBundleTask.MISSING_PASSWORD, DeployBundleTask.DEPLOY_CONFIG_EXCEPTION]
+		["cicsplex"]         | [DeployBundleTask.MISSING_CICSPLEX_OR_REGION, DeployBundleTask.DEPLOY_CONFIG_EXCEPTION]
+		["region"]           | [DeployBundleTask.MISSING_CICSPLEX_OR_REGION, DeployBundleTask.DEPLOY_CONFIG_EXCEPTION]
+		// if both cicsplex and region are missing, we shouldn't see an error message
+		["url", "cicsplex", "region", "bunddef", "csdgroup", "username", "password"] | [DeployBundleTask.MISSING_URL, DeployBundleTask.MISSING_BUNDDEF, DeployBundleTask.MISSING_CSDGROUP, DeployBundleTask.MISSING_USERNAME, DeployBundleTask.MISSING_PASSWORD, DeployBundleTask.DEPLOY_CONFIG_EXCEPTION]
 		["url", "bunddef", "csdgroup", "username", "password"] | [DeployBundleTask.MISSING_URL, DeployBundleTask.MISSING_BUNDDEF, DeployBundleTask.MISSING_CSDGROUP, DeployBundleTask.MISSING_USERNAME, DeployBundleTask.MISSING_PASSWORD, DeployBundleTask.DEPLOY_CONFIG_EXCEPTION]
 	}
 }

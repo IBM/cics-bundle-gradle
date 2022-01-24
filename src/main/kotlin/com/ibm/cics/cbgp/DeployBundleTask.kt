@@ -28,6 +28,7 @@ open class DeployBundleTask : DefaultTask() {
 		const val MISSING_URL = "Specify url for deploy"
 		const val MISSING_USERNAME = "Specify username for deploy"
 		const val MISSING_PASSWORD = "Specify password for deploy"
+		const val MISSING_CICSPLEX_OR_REGION = "Specify both or neither of cicsplex and region for deploy"
 
 		val DEPLOY_CONFIG_EXCEPTION = """
 			Please specify deploy configuration in build.gradle.
@@ -88,6 +89,8 @@ open class DeployBundleTask : DefaultTask() {
 
 	private fun validateBundleExtension() {
 		var blockValid = true
+		var cicsplexSpecified = !cicsplex.isEmpty()
+		var regionSpecified = !region.isEmpty()
 
 		// Validate block items exist, no check on content
 		if (bunddef.isEmpty()) {
@@ -108,6 +111,10 @@ open class DeployBundleTask : DefaultTask() {
 		}
 		if (password.isEmpty()) {
 			logger.error(MISSING_PASSWORD)
+			blockValid = false
+		}
+		if(regionSpecified && !cicsplexSpecified || !regionSpecified && cicsplexSpecified) {
+			logger.error(MISSING_CICSPLEX_OR_REGION)
 			blockValid = false
 		}
 
