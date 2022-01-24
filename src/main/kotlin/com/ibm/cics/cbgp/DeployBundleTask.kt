@@ -28,7 +28,7 @@ open class DeployBundleTask : DefaultTask() {
 		const val MISSING_URL = "Specify url for deploy"
 		const val MISSING_USERNAME = "Specify username for deploy"
 		const val MISSING_PASSWORD = "Specify password for deploy"
-		const val MISSING_CICSPLEX_OR_REGION = "Specify both or neither of cicsplex and region"
+		const val MISSING_CICSPLEX_OR_REGION = "Specify both or neither of cicsplex and region for deploy"
 
 		val DEPLOY_CONFIG_EXCEPTION = """
 			Please specify deploy configuration in build.gradle.
