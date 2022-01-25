@@ -1,3 +1,14 @@
+pluginManagement {
+    repositories {
+        mavenLocal()
+        mavenCentral()
+        maven {
+            name = "SonatypeSnapshots"
+            url = uri("https://oss.sonatype.org/content/repositories/snapshots")
+        }
+        gradlePluginPortal() // Needed for the plugin's own dependencies.
+    }
+}
 rootProject.name = 'gradle-multipart-sample'
 include 'gradle-war-demo'
 include 'gradle-bundle-demo'
