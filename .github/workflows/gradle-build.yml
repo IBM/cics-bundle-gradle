@@ -35,3 +35,11 @@ jobs:
       - name: Build with Gradle
         if: github.ref != 'refs/heads/main'
         run: ./gradlew build --no-daemon --info --stacktrace
+
+      - name: Build Gradle War Sample
+        working-directory: ./samples/gradle-war-sample
+        run: ./gradlew build -PcicsUser=user -PcicsPass=pass --no-daemon --info --stacktrace
+
+      - name: Build Gradle Multipart Sample
+        working-directory: ./samples/gradle-multipart-sample
+        run: ./gradlew build -PcicsUser=user -PcicsPass=pass --no-daemon --info --stacktrace
