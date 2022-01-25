@@ -1,0 +1,31 @@
+name: Scheduled Build
+on:
+  schedule:
+    - cron:  '*/0 1 * * 0'    # Every Sunday at 1am
+jobs:
+
+  build:
+    name: Gradle Build
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Setup Java
+        uses: actions/setup-java@v2
+        with:
+          java-version: '8'
+          distribution: 'temurin'
+          cache: gradle
+
+      - name: Build with Gradle
+        run: ./gradlew build --no-daemon --info --stacktrace
+
+      - name: Build Gradle War Sample
+        working-directory: ./samples/gradle-war-sample
+        run: ./gradlew build -PcicsUser=user -PcicsPass=pass --no-daemon --info --stacktrace
+
+      - name: Build Gradle Multipart Sample
+        working-directory: ./samples/gradle-multipart-sample
+        run: ./gradlew build -PcicsUser=user -PcicsPass=pass --no-daemon --info --stacktrace
