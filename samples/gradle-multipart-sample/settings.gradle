@@ -1,6 +1,6 @@
 pluginManagement {
     repositories {
-        mavenLocal()
+        //mavenLocal() // enable this to test a local version published using publishToMavenLocal goal
         mavenCentral()
         maven {
             name = "SonatypeSnapshots"
