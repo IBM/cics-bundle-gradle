@@ -1,12 +1,13 @@
 pluginManagement {
     repositories {
-        //mavenLocal() // enable this to test a local version published using publishToMavenLocal goal
         mavenCentral()
-        maven {
-            name = "SonatypeSnapshots"
-            url = uri("https://oss.sonatype.org/content/repositories/snapshots")
-        }
         gradlePluginPortal() // Needed for the plugin's own dependencies.
+        //mavenLocal() //enable this to test a local version published using publishToMavenLocal goal
+        //uncomment lines below to use Sonatype snapshots
+        //maven {
+        //    name = "SonatypeSnapshots"
+        //    url = uri("https://oss.sonatype.org/content/repositories/snapshots")
+        //}
     }
 }
 rootProject.name = 'gradle-multipart-sample'
