@@ -30,9 +30,9 @@ cicsBundle {
 }
 
 dependencies {
-    testImplementation group: 'junit', name: 'junit', version: '4.12'
+    testImplementation group: 'junit', name: 'junit', version: '4.13.2'
     compileOnly group: 'javax.servlet', name: 'javax.servlet-api', version: '3.1.0'
-    compileOnly 'com.ibm.cics:com.ibm.cics.server:1.700.0-5.5-PH10453'
+    compileOnly 'com.ibm.cics:com.ibm.cics.server:1.800.1-5.6-PH34012'
     compileOnly 'javax.annotation:jsr250-api:1.0'
     cicsBundlePart files(war) //specify the name of the task which produces the bundle part archive
 }
