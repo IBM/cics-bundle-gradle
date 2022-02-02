@@ -12,7 +12,7 @@ repositories {
 }
 
 dependencies {
-    testCompile group: 'junit', name: 'junit', version: '4.12'
+    testImplementation group: 'junit', name: 'junit', version: '4.12'
     providedCompile 'javax.servlet:javax.servlet-api:3.1.0'
     compileOnly 'com.ibm.cics:com.ibm.cics.server:1.700.0-5.5-PH10453'
     compileOnly 'javax.annotation:jsr250-api:1.0'
