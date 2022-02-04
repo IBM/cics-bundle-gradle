@@ -21,7 +21,7 @@ plugins {
 }
 
 group = "com.ibm.cics"
-version = "1.0.2-SNAPSHOT"
+version = "1.0.2"
 val isReleaseVersion by extra(!version.toString().endsWith("SNAPSHOT"))
 
 gradlePlugin {
@@ -88,7 +88,7 @@ repositories {
 defaultTasks("build")
 
 dependencies {
-    implementation("com.ibm.cics:cics-bundle-common:1.0.4-SNAPSHOT")
+    implementation("com.ibm.cics:cics-bundle-common:1.0.4")
     testImplementation("junit:junit:4.13.2")
     testImplementation("com.github.tomakehurst:wiremock-jre8:2.32.0")
     testImplementation(enforcedPlatform("org.spockframework:spock-bom:2.0-groovy-3.0"))
