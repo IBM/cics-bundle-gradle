@@ -110,11 +110,9 @@ open class BuildBundleTask : DefaultTask() {
 
 	private fun getProjectVersionNumber(): VersionNumber {
 		val pv = project.version
-		if (pv is String) {
-			val versionNumber = VersionNumber.parse(pv.toString())
-			if (!VersionNumber.UNKNOWN.equals(versionNumber)) {
-				return versionNumber
-			}
+		val versionNumber = VersionNumber.parse(pv.toString())
+		if (!VersionNumber.UNKNOWN.equals(versionNumber)) {
+			return versionNumber
 		}
 		throw GradleException("Project version number '$pv' could not be parsed into MAJOR.MINOR.MICRO.PATCH format")
 	}

@@ -49,6 +49,21 @@ class GoldenPathTests extends AbstractTest {
 		checkBundleArchiveFile()
 	}
 
+	def "Test version number"() {
+
+		given:
+		rootProjectName = bundleProjectName = "version"
+		projectVersion = "1.2.3"
+
+		copyTestProject()
+
+		when:
+		runGradleAndSucceed([BundlePlugin.DEPLOY_TASK_NAME])
+
+		then:
+		checkBundleArchiveFile()
+	}
+
 	@Unroll
 	def "Test standalone #type project"(String type) {
 
