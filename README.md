@@ -276,7 +276,7 @@ com.ibm.cics.bundle.deploy.BundleDeployException: An internal server error occur
 **Why does it happen?**  
 It indicates errors on the CMCI JVM server side.  
 **How to resolve it?**  
-Contact your system administrator to check the `messages.log` file of the CMCI JVM server. More information about how to resolve CMCI JVM server errors, see [Troubleshooting CMCI JVM server](https://www.ibm.com/docs/en/cics-ts/5.6?topic=troubleshooting-cmci-jvm-server) in CICS documentation.  
+Contact your system administrator to check the `messages.log` file of the CMCI JVM server. For more information about how to resolve CMCI JVM server errors, see [Troubleshooting CMCI JVM server](https://www.ibm.com/docs/en/cics-ts/5.6?topic=troubleshooting-cmci-jvm-server) in CICS documentation.  
 
 ### `Error creating directory` during deployment
 You might see this message in the Gradle log when deploying a CICS bundle:  
@@ -284,7 +284,7 @@ You might see this message in the Gradle log when deploying a CICS bundle:
 [ERROR]  - Error creating directory '<directory>'.
 ```
 **Why does it happen?**  
-The error occurs because the user ID that deploys the bundle doesn't have right access.  
+The error occurs because the user ID that deploys the bundle doesn't have access to the bundles directory.  
 **How to resolve it?**  
 Contact your system administrator to make sure the `deploy_userid` configured for the CICS bundle deployment API has WRITE access to the bundles directory. The bundles directory is specified on the `com.ibm.cics.jvmserver.cmci.bundles.dir` option in the JVM profile of the CMCI JVM server.  
 For instructions on how to specify the bundles directory and grant access to `deploy_userid`, see [Configuring the CMCI JVM server for the CICS bundle deployment API](https://www.ibm.com/docs/en/cics-ts/5.6?topic=suc-configuring-cmci-jvm-server-cics-bundle-deployment-api) in CICS documentation.
