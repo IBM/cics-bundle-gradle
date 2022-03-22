@@ -24,8 +24,8 @@ jobs:
 
       - name: Build Gradle War Sample
         working-directory: ./samples/gradle-war-sample
-        run: ./gradlew build -PcicsUser=user -PcicsPass=pass --no-daemon --info --stacktrace
+        run: ./gradlew build -PcicsUser=user -PcicsPass=pass --no-daemon --info --stacktrace --include-build ../..
 
       - name: Build Gradle Multipart Sample
         working-directory: ./samples/gradle-multipart-sample
-        run: ./gradlew build -PcicsUser=user -PcicsPass=pass --no-daemon --info --stacktrace
+        run: ./gradlew build -PcicsUser=user -PcicsPass=pass --no-daemon --info --stacktrace --include-build ../..
