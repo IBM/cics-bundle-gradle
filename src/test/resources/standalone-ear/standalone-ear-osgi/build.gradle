@@ -1,6 +1,6 @@
 plugins {
     id 'java'
-    id 'osgi'
+    id 'biz.aQute.bnd.builder' version '6.3.0'
 }
 
 version '1.0.0'
@@ -16,8 +16,8 @@ dependencies {
 }
 
 jar {
-    manifest {
-        attributes(
+    bundle {
+        bnd (
                 'Bundle-SymbolicName': 'com.ibm.cics.standalone-ear-osgi',
                 'CICS-MainClass': 'examples.hello.HelloCICSWorld, examples.hello.HelloWorld'
         )

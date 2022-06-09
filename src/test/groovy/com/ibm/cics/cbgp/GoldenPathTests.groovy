@@ -35,7 +35,6 @@ class GoldenPathTests extends AbstractTest {
 
 		then:
 		checkBuildOutputStrings(result, [
-				"(Gradle 5.0)",
 				"Task :buildCICSBundle",
 				"Task :packageCICSBundle",
 				"No Java-based bundle parts found in 'cicsBundlePart' dependency configuration",
