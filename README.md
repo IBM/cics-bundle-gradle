@@ -33,7 +33,8 @@ The CICS bundle Gradle plugin supports building CICS bundles that contain the fo
  * OSGi Bundle (JAR)
  * Web Archive (WAR)
  * Enterprise Archive (EAR)
- * Enterprise Bundle Archive (EBA)
+ * Enterprise Bundle Archive (EBA)  
+ **Note:** [Enterprise Bundle Archive (EBA) support is stabilized in CICS TS](https://www.ibm.com/docs/en/cics-ts/latest?topic=releases-stabilization-notices).
 
 **Non-Java-based bundle parts**
  * EPADAPTER
