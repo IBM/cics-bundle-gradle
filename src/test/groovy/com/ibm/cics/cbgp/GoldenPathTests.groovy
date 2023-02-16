@@ -2,7 +2,7 @@
  * #%L
  * CICS Bundle Gradle Plugin
  * %%
- * Copyright (C) 2019 IBM Corp.
+ * Copyright (C) 2019, 2023 IBM Corp.
  * %%
  * This program and the accompanying materials are made
  * available under the terms of the Eclipse Public License 2.0
@@ -62,6 +62,51 @@ class GoldenPathTests extends AbstractTest {
 		then:
 		checkBundleArchiveFile()
 	}
+
+	def "Test OSGi with version range"() {
+
+		given:
+		rootProjectName = bundleProjectName = "bundle-osgi-versionrange"
+		projectVersion = "1.0.0"
+
+		def jvmsOsgi = "DFHWLP"
+		def bindingExtension = "osgibundle"
+		def versionRange = "[1.0.0,2.0.0)"
+		def subProjectName = "multi-osgi"
+
+		copyTestProject()
+
+		when:
+		runGradleAndSucceed([BundlePlugin.DEPLOY_TASK_NAME])
+
+		then:
+		checkFileContains(getFileInDir(bundleBuildDir, "${subProjectName + "-" + projectVersion}.${bindingExtension}") , ["<${bindingExtension} jvmserver=\"${jvmsOsgi}\" symbolicname=\"com.ibm.cics.multi-osgi\" version=\"\" versionRange=\"${versionRange}\"/>"])
+		checkBundleArchiveFile()
+	}
+	def "Test multiple OSGi with version range"() {
+
+		given:
+		rootProjectName = bundleProjectName = "bundle-osgi-versionrange-multi"
+		projectVersion = "1.0.0"
+
+		def jvmsOsgi = "DFHWLP"
+		def bindingExtension = "osgibundle"
+		def versionRange = "[1.0.0,2.0.0)"
+		def versionRangeTwo = "[1.0.0,3.0.0)"
+		def subProjectName = "multi-osgi"
+		def subProjectNameTwo = "multi-osgi-repeat"
+
+		copyTestProject()
+
+		when:
+		runGradleAndSucceed([BundlePlugin.DEPLOY_TASK_NAME])
+
+		then:
+		checkFileContains(getFileInDir(bundleBuildDir, "${subProjectName + "-" + projectVersion}.${bindingExtension}") , ["<${bindingExtension} jvmserver=\"${jvmsOsgi}\" symbolicname=\"com.ibm.cics.multi-osgi\" version=\"\" versionRange=\"${versionRange}\"/>"])
+		checkFileContains(getFileInDir(bundleBuildDir, "${subProjectNameTwo + "-" + projectVersion}.${bindingExtension}") , ["<${bindingExtension} jvmserver=\"${jvmsOsgi}\" symbolicname=\"com.ibm.cics.multi-osgi-repeat\" version=\"\" versionRange=\"${versionRangeTwo}\"/>"])
+		checkBundleArchiveFile()
+	}
+
 
 	@Unroll
 	def "Test standalone #type project"(String type) {

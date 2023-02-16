@@ -1,0 +1,4 @@
+rootProject.name = 'bundle-osgi-versionrange-multi'
+
+include ':multi-osgi'
+include ':multi-osgi-repeat'

@@ -1,0 +1,33 @@
+plugins {
+    id "com.ibm.cics.bundle" version '1.0.3'
+}
+
+group 'com.ibm.cics'
+version '1.0.0'
+
+repositories {
+    mavenLocal()
+}
+
+cicsBundle {
+    build {
+        defaultJVMServer = 'DFHWLP'
+    }
+    deploy {
+        url = project.url
+        cicsplex = project.cicsplex
+        region = project.region
+        bunddef = 'GRADLESW'
+        csdgroup = project.csdgroup
+        username = project.username
+        password = project.password
+        insecure = project.insecure
+    }
+}
+
+dependencies {
+    cicsBundleOsgi {
+        dependency = cicsBundlePart project(path: 'multi-osgi', configuration: 'archives')
+        versionRange = "[1.0.0,2.0.0)"
+    }
+}
