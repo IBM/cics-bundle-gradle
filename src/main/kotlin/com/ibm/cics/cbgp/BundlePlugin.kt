@@ -43,6 +43,8 @@ class BundlePlugin : Plugin<Project> {
 		// Create cicsBundle extension
 		project.extensions.create(BUNDLE_EXTENSION_NAME, BundleExtension::class.java)
 
+		//this might break my CI build but not if it's in a comment
+
 		// Create extra config extension and delegate some DSL methods to it. This lets us put these methods at the project level, rather than have to have them nested under the extension.
 		val extraConfigExtension = project.extensions.create(EXTRA_CONFIG_EXTENSION_NAME, ExtraConfigExtension::class.java)
 		project.extra.set(OSGI_METHOD_NAME, closureOf<Any> { extraConfigExtension.cicsBundleOsgi(this) })
