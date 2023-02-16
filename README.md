@@ -210,12 +210,15 @@ When adding Java-based bundle parts to your CICS bundle, the following defaults 
 * The `name` of the bundle part will be equal to the file name.
 * The `jvmserver` of the bundle part will be equal to the vaule of the `defaultJVMServer` property in the `cicsBundle` extension.
 * The type of the bundle part will be determined by the file extension, e.g. a `.jar` extension will result in an OSGi bundle part.
+* Any version ranges will be ignored and the version in the build file will be used when generating the bundlepart file
 
 For the majority of users, these defaults will be sufficient. However, for advanced users, any of the defaults can be overriden with specific values by wrapping your `cicsBundlePart` dependency declaration inside one of the following types:
 * `cicsBundleOsgi`
 * `cicsBundleWar`
 * `cicsBundleEar`
 * `cicsBundleEba`
+
+> NOTE: Only `cicsBundleOsgi` supports version range
 
 You may use either the closure syntax or map syntax to specify the values:
 ```gradle
@@ -238,7 +241,18 @@ cicsBundle {
     }
 }
 ```
- 
+For phase-in support when deploying a bundle, include a version range on a cicsBundleOsgi dependency:
+```gradle
+dependencies {
+    cicsBundleOsgi {
+        // Specify dependency as normal using any of the usual notations.
+        dependency = cicsBundlePart 'org.codehaus.cargo:simple-jar:1.7.7@jar'
+        // Specify a version range
+        versionRange = "[1.0.0,2.0.0)"
+    }
+}
+```
+
 ## Samples
 Use of this plugin will vary depending on what you’re starting with and the structure of your project, for example, whether you'd like to create a separate Gradle module for the bundle configuration or you'd like to include it into your existing module. We have included some samples to demonstrate the different methods.  
 [Multi-part project sample (`gradle-multipart-sample`)](https://github.com/IBM/cics-bundle-gradle/tree/main/samples/gradle-multipart-sample)    
