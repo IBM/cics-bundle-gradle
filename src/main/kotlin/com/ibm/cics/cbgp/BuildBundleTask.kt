@@ -2,7 +2,7 @@
  * #%L
  * CICS Bundle Gradle Plugin
  * %%
- * Copyright (C) 2019 IBM Corp.
+ * Copyright (C) 2019, 2023 IBM Corp.
  * %%
  * This program and the accompanying materials are made
  * available under the terms of the Eclipse Public License 2.0
@@ -41,6 +41,8 @@ open class BuildBundleTask : DefaultTask() {
 	val defaultJVMServer = bundleExtension.build.defaultJVMServer
 	@Input
 	val bundlePartsDirectory = "src/main/${bundleExtension.build.bundlePartsDirectory}"
+	@Input
+	val osgiVersionRange = bundleExtension.build.osgiVersionRange
 
 	/**
 	 * Set parameters from the extraConfig extension as task inputs.
@@ -119,6 +121,7 @@ open class BuildBundleTask : DefaultTask() {
 
 	private fun addJavaBundlePartsToBundle(bundlePublisher: BundlePublisher) {
 		logger.lifecycle("Adding Java-based bundle parts from '${BundlePlugin.BUNDLE_DEPENDENCY_CONFIGURATION_NAME}' dependency configuration")
+
 		val resolved = cicsBundlePartConfig.resolvedConfiguration
 		if (resolved.hasError()) {
 			throw GradleException("Failed to resolve Java-based bundle parts from '${BundlePlugin.BUNDLE_DEPENDENCY_CONFIGURATION_NAME}' dependency configuration")
@@ -147,6 +150,7 @@ open class BuildBundleTask : DefaultTask() {
 			}
 			binding.file = file
 			binding.applyDefaults(defaultJVMServer)
+			binding.applyVersionRange(osgiVersionRange)
 
 			try {
 				bundlePublisher.addResource(binding.toBundlePart())

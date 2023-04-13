@@ -2,7 +2,7 @@
  * #%L
  * CICS Bundle Gradle Plugin
  * %%
- * Copyright (C) 2019 IBM Corp.
+ * Copyright (C) 2019, 2023 IBM Corp.
  * %%
  * This program and the accompanying materials are made
  * available under the terms of the Eclipse Public License 2.0
@@ -16,7 +16,6 @@ package com.ibm.cics.cbgp
 import com.ibm.cics.bundle.parts.BundleResource
 import com.ibm.cics.bundle.parts.OsgiBundlePart
 import org.gradle.api.GradleException
-import java.io.File
 import java.io.IOException
 
 class OsgiBundlePartBinding() : AbstractJavaBundlePartBinding() {
@@ -51,12 +50,22 @@ class OsgiBundlePartBinding() : AbstractJavaBundlePartBinding() {
 	}
 
 	override fun toBundlePart(): BundleResource {
-		return OsgiBundlePart(
+		val bundlePart = OsgiBundlePart(
 				name,
 				symbolicName,
 				osgiVersion,
 				jvmserver,
 				file
-		)
+		);
+		bundlePart.versionRange = getRange();
+		return bundlePart;
+	}
+
+	 private fun getRange(): String {
+		 return if(versionRange.isNotEmpty() && versionRange.contains(",")) {
+			 versionRange
+		 } else {
+			 "";
+		 }
 	}
 }
