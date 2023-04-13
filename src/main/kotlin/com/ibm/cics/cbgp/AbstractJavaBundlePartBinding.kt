@@ -2,7 +2,7 @@
  * #%L
  * CICS Bundle Gradle Plugin
  * %%
- * Copyright (C) 2019 IBM Corp.
+ * Copyright (C) 2019, 2023 IBM Corp.
  * %%
  * This program and the accompanying materials are made
  * available under the terms of the Eclipse Public License 2.0
@@ -32,6 +32,7 @@ abstract class AbstractJavaBundlePartBinding() : AbstractBundlePartBinding() {
 
 	var name: String = ""
 	var jvmserver: String = ""
+	var versionRange: String = ""
 
 	@Throws(GradleException::class)
 	override fun applyDefaults(defaultJVMServer: String) {
@@ -46,6 +47,12 @@ abstract class AbstractJavaBundlePartBinding() : AbstractBundlePartBinding() {
 		}
 	}
 
+	fun applyVersionRange(range: String){
+		if(versionRange.isEmpty()) {
+			versionRange = range
+		}
+	}
+
 	fun extraConfigAsString(): String {
 		val map = LinkedHashMap<String, String>()
 		if (name.isNotEmpty()) {
@@ -53,6 +60,9 @@ abstract class AbstractJavaBundlePartBinding() : AbstractBundlePartBinding() {
 		}
 		if (jvmserver.isNotEmpty()) {
 			map["jvmserver"] = jvmserver
+		}
+		if(versionRange.isNotEmpty()) {
+			map["versionRange"] = versionRange
 		}
 		return map.toString()
 	}
