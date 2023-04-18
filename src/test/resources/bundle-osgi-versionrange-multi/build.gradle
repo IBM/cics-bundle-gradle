@@ -1,25 +1,22 @@
 plugins {
-    id "com.ibm.cics.bundle" version '1.0.3'
+    id "com.ibm.cics.bundle"
 }
 
-group 'com.ibm.cics'
 version '1.0.0'
 
 repositories {
-    mavenLocal()
     mavenCentral()
 }
 
-
 cicsBundle {
     build {
-        defaultJVMServer = 'DFHWLP'
+        defaultJVMServer = project.jvmsOsgi
     }
     deploy {
         url = project.url
         cicsplex = project.cicsplex
         region = project.region
-        bunddef = 'GRADLESW'
+        bunddef = 'GRADLEVM'
         csdgroup = project.csdgroup
         username = project.username
         password = project.password
