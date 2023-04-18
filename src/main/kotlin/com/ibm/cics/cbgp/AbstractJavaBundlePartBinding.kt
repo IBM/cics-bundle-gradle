@@ -47,12 +47,6 @@ abstract class AbstractJavaBundlePartBinding() : AbstractBundlePartBinding() {
 		}
 	}
 
-	fun applyVersionRange(range: String){
-		if(versionRange.isEmpty()) {
-			versionRange = range
-		}
-	}
-
 	fun extraConfigAsString(): String {
 		val map = LinkedHashMap<String, String>()
 		if (name.isNotEmpty()) {

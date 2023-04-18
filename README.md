@@ -208,17 +208,14 @@ Also ensure a BUNDLE definition for this CICS bundle has already been created in
 ## Advanced configuration
 When adding Java-based bundle parts to your CICS bundle, the following defaults will be used:
 * The `name` of the bundle part will be equal to the file name.
-* The `jvmserver` of the bundle part will be equal to the vaule of the `defaultJVMServer` property in the `cicsBundle` extension.
+* The `jvmserver` of the bundle part will be equal to the value of the `defaultJVMServer` property in the `cicsBundle` extension.
 * The type of the bundle part will be determined by the file extension, e.g. a `.jar` extension will result in an OSGi bundle part.
-* Any version ranges will be ignored and the version in the build file will be used when generating the bundlepart file
 
-For the majority of users, these defaults will be sufficient. However, for advanced users, any of the defaults can be overriden with specific values by wrapping your `cicsBundlePart` dependency declaration inside one of the following types:
+For the majority of users, these defaults will be sufficient. However, for advanced users, any of the defaults can be overridden with specific values by wrapping your `cicsBundlePart` dependency declaration inside one of the following types:
 * `cicsBundleOsgi`
 * `cicsBundleWar`
 * `cicsBundleEar`
 * `cicsBundleEba`
-
-> NOTE: Only `cicsBundleOsgi` supports version range
 
 You may use either the closure syntax or map syntax to specify the values:
 ```gradle
@@ -241,7 +238,7 @@ cicsBundle {
     }
 }
 ```
-For phase-in support when deploying a bundle, include a version range on a cicsBundleOsgi dependency:
+For phase-in support when deploying a bundle, the `cicsBundleOsgi` type can also be used to specify a version range for the OSGi bundle part:
 ```gradle
 dependencies {
     cicsBundleOsgi {

@@ -41,8 +41,6 @@ open class BuildBundleTask : DefaultTask() {
 	val defaultJVMServer = bundleExtension.build.defaultJVMServer
 	@Input
 	val bundlePartsDirectory = "src/main/${bundleExtension.build.bundlePartsDirectory}"
-	@Input
-	val osgiVersionRange = bundleExtension.build.osgiVersionRange
 
 	/**
 	 * Set parameters from the extraConfig extension as task inputs.
@@ -150,7 +148,6 @@ open class BuildBundleTask : DefaultTask() {
 			}
 			binding.file = file
 			binding.applyDefaults(defaultJVMServer)
-			binding.applyVersionRange(osgiVersionRange)
 
 			try {
 				bundlePublisher.addResource(binding.toBundlePart())

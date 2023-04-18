@@ -69,7 +69,7 @@ class GoldenPathTests extends AbstractTest {
 		rootProjectName = bundleProjectName = "bundle-osgi-versionrange"
 		projectVersion = "1.0.0"
 
-		def jvmsOsgi = "DFHWLP"
+		def jvmsOsgi = "DFHJVMS"
 		def bindingExtension = "osgibundle"
 		def versionRange = "[1.0.0,2.0.0)"
 		def subProjectName = "multi-osgi"
@@ -89,7 +89,7 @@ class GoldenPathTests extends AbstractTest {
 		rootProjectName = bundleProjectName = "bundle-osgi-versionrange-multi"
 		projectVersion = "1.0.0"
 
-		def jvmsOsgi = "DFHWLP"
+		def jvmsOsgi = "DFHJVMS"
 		def bindingExtension = "osgibundle"
 		def versionRange = "[1.0.0,2.0.0)"
 		def versionRangeTwo = "[1.0.0,3.0.0)"
