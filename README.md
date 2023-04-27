@@ -178,6 +178,8 @@ Deploying your bundle to CICS requires extra configuration in CICS, as described
 
 Also ensure a BUNDLE definition for this CICS bundle has already been created in the CSD. You can ask your system admin to do this and pass you the CSD group and name of the definition. The bundle directory of the BUNDLE definition should be set as follows to match your CICS bundle: `<bundle_deploy_root>/<bundle_id>_<bundle_version>`.
 
+The username defined in the pom.xml is the developer’s credentials which need to have access to the appropriate RACF profile_prefix.CMCI.DEPLOYER EJBROLE. Credentials, such as a username and password, should not be directly placed into the pom.xml file. Instead, variables for the credentials should be referenced in the pom.xml file.
+
 1. In the CICS bundle module's `build.gradle`, add settings to the `cicsBundle` extension block for the deploy destination.
     ```gradle
     cicsBundle {
