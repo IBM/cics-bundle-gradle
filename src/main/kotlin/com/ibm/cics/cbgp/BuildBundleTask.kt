@@ -103,7 +103,7 @@ open class BuildBundleTask : DefaultTask() {
 				versionNumber.major,
 				versionNumber.minor,
 				versionNumber.micro,
-				versionNumber.patch
+				versionNumber.patch.toLong()
 		)
 		return bundlePublisher
 	}
