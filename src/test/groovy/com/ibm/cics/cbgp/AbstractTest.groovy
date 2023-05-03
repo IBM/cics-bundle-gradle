@@ -151,7 +151,7 @@ abstract class AbstractTest extends Specification {
 				.withArguments(args)
 				.withPluginClasspath()
 				.withDebug(isDebug)
-				.withGradleVersion("7.4.2")
+				.withGradleVersion("7.6.1")
 
 		if (!failExpected) {
 			result = gradleRunner.build()
