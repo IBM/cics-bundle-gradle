@@ -17,7 +17,6 @@ plugins {
     id("maven-publish")
     id("com.gradle.plugin-publish") version "1.2.0"
     id("signing")
-    id ("com.github.ben-manes.versions") version "0.46.0"
     `kotlin-dsl`
 }
 
