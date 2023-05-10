@@ -174,7 +174,7 @@ In either case, configure the Gradle module as follows:
     ```
 
 ## Deploy a CICS bundle
-Deploying your bundle to CICS requires extra configuration in CICS, as described in [Pre-requisites](https://github.com/IBM/cics-bundle-gradle#pre-requisites).
+Deploying your bundle to CICS requires extra configuration in CICS, as described in [Prerequisites](https://github.com/IBM/cics-bundle-gradle#prerequisites).
 
 Also ensure a BUNDLE definition for this CICS bundle has already been created in the CSD. You can ask your system admin to do this and pass you the CSD group and name of the definition. The bundle directory of the BUNDLE definition should be set as follows to match your CICS bundle: `<bundle_deploy_root>/<bundle_id>_<bundle_version>`.
 
