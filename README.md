@@ -56,9 +56,9 @@ The plugin requires Gradle version 5 features and will not work correctly on ear
 
 The plugin builds CICS bundles for any in-service version of CICS Transaction Server for z/OS (version 5.3 and later at the time of writing).
 
-However, if you're using the `deployCICSBundle` task of the plugin to deploy bundles to CICS, you must enable the CICS bundle deployment API. The CICS bundle deployment API is supported by the CMCI JVM server that must be set up in a WUI region or a single CICS region. See the [CICS TS doc](https://www.ibm.com/docs/en/cics-ts/6.1_beta?topic=suc-configuring-cmci-jvm-server-cics-bundle-deployment-api) for details. To use the `deployCICSBundle` task, make sure that:
+However, if you're using the `deployCICSBundle` task of the plugin to deploy bundles to CICS, you must enable the CICS bundle deployment API. The CICS bundle deployment API is supported by the CMCI JVM server that must be set up in a WUI region or a single CICS region. See the [CICS TS doc](https://www.ibm.com/docs/en/cics-ts/latest?topic=suc-configuring-cmci-jvm-server-cics-bundle-deployment-api) for details. To use the `deployCICSBundle` task, make sure that:
  * For a CICSPlex SM environment, set up the CMCI JVM server in the WUI region of the CICSplex that contains the deployment target region. The WUI region must be at CICS TS 5.6 or later.  
- * For a single CICS region environment (SMSS), set up the CMCI JVM server in the deployment target region. The region must be at CICS TS open beta or later. 
+ * For a single CICS region environment (SMSS), set up the CMCI JVM server in the deployment target region. The region must be at CICS TS 5.6 with APAR PH35122 applied, or later. 
 
 ## Gradle tasks
 The CICS bundle Gradle plugin contributes the following gradle tasks in sequential order.
@@ -290,7 +290,7 @@ com.ibm.cics.bundle.deploy.BundleDeployException: An internal server error occur
 **Why does it happen?**  
 It indicates errors on the CMCI JVM server side.  
 **How to resolve it?**  
-Contact your system administrator to check the `messages.log` file of the CMCI JVM server. For more information about how to resolve CMCI JVM server errors, see [Troubleshooting CMCI JVM server](https://www.ibm.com/docs/en/cics-ts/5.6?topic=troubleshooting-cmci-jvm-server) in CICS documentation.  
+Contact your system administrator to check the `messages.log` file of the CMCI JVM server. For more information about how to resolve CMCI JVM server errors, see [Troubleshooting CMCI JVM server](https://www.ibm.com/docs/en/cics-ts/latest?topic=troubleshooting-cmci-jvm-server) in CICS documentation.  
 
 ### `Error creating directory` during deployment
 You might see this message in the Gradle log when deploying a CICS bundle:  
@@ -301,7 +301,7 @@ You might see this message in the Gradle log when deploying a CICS bundle:
 The error occurs because the user ID that deploys the bundle doesn't have access to the bundles directory.  
 **How to resolve it?**  
 Contact your system administrator to make sure the `deploy_userid` configured for the CICS bundle deployment API has WRITE access to the bundles directory. The bundles directory is specified on the `com.ibm.cics.jvmserver.cmci.bundles.dir` option in the JVM profile of the CMCI JVM server.  
-For instructions on how to specify the bundles directory and grant access to `deploy_userid`, see [Configuring the CMCI JVM server for the CICS bundle deployment API](https://www.ibm.com/docs/en/cics-ts/5.6?topic=suc-configuring-cmci-jvm-server-cics-bundle-deployment-api) in CICS documentation.
+For instructions on how to specify the bundles directory and grant access to `deploy_userid`, see [Configuring the CMCI JVM server for the CICS bundle deployment API](https://www.ibm.com/docs/en/cics-ts/latest?topic=suc-configuring-cmci-jvm-server-cics-bundle-deployment-api) in CICS documentation.
 
 
 ## Contributing
