@@ -31,14 +31,11 @@ gradlePlugin {
             displayName = "CICS Bundle Gradle Plugin"
             description = "A Gradle plugin to build CICS bundles, including external dependencies."
             implementationClass = "com.ibm.cics.cbgp.BundlePlugin"
+            tags.set(listOf("cics", "cicsts", "cicsbundle", "cics-bundle"))
         }
     }
-}
-
-pluginBundle {
-    website = "https://github.com/IBM/cics-bundle-gradle"
-    vcsUrl = "https://github.com/IBM/cics-bundle-gradle"
-    tags = listOf("cics", "cicsts", "cicsbundle", "cics-bundle")
+    website.set("https://github.com/IBM/cics-bundle-gradle")
+    vcsUrl.set("https://github.com/IBM/cics-bundle-gradle")
 }
 
 val ossrhUser: String? by project
@@ -89,6 +86,7 @@ defaultTasks("build")
 
 dependencies {
     implementation("com.ibm.cics:cics-bundle-common:2.0.0")
+    implementation(kotlin("reflect"))
     testImplementation("junit:junit:4.13.2")
     testImplementation("com.github.tomakehurst:wiremock-jre8:2.35.0")
     testImplementation(enforcedPlatform("org.spockframework:spock-bom:2.3-groovy-3.0"))

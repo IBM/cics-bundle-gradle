@@ -17,9 +17,12 @@ import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.internal.artifacts.dsl.LazyPublishArtifact
 import org.gradle.api.internal.plugins.DefaultArtifactPublicationSet
+import org.gradle.api.internal.project.ProjectInternal
 import org.gradle.api.plugins.BasePlugin
 import org.gradle.kotlin.dsl.closureOf
 import org.gradle.kotlin.dsl.extra
+import org.gradle.util.GradleVersion
+import kotlin.reflect.full.primaryConstructor
 
 class BundlePlugin : Plugin<Project> {
 	companion object {
@@ -102,7 +105,13 @@ class BundlePlugin : Plugin<Project> {
 		}
 
 		// Add the bundle zip to the 'archives' configuration so it can be consumed by other projects
-		val bundleArtifact = LazyPublishArtifact(packageTaskProvider)
+		val bundleArtifact = if (GradleVersion.current() >= GradleVersion.version("8.0")) {
+			val projectInternal = project as ProjectInternal
+			LazyPublishArtifact(packageTaskProvider, projectInternal.fileResolver, projectInternal.taskDependencyFactory)
+		} else {
+			val constructors = LazyPublishArtifact::class.constructors
+			constructors.first{ it.parameters.size == 1 }.call(packageTaskProvider)
+		}
 		project.extensions.getByType(DefaultArtifactPublicationSet::class.java).addCandidate(bundleArtifact)
 	}
 }
