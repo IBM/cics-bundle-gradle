@@ -114,7 +114,8 @@ abstract class AbstractTest extends Specification {
 	protected def copyTestProject() {
 
 		File srcFile = getFileInDir(testResourcesDir, rootProjectName)
-		File destFile = getFileInDir(testProjectsDir, "$testName/$rootProjectName")
+		File destFile = getFileInDir(testProjectsDir, "${this.class.simpleName}/$testName/$rootProjectName")
+		FileUtils.deleteDirectory(destFile)
 		FileUtils.copyDirectory(srcFile, destFile)
 		rootProjectDir = destFile
 		if (bundleProjectName == rootProjectName) {
@@ -151,7 +152,7 @@ abstract class AbstractTest extends Specification {
 				.withArguments(args)
 				.withPluginClasspath()
 				.withDebug(isDebug)
-				.withGradleVersion("7.6.1")
+				.withGradleVersion(getGradleVersion())
 
 		if (!failExpected) {
 			result = gradleRunner.build()
@@ -248,4 +249,6 @@ abstract class AbstractTest extends Specification {
 	protected void checkBundleArchiveFile() {
 		assert archiveFile.exists(): "Missing archive file '${archiveFile.getPath()}'"
 	}
+
+	abstract String getGradleVersion();
 }

@@ -14,6 +14,7 @@
 package com.ibm.cics.cbgp
 
 import org.apache.commons.io.FileUtils
+import spock.lang.Title
 import spock.lang.Unroll
 
 import java.nio.charset.Charset
@@ -21,7 +22,7 @@ import java.nio.charset.Charset
 /**
  * Test error path scenarios where invalid bundles fail to build and return appropriate error messages.
  */
-class ErrorTests extends AbstractTest {
+abstract class ErrorTests extends AbstractTest {
 
 	def "Test unsupported bundle part extension"() {
 
@@ -79,4 +80,22 @@ class ErrorTests extends AbstractTest {
 		["url", "cicsplex", "region", "bunddef", "csdgroup", "username", "password"] | [DeployBundleTask.MISSING_URL, DeployBundleTask.MISSING_BUNDDEF, DeployBundleTask.MISSING_CSDGROUP, DeployBundleTask.MISSING_USERNAME, DeployBundleTask.MISSING_PASSWORD, DeployBundleTask.DEPLOY_CONFIG_EXCEPTION]
 		["url", "bunddef", "csdgroup", "username", "password"] | [DeployBundleTask.MISSING_URL, DeployBundleTask.MISSING_BUNDDEF, DeployBundleTask.MISSING_CSDGROUP, DeployBundleTask.MISSING_USERNAME, DeployBundleTask.MISSING_PASSWORD, DeployBundleTask.DEPLOY_CONFIG_EXCEPTION]
 	}
+}
+
+@Title("ErrorTests (Gradle 7.6.1)")
+class Gradle761ErrorTests extends ErrorTests {
+
+    @Override
+    String getGradleVersion() {
+        return "7.6.1"
+    }
+}
+
+@Title("ErrorTests (Gradle 8.3)")
+class Gradle83ErrorTests extends ErrorTests {
+
+    @Override
+    String getGradleVersion() {
+        return "8.3"
+    }
 }
