@@ -14,6 +14,7 @@
 package com.ibm.cics.cbgp
 
 import org.apache.commons.io.FileUtils
+import spock.lang.Title
 
 import java.nio.charset.Charset
 
@@ -22,7 +23,7 @@ import java.nio.charset.Charset
  * If a Task Input has changed since the last build then that task will be re-run. Check that this works correctly for a
  * variety of changes.
  */
-class UpToDateTests extends AbstractTest {
+abstract class UpToDateTests extends AbstractTest {
 
 	def "Test build up-to-date"() {
 
@@ -217,5 +218,23 @@ class UpToDateTests extends AbstractTest {
 		checkBuildOutputStrings(result, [
 				"Task ':deployCICSBundle' is not up-to-date"
 		])
+	}
+}
+
+@Title("UpToDateTests (Gradle 7.6.1)")
+class Gradle761UpToDateTests extends UpToDateTests {
+
+	@Override
+	String getGradleVersion() {
+		return "7.6.1"
+	}
+}
+
+@Title("UpToDateTests (Gradle 8.3)")
+class Gradle83UpToDateTests extends UpToDateTests {
+
+	@Override
+	String getGradleVersion() {
+		return "8.3"
 	}
 }

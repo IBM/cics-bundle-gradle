@@ -14,12 +14,13 @@
 package com.ibm.cics.cbgp
 
 import org.apache.commons.io.FileUtils
+import spock.lang.Title
 import spock.lang.Unroll
 
 /**
  * Test bundle parts which have been explicitly configured with extra values. E.g. overrides for name, jvmserver, etc.
  */
-class ExtraConfigTests extends AbstractTest {
+abstract class ExtraConfigTests extends AbstractTest {
 
     @Unroll
     def "Test extra config with #syntax syntax"(String syntax) {
@@ -111,5 +112,23 @@ class ExtraConfigTests extends AbstractTest {
         syntax    | _
         "closure" | _
         "map"     | _
+    }
+}
+
+@Title("ExtraConfigTests (Gradle 7.6.1)")
+class Gradle761ExtraConfigTests extends ErrorTests {
+
+    @Override
+    String getGradleVersion() {
+        return "7.6.1"
+    }
+}
+
+@Title("ExtraConfigTests (Gradle 8.3)")
+class Gradle83ExtraConfigTests extends ErrorTests {
+
+    @Override
+    String getGradleVersion() {
+        return "8.3"
     }
 }

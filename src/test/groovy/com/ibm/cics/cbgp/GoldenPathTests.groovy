@@ -14,6 +14,7 @@
 package com.ibm.cics.cbgp
 
 import org.apache.commons.io.FileUtils
+import spock.lang.Title
 import spock.lang.Unroll
 
 import java.nio.charset.Charset
@@ -21,7 +22,7 @@ import java.nio.charset.Charset
 /**
  * Test golden path scenarios where valid bundles build successfully.
  */
-class GoldenPathTests extends AbstractTest {
+abstract class GoldenPathTests extends AbstractTest {
 
 	def "Test empty bundle"() {
 
@@ -289,5 +290,23 @@ class GoldenPathTests extends AbstractTest {
 
 		then:
 		checkBuildOutputFiles(["PROGDEF2.program"])
+	}
+}
+
+@Title("GoldenPathTests (Gradle 7.6.1)")
+class Gradle761GoldenPathTests extends ErrorTests {
+
+	@Override
+	String getGradleVersion() {
+		return "7.6.1"
+	}
+}
+
+@Title("GoldenPathTests (Gradle 8.3)")
+class Gradle83GoldenPathTests extends ErrorTests {
+
+	@Override
+	String getGradleVersion() {
+		return "8.3"
 	}
 }
