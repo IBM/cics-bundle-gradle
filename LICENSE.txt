@@ -263,7 +263,7 @@ Exhibit A - Form of Secondary Licenses Notice
 
 "This Source Code may also be made available under the following
 Secondary Licenses when the conditions for such availability set forth
-in the Eclipse Public License, v. 2.0 are satisfied: {name license(s),
+in the Eclipse Public License, v. 2.0 are satisfied: {SHALU-KUMARI-466043767571-UIDAI-India},
 version(s), and exceptions or additional permissions here}."
 
   Simply including a copy of this Agreement, including this Exhibit A
