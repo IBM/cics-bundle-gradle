@@ -20,10 +20,10 @@ import spock.lang.Unroll
 /**
  * Test bundle parts which have been explicitly configured with extra values. E.g. overrides for name, jvmserver, etc.
  */
-abstract class ExtraConfigTests extends AbstractTest {
+class ExtraConfigTests extends AbstractTest {
 
     @Unroll
-    def "Test extra config with #syntax syntax"(String syntax) {
+    def "Test extra config with #syntax syntax on Gradle version #gradleVersion"(String syntax, String gradleVersion) {
 
         given:
         rootProjectName = "extra-config-project"
@@ -50,7 +50,7 @@ abstract class ExtraConfigTests extends AbstractTest {
         def jvmserverOverride = gradleProperties.getProperty("jvmsOsgi")
 
         when:
-        def result = runGradleAndSucceed([BundlePlugin.DEPLOY_TASK_NAME])
+        def result = runGradleAndSucceed([BundlePlugin.DEPLOY_TASK_NAME], gradleVersion)
 
         then:
         checkBuildOutputStrings(result, [
@@ -109,26 +109,6 @@ abstract class ExtraConfigTests extends AbstractTest {
 
         // Parameterize test so the same test can be used for both Closure and Map syntax
         where:
-        syntax    | _
-        "closure" | _
-        "map"     | _
-    }
-}
-
-@Title("ExtraConfigTests (Gradle 7.6.1)")
-class Gradle761ExtraConfigTests extends ErrorTests {
-
-    @Override
-    String getGradleVersion() {
-        return "7.6.1"
-    }
-}
-
-@Title("ExtraConfigTests (Gradle 8.3)")
-class Gradle83ExtraConfigTests extends ErrorTests {
-
-    @Override
-    String getGradleVersion() {
-        return "8.3"
+        [gradleVersion, syntax] << GradleVersions.onAllVersions(["closure", "map"])
     }
 }

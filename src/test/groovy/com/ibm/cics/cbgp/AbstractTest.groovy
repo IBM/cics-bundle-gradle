@@ -132,16 +132,16 @@ abstract class AbstractTest extends Specification {
 		FileUtils.copyFile(srcFile, destFile)
 	}
 
-	protected def runGradleAndSucceed(List args) {
-		return runGradle(args, false)
+	protected def runGradleAndSucceed(List args, String gradleVersion) {
+		return runGradle(args, false, gradleVersion)
 	}
 
-	protected def runGradleAndFail(List args) {
-		return runGradle(args, true)
+	protected def runGradleAndFail(List args, String gradleVersion) {
+		return runGradle(args, true, gradleVersion)
 	}
 
 	// Run the gradle build and print the test output
-	private def runGradle(List args, boolean failExpected) {
+	private def runGradle(List args, boolean failExpected, String gradleVersion) {
 		def result
 		args.add("--stacktrace")
 		args.add("--info")
@@ -152,7 +152,7 @@ abstract class AbstractTest extends Specification {
 				.withArguments(args)
 				.withPluginClasspath()
 				.withDebug(isDebug)
-				.withGradleVersion(getGradleVersion())
+				.withGradleVersion(gradleVersion)
 
 		if (!failExpected) {
 			result = gradleRunner.build()
@@ -249,6 +249,4 @@ abstract class AbstractTest extends Specification {
 	protected void checkBundleArchiveFile() {
 		assert archiveFile.exists(): "Missing archive file '${archiveFile.getPath()}'"
 	}
-
-	abstract String getGradleVersion();
 }
