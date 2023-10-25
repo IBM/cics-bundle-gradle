@@ -10,6 +10,4 @@ pluginManagement {
         //}
     }
 }
-rootProject.name = 'gradle-war-sample'
-include 'standalone-war-demo'
-
+rootProject.name = 'gradle-osgi-sample'
