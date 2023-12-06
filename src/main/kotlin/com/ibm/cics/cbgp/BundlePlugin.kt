@@ -112,9 +112,6 @@ class BundlePlugin : Plugin<Project> {
 			deployTaskProvider.configure {
 				// Wire output of package task to input of deploy task, by default
 				inputFile.set(packageTaskProvider.flatMap { it.archiveFile })
-
-				// Never skip the deploy task, even if nothing has changed, because we can't know whether the bundle needs redeploying in CICS.
-				outputs.upToDateWhen { false }
 			}
 		}
 	}
