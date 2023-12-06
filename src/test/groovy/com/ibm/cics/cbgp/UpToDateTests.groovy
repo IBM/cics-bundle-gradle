@@ -24,7 +24,7 @@ import java.nio.charset.Charset
  */
 class UpToDateTests extends AbstractTest {
 
-	def "Test build up-to-date"() {
+	def "Test build up-to-date on Gradle version #gradleVersion"(String gradleVersion) {
 
 		given:
 		rootProjectName = bundleProjectName = "empty"
@@ -33,7 +33,7 @@ class UpToDateTests extends AbstractTest {
 
 		println("----- '$testName' - Run build -----")
 		when:
-		def result = runGradleAndSucceed([BundlePlugin.BUILD_TASK_NAME])
+		def result = runGradleAndSucceed([BundlePlugin.BUILD_TASK_NAME], gradleVersion)
 
 		then:
 		checkBuildOutputStrings(result, [
@@ -42,7 +42,7 @@ class UpToDateTests extends AbstractTest {
 
 		println("----- '$testName' - Run build again with no changes -----")
 		when:
-		result = runGradleAndSucceed([BundlePlugin.BUILD_TASK_NAME])
+		result = runGradleAndSucceed([BundlePlugin.BUILD_TASK_NAME], gradleVersion)
 
 		then:
 		checkBuildOutputStrings(result, [
@@ -56,7 +56,7 @@ class UpToDateTests extends AbstractTest {
 			cicsBundlePart(group: 'org.codehaus.cargo', name: 'simple-bundle', version: '1.7.0', ext: 'jar')
 		}
 		""".stripIndent()
-		result = runGradleAndSucceed([BundlePlugin.BUILD_TASK_NAME])
+		result = runGradleAndSucceed([BundlePlugin.BUILD_TASK_NAME], gradleVersion)
 
 		then:
 		checkBuildOutputStrings(result, [
@@ -68,7 +68,7 @@ class UpToDateTests extends AbstractTest {
 		File srcFile = getFileInDir(bundleProjectDir, "bundleParts")
 		File destFile = getFileInDir(bundleProjectDir, "src/main/bundleParts")
 		FileUtils.moveDirectory(srcFile, destFile)
-		result = runGradleAndSucceed([BundlePlugin.BUILD_TASK_NAME])
+		result = runGradleAndSucceed([BundlePlugin.BUILD_TASK_NAME], gradleVersion)
 
 		then:
 		checkBuildOutputStrings(result, [
@@ -78,7 +78,7 @@ class UpToDateTests extends AbstractTest {
 		println("----- '$testName' - Delete build output dir -----")
 		when:
 		bundleBuildDir.deleteDir()
-		result = runGradleAndSucceed([BundlePlugin.BUILD_TASK_NAME])
+		result = runGradleAndSucceed([BundlePlugin.BUILD_TASK_NAME], gradleVersion)
 
 		then:
 		checkBuildOutputStrings(result, [
@@ -93,7 +93,7 @@ class UpToDateTests extends AbstractTest {
 		}
 		Collections.replaceAll(fileLines, lineToReplace, "defaultJVMServer = 'NEW'")
 		FileUtils.writeLines(buildFile, fileLines)
-		result = runGradleAndSucceed([BundlePlugin.BUILD_TASK_NAME])
+		result = runGradleAndSucceed([BundlePlugin.BUILD_TASK_NAME], gradleVersion)
 
 		then:
 		checkBuildOutputStrings(result, [
@@ -109,7 +109,7 @@ class UpToDateTests extends AbstractTest {
 			}
 		}
 		""".stripIndent()
-		result = runGradleAndSucceed([BundlePlugin.BUILD_TASK_NAME])
+		result = runGradleAndSucceed([BundlePlugin.BUILD_TASK_NAME], gradleVersion)
 
 		then:
 		checkBuildOutputStrings(result, [
@@ -123,7 +123,7 @@ class UpToDateTests extends AbstractTest {
 			cicsBundleWar(dependency: cicsBundlePart(group: 'org.codehaus.cargo', name: 'simple-war', version: '1.7.0', ext: 'war'), name: 'new-war-module')
 		}
 		""".stripIndent()
-		result = runGradleAndSucceed([BundlePlugin.BUILD_TASK_NAME])
+		result = runGradleAndSucceed([BundlePlugin.BUILD_TASK_NAME], gradleVersion)
 
 		then:
 		checkBuildOutputStrings(result, [
@@ -138,15 +138,18 @@ class UpToDateTests extends AbstractTest {
 		}
 		Collections.replaceAll(fileLines, lineToReplace, lineToReplace.replace('new-war-module', 'blah'))
 		FileUtils.writeLines(buildFile, fileLines)
-		result = runGradleAndSucceed([BundlePlugin.BUILD_TASK_NAME])
+		result = runGradleAndSucceed([BundlePlugin.BUILD_TASK_NAME], gradleVersion)
 
 		then:
 		checkBuildOutputStrings(result, [
 				"Task ':buildCICSBundle' is not up-to-date"
 		])
+
+		where:
+		gradleVersion << GradleVersions.GRADLE_VERSIONS
 	}
 
-	def "Test package up-to-date"() {
+	def "Test package up-to-date on Gradle version #gradleVersion"(String gradleVersion) {
 
 		given:
 		rootProjectName = bundleProjectName = "empty"
@@ -155,7 +158,7 @@ class UpToDateTests extends AbstractTest {
 
 		println("----- '$testName' - Run build -----")
 		when:
-		def result = runGradleAndSucceed([BundlePlugin.PACKAGE_TASK_NAME])
+		def result = runGradleAndSucceed([BundlePlugin.PACKAGE_TASK_NAME], gradleVersion)
 
 		then:
 		checkBuildOutputStrings(result, [
@@ -164,7 +167,7 @@ class UpToDateTests extends AbstractTest {
 
 		println("----- '$testName' - Run build again with no changes -----")
 		when:
-		result = runGradleAndSucceed([BundlePlugin.PACKAGE_TASK_NAME])
+		result = runGradleAndSucceed([BundlePlugin.PACKAGE_TASK_NAME], gradleVersion)
 
 		then:
 		checkBuildOutputStrings(result, [
@@ -174,7 +177,7 @@ class UpToDateTests extends AbstractTest {
 		println("----- '$testName' - Delete build output dir -----")
 		when:
 		bundleBuildDir.deleteDir()
-		result = runGradleAndSucceed([BundlePlugin.PACKAGE_TASK_NAME])
+		result = runGradleAndSucceed([BundlePlugin.PACKAGE_TASK_NAME], gradleVersion)
 
 		then:
 		checkBuildOutputStrings(result, [
@@ -184,15 +187,18 @@ class UpToDateTests extends AbstractTest {
 		println("----- '$testName' - Delete archive zip -----")
 		when:
 		archiveFile.delete()
-		result = runGradleAndSucceed([BundlePlugin.PACKAGE_TASK_NAME])
+		result = runGradleAndSucceed([BundlePlugin.PACKAGE_TASK_NAME], gradleVersion)
 
 		then:
 		checkBuildOutputStrings(result, [
 				"Task ':packageCICSBundle' is not up-to-date"
 		])
+
+		where:
+		gradleVersion << GradleVersions.GRADLE_VERSIONS
 	}
 
-	def "Test deploy up-to-date"() {
+	def "Test deploy up-to-date on Gradle version #gradleVersion"(String gradleVersion) {
 
 		given:
 		rootProjectName = bundleProjectName = "empty"
@@ -201,7 +207,7 @@ class UpToDateTests extends AbstractTest {
 
 		println("----- '$testName' - Run build -----")
 		when:
-		def result = runGradleAndSucceed([BundlePlugin.DEPLOY_TASK_NAME])
+		def result = runGradleAndSucceed([BundlePlugin.DEPLOY_TASK_NAME], gradleVersion)
 
 		then:
 		checkBuildOutputStrings(result, [
@@ -210,12 +216,15 @@ class UpToDateTests extends AbstractTest {
 
 		println("----- '$testName' - Run build again with no changes -----")
 		when:
-		result = runGradleAndSucceed([BundlePlugin.DEPLOY_TASK_NAME])
+		result = runGradleAndSucceed([BundlePlugin.DEPLOY_TASK_NAME], gradleVersion)
 
 		then:
 		// Deploy task should always run, even if there are no changes
 		checkBuildOutputStrings(result, [
 				"Task ':deployCICSBundle' is not up-to-date"
 		])
+
+		where:
+		gradleVersion << GradleVersions.GRADLE_VERSIONS
 	}
 }

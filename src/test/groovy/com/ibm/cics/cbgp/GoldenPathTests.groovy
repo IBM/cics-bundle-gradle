@@ -13,7 +13,6 @@
  */
 package com.ibm.cics.cbgp
 
-import org.apache.commons.io.FileUtils
 import spock.lang.Unroll
 
 import java.nio.charset.Charset
@@ -23,7 +22,8 @@ import java.nio.charset.Charset
  */
 class GoldenPathTests extends AbstractTest {
 
-	def "Test empty bundle"() {
+	@Unroll
+	def "Test empty bundle on Gradle #gradleVersion"(String gradleVersion) {
 
 		given:
 		rootProjectName = bundleProjectName = "empty"
@@ -31,7 +31,7 @@ class GoldenPathTests extends AbstractTest {
 		copyTestProject()
 
 		when:
-		def result = runGradleAndSucceed([BundlePlugin.DEPLOY_TASK_NAME])
+		def result = runGradleAndSucceed([BundlePlugin.DEPLOY_TASK_NAME], gradleVersion)
 
 		then:
 		checkBuildOutputStrings(result, [
@@ -46,9 +46,13 @@ class GoldenPathTests extends AbstractTest {
 		checkManifest(["<manifest xmlns=\"http://www.ibm.com/xmlns/prod/cics/bundle\" bundleMajorVer=\"1\" bundleMicroVer=\"0\" bundleMinorVer=\"0\" bundleRelease=\"0\" bundleVersion=\"1\" id=\"$bundleProjectName\">"])
 
 		checkBundleArchiveFile()
+
+		where:
+		gradleVersion << GradleVersions.GRADLE_VERSIONS
 	}
 
-	def "Test version number"() {
+	@Unroll
+	def "Test version number on Gradle #gradleVersion"(String gradleVersion) {
 
 		given:
 		rootProjectName = bundleProjectName = "version"
@@ -57,13 +61,17 @@ class GoldenPathTests extends AbstractTest {
 		copyTestProject()
 
 		when:
-		runGradleAndSucceed([BundlePlugin.DEPLOY_TASK_NAME])
+		runGradleAndSucceed([BundlePlugin.DEPLOY_TASK_NAME], gradleVersion)
 
 		then:
 		checkBundleArchiveFile()
+
+		where:
+		gradleVersion << GradleVersions.GRADLE_VERSIONS
 	}
 
-	def "Test OSGi with version range"() {
+	@Unroll
+	def "Test OSGi with version range on Gradle #gradleVersion"(String gradleVersion) {
 
 		given:
 		rootProjectName = bundleProjectName = "bundle-osgi-versionrange"
@@ -77,13 +85,18 @@ class GoldenPathTests extends AbstractTest {
 		copyTestProject()
 
 		when:
-		runGradleAndSucceed([BundlePlugin.DEPLOY_TASK_NAME])
+		runGradleAndSucceed([BundlePlugin.DEPLOY_TASK_NAME], gradleVersion)
 
 		then:
 		checkFileContains(getFileInDir(bundleBuildDir, "${subProjectName + "-" + projectVersion}.${bindingExtension}") , ["<${bindingExtension} jvmserver=\"${jvmsOsgi}\" symbolicname=\"com.ibm.cics.multi-osgi\" version=\"\" versionRange=\"${versionRange}\"/>"])
 		checkBundleArchiveFile()
+
+		where:
+		gradleVersion << GradleVersions.GRADLE_VERSIONS
 	}
-	def "Test multiple OSGi with version range"() {
+
+	@Unroll
+	def "Test multiple OSGi with version range on Gradle #gradleVersion"(String gradleVersion) {
 
 		given:
 		rootProjectName = bundleProjectName = "bundle-osgi-versionrange-multi"
@@ -99,17 +112,20 @@ class GoldenPathTests extends AbstractTest {
 		copyTestProject()
 
 		when:
-		runGradleAndSucceed([BundlePlugin.DEPLOY_TASK_NAME])
+		runGradleAndSucceed([BundlePlugin.DEPLOY_TASK_NAME], gradleVersion)
 
 		then:
 		checkFileContains(getFileInDir(bundleBuildDir, "${subProjectName + "-" + projectVersion}.${bindingExtension}") , ["<${bindingExtension} jvmserver=\"${jvmsOsgi}\" symbolicname=\"com.ibm.cics.multi-osgi\" version=\"\" versionRange=\"${versionRange}\"/>"])
 		checkFileContains(getFileInDir(bundleBuildDir, "${subProjectNameTwo + "-" + projectVersion}.${bindingExtension}") , ["<${bindingExtension} jvmserver=\"${jvmsOsgi}\" symbolicname=\"com.ibm.cics.multi-osgi-repeat\" version=\"\" versionRange=\"${versionRangeTwo}\"/>"])
 		checkBundleArchiveFile()
+
+		where:
+		gradleVersion << GradleVersions.GRADLE_VERSIONS
 	}
 
 
 	@Unroll
-	def "Test standalone #type project"(String type) {
+	def "Test standalone #type project on Gradle #gradleVersion"(String gradleVersion, String type) {
 
 		def projectName = null
 		def archiveExtension = null
@@ -142,7 +158,7 @@ class GoldenPathTests extends AbstractTest {
 		def jvmsOsgi = gradleProperties.getProperty("jvmsOsgi")
 
 		when:
-		runGradleAndSucceed([BundlePlugin.DEPLOY_TASK_NAME])
+		runGradleAndSucceed([BundlePlugin.DEPLOY_TASK_NAME], gradleVersion)
 
 		then:
 		checkBuildOutputFiles([
@@ -164,13 +180,11 @@ class GoldenPathTests extends AbstractTest {
 
 		// Parameterize test so the same test can be used for each project type
 		where:
-		type   | _
-		"osgi" | _
-		"war"  | _
-		"ear"  | _
+		[gradleVersion, type] << GradleVersions.onAllVersions(["osgi", "war", "ear"])
 	}
 
-	def "Test multi part project"() {
+	@Unroll
+	def "Test multi part project on Gradle #gradleVersion"(String gradleVersion) {
 
 		given:
 		rootProjectName = "multi-project"
@@ -188,7 +202,7 @@ class GoldenPathTests extends AbstractTest {
 		def jvmsOsgi = gradleProperties.getProperty("jvmsOsgi")
 
 		when:
-		runGradleAndSucceed([BundlePlugin.DEPLOY_TASK_NAME])
+		runGradleAndSucceed([BundlePlugin.DEPLOY_TASK_NAME], gradleVersion)
 
 		then:
 		checkBuildOutputFiles([
@@ -227,9 +241,13 @@ class GoldenPathTests extends AbstractTest {
 		])
 
 		checkBundleArchiveFile()
+
+		where:
+		gradleVersion << GradleVersions.GRADLE_VERSIONS
 	}
 
-	def "Test resources"() {
+	@Unroll
+	def "Test resources on Gradle #gradleVersion"(String gradleVersion) {
 
 		given:
 		rootProjectName = bundleProjectName = "standalone-resources"
@@ -237,7 +255,7 @@ class GoldenPathTests extends AbstractTest {
 		copyTestProject()
 
 		when:
-		runGradleAndSucceed([BundlePlugin.DEPLOY_TASK_NAME])
+		runGradleAndSucceed([BundlePlugin.DEPLOY_TASK_NAME], gradleVersion)
 
 		then:
 		checkBuildOutputFiles([
@@ -285,9 +303,12 @@ class GoldenPathTests extends AbstractTest {
 		}
 		""".stripIndent()
 
-		runGradleAndSucceed([BundlePlugin.DEPLOY_TASK_NAME])
+		runGradleAndSucceed([BundlePlugin.DEPLOY_TASK_NAME], gradleVersion)
 
 		then:
 		checkBuildOutputFiles(["PROGDEF2.program"])
+
+		where:
+		gradleVersion << GradleVersions.GRADLE_VERSIONS
 	}
 }

@@ -14,6 +14,7 @@
 package com.ibm.cics.cbgp
 
 import org.apache.commons.io.FileUtils
+import spock.lang.Title
 import spock.lang.Unroll
 
 /**
@@ -22,7 +23,7 @@ import spock.lang.Unroll
 class ExtraConfigTests extends AbstractTest {
 
     @Unroll
-    def "Test extra config with #syntax syntax"(String syntax) {
+    def "Test extra config with #syntax syntax on Gradle version #gradleVersion"(String syntax, String gradleVersion) {
 
         given:
         rootProjectName = "extra-config-project"
@@ -49,7 +50,7 @@ class ExtraConfigTests extends AbstractTest {
         def jvmserverOverride = gradleProperties.getProperty("jvmsOsgi")
 
         when:
-        def result = runGradleAndSucceed([BundlePlugin.DEPLOY_TASK_NAME])
+        def result = runGradleAndSucceed([BundlePlugin.DEPLOY_TASK_NAME], gradleVersion)
 
         then:
         checkBuildOutputStrings(result, [
@@ -108,8 +109,6 @@ class ExtraConfigTests extends AbstractTest {
 
         // Parameterize test so the same test can be used for both Closure and Map syntax
         where:
-        syntax    | _
-        "closure" | _
-        "map"     | _
+        [gradleVersion, syntax] << GradleVersions.onAllVersions(["closure", "map"])
     }
 }

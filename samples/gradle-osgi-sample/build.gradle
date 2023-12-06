@@ -1,0 +1,44 @@
+plugins {
+    id 'biz.aQute.bnd.builder' version "6.3.0"
+    id 'com.ibm.cics.bundle' version "1.0.3"
+}
+
+group 'com.ibm.cics'
+version '1.0.0'
+
+sourceCompatibility = 1.8
+
+repositories {
+    mavenCentral()
+}
+
+jar {
+    bundle{
+        bnd (
+                'Bundle-SymbolicName': 'com.ibm.cics.standalone-osgi',
+                'CICS-MainClass': 'examples.hello.HelloCICSWorld, examples.hello.HelloWorld'
+        )
+    }
+}
+
+cicsBundle {
+    build {
+        defaultJVMServer = 'DFHOSGI'
+    }
+    deploy {
+        cicsplex = 'MYPLEX'
+        region   = 'MYREGION'
+        bunddef  = 'MYBUN'
+        csdgroup = 'MYGROUP'
+        url      = 'myserver.site.domain.com:1234'
+        username = project.cicsUser    // Define cicsUser in gradle.properties file
+        password = project.cicsPass   // Define cicsPass in gradle.properties file
+        // Caution: uncomment the line below to disable TLS/SSL checking for certificates
+        //insecure = true
+    }
+}
+
+dependencies {
+    compileOnly ('com.ibm.cics:com.ibm.cics.server:1.800.1-5.6-PH34012')
+    cicsBundlePart files(jar)
+}

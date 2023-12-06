@@ -27,15 +27,16 @@ open class PackageBundleTask : Zip() {
 	@InputDirectory
 	val inputDirectory: DirectoryProperty = project.objects.directoryProperty()
 
-	/**
-	 * Set the zip archive file as a task output. This will be linked to the input of the deploy task.
-	 */
-	@OutputFile
-	val outputFile: RegularFileProperty = project.objects.fileProperty()
+    /**
+     * Set the zip archive file as a task output. This will be linked to the input of the deploy task.
+     */
+    @OutputFile @Deprecated("Will be removed in v2.0.0", ReplaceWith("archiveFile"))
+    val outputFile: RegularFileProperty = project.objects.fileProperty()
 
 	init {
 		// Tell the task which directory to zip up
 		from(inputDirectory)
 		setMetadataCharset("UTF-8")
+		outputFile.set(archiveFile)
 	}
 }

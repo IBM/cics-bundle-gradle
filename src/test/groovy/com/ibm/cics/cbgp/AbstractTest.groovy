@@ -114,7 +114,8 @@ abstract class AbstractTest extends Specification {
 	protected def copyTestProject() {
 
 		File srcFile = getFileInDir(testResourcesDir, rootProjectName)
-		File destFile = getFileInDir(testProjectsDir, "$testName/$rootProjectName")
+		File destFile = getFileInDir(testProjectsDir, "${this.class.simpleName}/$testName/$rootProjectName")
+		FileUtils.deleteDirectory(destFile)
 		FileUtils.copyDirectory(srcFile, destFile)
 		rootProjectDir = destFile
 		if (bundleProjectName == rootProjectName) {
@@ -131,16 +132,16 @@ abstract class AbstractTest extends Specification {
 		FileUtils.copyFile(srcFile, destFile)
 	}
 
-	protected def runGradleAndSucceed(List args) {
-		return runGradle(args, false)
+	protected def runGradleAndSucceed(List args, String gradleVersion) {
+		return runGradle(args, false, gradleVersion)
 	}
 
-	protected def runGradleAndFail(List args) {
-		return runGradle(args, true)
+	protected def runGradleAndFail(List args, String gradleVersion) {
+		return runGradle(args, true, gradleVersion)
 	}
 
 	// Run the gradle build and print the test output
-	private def runGradle(List args, boolean failExpected) {
+	private def runGradle(List args, boolean failExpected, String gradleVersion) {
 		def result
 		args.add("--stacktrace")
 		args.add("--info")
@@ -151,7 +152,7 @@ abstract class AbstractTest extends Specification {
 				.withArguments(args)
 				.withPluginClasspath()
 				.withDebug(isDebug)
-				.withGradleVersion("7.6.1")
+				.withGradleVersion(gradleVersion)
 
 		if (!failExpected) {
 			result = gradleRunner.build()

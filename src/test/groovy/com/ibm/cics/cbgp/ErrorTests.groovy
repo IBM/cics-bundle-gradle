@@ -14,6 +14,7 @@
 package com.ibm.cics.cbgp
 
 import org.apache.commons.io.FileUtils
+import spock.lang.Title
 import spock.lang.Unroll
 
 import java.nio.charset.Charset
@@ -23,7 +24,8 @@ import java.nio.charset.Charset
  */
 class ErrorTests extends AbstractTest {
 
-	def "Test unsupported bundle part extension"() {
+	@Unroll
+	def "Test unsupported bundle part extension on Gradle #gradleVersion"(String gradleVersion) {
 
 		given:
 		rootProjectName = bundleProjectName = "empty"
@@ -37,14 +39,17 @@ class ErrorTests extends AbstractTest {
 		""".stripIndent()
 
 		when:
-		def result = runGradleAndFail([BundlePlugin.DEPLOY_TASK_NAME])
+		def result = runGradleAndFail([BundlePlugin.DEPLOY_TASK_NAME], gradleVersion)
 
 		then:
 		checkBuildOutputStrings(result, ["Unsupported file extension 'har' for Java-based bundle part 'simple-har-1.7.7.har'. Supported extensions are: [ear, jar, war, eba]."])
+
+		where:
+		gradleVersion << GradleVersions.GRADLE_VERSIONS
 	}
 
 	@Unroll
-	def "Test cicsBundle extension missing #propertiesToRemove"(List<String> propertiesToRemove, List<String> expectedMessages) {
+	def "Test cicsBundle extension missing #propertiesToRemove on Gradle version #gradleVersion"(List<String> propertiesToRemove, List<String> expectedMessages, String gradleVersion) {
 
 		given:
 		rootProjectName = bundleProjectName = "standalone-war"
@@ -59,24 +64,59 @@ class ErrorTests extends AbstractTest {
 			}
 		}
 		FileUtils.writeLines(buildFile, fileLines)
-		def result = runGradleAndFail([BundlePlugin.DEPLOY_TASK_NAME])
+		def result = runGradleAndFail([BundlePlugin.DEPLOY_TASK_NAME], gradleVersion)
 
 		then:
 		checkBuildOutputStrings(result, expectedMessages)
 
 		// Parameterize test so the same test can be used for various combinations of properties
 		where:
-		propertiesToRemove | expectedMessages
-		["defaultJVMServer"] | [AbstractJavaBundlePartBinding.JVMSERVER_EXCEPTION]
-		["url"]              | [DeployBundleTask.MISSING_URL, DeployBundleTask.DEPLOY_CONFIG_EXCEPTION]
-		["bunddef"]          | [DeployBundleTask.MISSING_BUNDDEF, DeployBundleTask.DEPLOY_CONFIG_EXCEPTION]
-		["csdgroup"]         | [DeployBundleTask.MISSING_CSDGROUP, DeployBundleTask.DEPLOY_CONFIG_EXCEPTION]
-		["username"]         | [DeployBundleTask.MISSING_USERNAME, DeployBundleTask.DEPLOY_CONFIG_EXCEPTION]
-		["password"]         | [DeployBundleTask.MISSING_PASSWORD, DeployBundleTask.DEPLOY_CONFIG_EXCEPTION]
-		["cicsplex"]         | [DeployBundleTask.MISSING_CICSPLEX_OR_REGION, DeployBundleTask.DEPLOY_CONFIG_EXCEPTION]
-		["region"]           | [DeployBundleTask.MISSING_CICSPLEX_OR_REGION, DeployBundleTask.DEPLOY_CONFIG_EXCEPTION]
-		// if both cicsplex and region are missing, we shouldn't see an error message
-		["url", "cicsplex", "region", "bunddef", "csdgroup", "username", "password"] | [DeployBundleTask.MISSING_URL, DeployBundleTask.MISSING_BUNDDEF, DeployBundleTask.MISSING_CSDGROUP, DeployBundleTask.MISSING_USERNAME, DeployBundleTask.MISSING_PASSWORD, DeployBundleTask.DEPLOY_CONFIG_EXCEPTION]
-		["url", "bunddef", "csdgroup", "username", "password"] | [DeployBundleTask.MISSING_URL, DeployBundleTask.MISSING_BUNDDEF, DeployBundleTask.MISSING_CSDGROUP, DeployBundleTask.MISSING_USERNAME, DeployBundleTask.MISSING_PASSWORD, DeployBundleTask.DEPLOY_CONFIG_EXCEPTION]
+		[gradleVersion, propertiesToRemove, expectedMessages] << INPUTS
 	}
+
+	static final var INPUTS = GradleVersions.onAllVersions(
+		[
+			[
+					["defaultJVMServer"],
+					[AbstractJavaBundlePartBinding.JVMSERVER_EXCEPTION]
+			],
+			[
+					["url"],
+					[DeployBundleTask.MISSING_URL, DeployBundleTask.DEPLOY_CONFIG_EXCEPTION]
+			],
+			[
+					["bunddef"],
+					[DeployBundleTask.MISSING_BUNDDEF, DeployBundleTask.DEPLOY_CONFIG_EXCEPTION]
+			],
+			[
+					["csdgroup"],
+					[DeployBundleTask.MISSING_CSDGROUP, DeployBundleTask.DEPLOY_CONFIG_EXCEPTION]
+			],
+			[
+					["username"],
+					[DeployBundleTask.MISSING_USERNAME, DeployBundleTask.DEPLOY_CONFIG_EXCEPTION]
+			],
+			[
+					["password"],
+					[DeployBundleTask.MISSING_PASSWORD, DeployBundleTask.DEPLOY_CONFIG_EXCEPTION]
+			],
+			[
+					["cicsplex"],
+					[DeployBundleTask.MISSING_CICSPLEX_OR_REGION, DeployBundleTask.DEPLOY_CONFIG_EXCEPTION]
+			],
+			[
+					["region"],
+					[DeployBundleTask.MISSING_CICSPLEX_OR_REGION, DeployBundleTask.DEPLOY_CONFIG_EXCEPTION]
+			],
+			// if both cicsplex and region are missing, we shouldn't see an error message
+			[
+					["url", "cicsplex", "region", "bunddef", "csdgroup", "username", "password"],
+					[DeployBundleTask.MISSING_URL, DeployBundleTask.MISSING_BUNDDEF, DeployBundleTask.MISSING_CSDGROUP, DeployBundleTask.MISSING_USERNAME, DeployBundleTask.MISSING_PASSWORD, DeployBundleTask.DEPLOY_CONFIG_EXCEPTION]
+			],
+			[
+					["url", "bunddef", "csdgroup", "username", "password"],
+					[DeployBundleTask.MISSING_URL, DeployBundleTask.MISSING_BUNDDEF, DeployBundleTask.MISSING_CSDGROUP, DeployBundleTask.MISSING_USERNAME, DeployBundleTask.MISSING_PASSWORD, DeployBundleTask.DEPLOY_CONFIG_EXCEPTION]
+			]
+		]
+	)
 }

@@ -48,6 +48,11 @@ open class DeployBundleTask : DefaultTask() {
 			""".trimIndent()
 	}
 
+	init {
+		// Never skip the deploy task, even if nothing has changed, because we can't know whether the bundle needs redeploying in CICS.
+		outputs.upToDateWhen { false }
+	}
+
 	/**
 	 * Set parameters from the cicsBundle extension as task inputs.
 	 */
