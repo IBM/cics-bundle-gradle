@@ -30,7 +30,7 @@ This project contains:
 The CICS bundle Gradle plugin supports building CICS bundles that contain the following bundle parts:
 
 ## Supported Gradle versions
-The CICS bundle Gradle plugin does not yet support Gradle 8.  See [Issue #136](https://github.com/IBM/cics-bundle-gradle/issues/136)
+The CICS bundle Gradle plugin supports Gradle 5 to Gradle 8.
 
 **Java-based bundle parts**
  * OSGi Bundle (JAR)
