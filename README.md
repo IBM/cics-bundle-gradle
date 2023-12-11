@@ -26,11 +26,11 @@ This project contains:
   * The CICS bundle Gradle plugin (`com.ibm.cics.bundle`), a Gradle plugin that can build CICS bundles, include selected bundle parts, and deploy them to CICS. It's available from both the [Gradle Plugin Portal](https://plugins.gradle.org/plugin/com.ibm.cics.bundle) and [Maven Central](https://search.maven.org/artifact/com.ibm.cics.bundle/com.ibm.cics.bundle.gradle.plugin).
   * `samples`, a collection of samples that show different ways of using this plugin.
 
-## Supported bundle part types
-The CICS bundle Gradle plugin supports building CICS bundles that contain the following bundle parts:
-
 ## Supported Gradle versions
 The CICS bundle Gradle plugin supports Gradle 5 to Gradle 8.
+
+## Supported bundle part types
+The CICS bundle Gradle plugin supports building CICS bundles that contain the following bundle parts:
 
 **Java-based bundle parts**
  * OSGi Bundle (JAR)
