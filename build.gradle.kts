@@ -75,6 +75,22 @@ publishing {
             }
         }
     }
+    publications {
+        mavenJava(MavenPublication) {
+            from(components.java)
+
+            pom {
+                name = 'CICS Bundle Gradle'
+                description = 'A Gradle plugin to build CICS bundles, and deploy them into CICS TS'
+                licenses {
+                    license {
+                        name = 'EPL-2.0'
+                        url = 'https://www.eclipse.org/legal/epl-2.0/'
+                    }
+                }
+            }
+        }
+    }
 }
 
 repositories {
