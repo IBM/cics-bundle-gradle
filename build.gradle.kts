@@ -107,7 +107,7 @@ defaultTasks("build")
 dependencies {
     implementation("com.ibm.cics:cics-bundle-common:2.0.1")
     testImplementation("junit:junit:4.13.2")
-    testImplementation("com.github.tomakehurst:wiremock-jre8:2.35.0")
+    testImplementation("com.github.tomakehurst:wiremock-jre8:2.35.1")
     testImplementation(enforcedPlatform("org.spockframework:spock-bom:2.3-groovy-3.0"))
     testImplementation("org.spockframework:spock-junit4")
     testImplementation("org.spockframework:spock-core")
