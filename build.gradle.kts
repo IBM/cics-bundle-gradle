@@ -75,16 +75,18 @@ publishing {
             }
         }
     }
-     publications {
-         create<MavenPublication>("mavenJava") {
-            from(components["java"])
-            pom {
-                name.set("CICS Bundle Gradle")
-                description.set("A Gradle plugin to build CICS bundles, and deploy them into CICS TS")
-                licenses {
-                    license {
-                        name.set("EPL-2.0")
-                        url.set("https://www.eclipse.org/legal/epl-2.0/")
+    publications {
+        // Access the 'pluginMaven' publication to update its POM metadata
+        withType<MavenPublication>().configureEach {
+            if (name == "pluginMaven") {
+                pom {
+                    name.set("CICS Bundle Gradle")
+                    description.set("A Gradle plugin to build CICS bundles, and deploy them into CICS TS")
+                    licenses {
+                        license {
+                            name.set("EPL-2.0")
+                            url.set("https://www.eclipse.org/legal/epl-2.0/")
+                        }
                     }
                 }
             }
