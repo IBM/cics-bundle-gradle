@@ -105,7 +105,7 @@ repositories {
 defaultTasks("build")
 
 dependencies {
-    implementation("com.ibm.cics:cics-bundle-common:2.0.1")
+    implementation("com.ibm.cics:cics-bundle-common:2.0.2")
     testImplementation("junit:junit:4.13.2")
     testImplementation("com.github.tomakehurst:wiremock-jre8:2.35.1")
     testImplementation(enforcedPlatform("org.spockframework:spock-bom:2.3-groovy-3.0"))
