@@ -27,7 +27,6 @@ val isReleaseVersion by extra(!version.toString().endsWith("SNAPSHOT"))
 gradlePlugin {
     website = "https://github.com/IBM/cics-bundle-gradle"
     vcsUrl = "https://github.com/IBM/cics-bundle-gradle"
-    tags = listOf("cics", "cicsts", "cicsbundle", "cics-bundle")
     plugins {
         register("com.ibm.cics.bundle") {
             id = "com.ibm.cics.bundle"
