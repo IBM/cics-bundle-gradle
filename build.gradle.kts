@@ -52,7 +52,14 @@ signing {
     useInMemoryPgpKeys(signingKeyId, signingKey, signingPassword)
     sign(publishing.publications)
 }
-
+fun MavenPom.licenseEpl20() {
+    licenses {
+        license {
+            name.set("EPL-2.0")
+            url.set("https://www.eclipse.org/legal/epl-2.0/")
+        }
+    }
+}
 publishing {
     repositories {
         if (isReleaseVersion) {
@@ -78,15 +85,19 @@ publishing {
     publications {
         // Access the 'pluginMaven' publication to update its POM metadata
         withType<MavenPublication>().configureEach {
-            if (name == "pluginMaven") {
-                pom {
-                    name.set("CICS Bundle Gradle")
-                    description.set("A Gradle plugin to build CICS bundles, and deploy them into CICS TS")
-                    licenses {
-                        license {
-                            name.set("EPL-2.0")
-                            url.set("https://www.eclipse.org/legal/epl-2.0/")
-                        }
+            when (name) {
+                "pluginMaven" -> {
+                    pom {
+                        name.set("CICS Bundle Gradle")
+                        description.set("A Gradle plugin to build CICS bundles, and deploy them into CICS TS")
+                        licenseEpl20()
+                    }
+                }
+                "com.ibm.cics.bundlePluginMarkerMaven" -> {
+                    pom {
+                        name.set("CICS Bundle Gradle Plugin")
+                        description.set("A Gradle plugin to build CICS bundles, including external dependencies.")
+                        licenseEpl20()
                     }
                 }
             }
