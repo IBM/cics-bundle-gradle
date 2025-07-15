@@ -84,7 +84,7 @@ publishing {
                 licenses {
                     license {
                         name.set("EPL-2.0")
-                        url .set("https://www.eclipse.org/legal/epl-2.0/")
+                        url.set("https://www.eclipse.org/legal/epl-2.0/")
                     }
                 }
             }
