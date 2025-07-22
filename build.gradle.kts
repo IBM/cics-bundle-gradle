@@ -52,7 +52,31 @@ signing {
     useInMemoryPgpKeys(signingKeyId, signingKey, signingPassword)
     sign(publishing.publications)
 }
-
+fun MavenPom.licenseEpl20() {
+    licenses {
+        license {
+            name.set("EPL-2.0")
+            url.set("https://www.eclipse.org/legal/epl-2.0/")
+        }
+    }
+}
+fun MavenPom.ibmDeveloper() {
+    developers {
+        developer {
+            name.set("IBM")
+            email.set("noreply@ibm.com")
+            organization.set("IBM")
+            organizationUrl.set("https://www.ibm.com")
+        }
+    }
+}
+fun MavenPom.ibmScm() {
+    scm {
+        connection.set("scm:git:git://github.com/IBM/cics-bundle-gradle.git")
+        developerConnection.set("scm:git:ssh://github.com:IBM/cics-bundle-gradle.git")
+        url.set("http://github.com/IBM/cics-bundle-gradle/tree/main")
+    }
+}
 publishing {
     repositories {
         if (isReleaseVersion) {
@@ -76,17 +100,25 @@ publishing {
         }
     }
     publications {
-        // Access the 'pluginMaven' publication to update its POM metadata
         withType<MavenPublication>().configureEach {
-            if (name == "pluginMaven") {
-                pom {
-                    name.set("CICS Bundle Gradle")
-                    description.set("A Gradle plugin to build CICS bundles, and deploy them into CICS TS")
-                    licenses {
-                        license {
-                            name.set("EPL-2.0")
-                            url.set("https://www.eclipse.org/legal/epl-2.0/")
-                        }
+            pom {
+                url.set("https://github.com/IBM/cics-bundle-gradle")
+                licenseEpl20()
+                ibmDeveloper()
+                ibmScm()
+            }
+
+            when (name) {
+                "pluginMaven" -> {
+                    pom {
+                        name.set("CICS Bundle Gradle")
+                        description.set("A Gradle plugin to build CICS bundles, and deploy them into CICS TS")
+                    }
+                }
+                "com.ibm.cics.bundlePluginMarkerMaven" -> {
+                    pom {
+                        name.set("CICS Bundle Gradle Plugin")
+                        description.set("A Gradle plugin to build CICS bundles, including external dependencies.")
                     }
                 }
             }
