@@ -3,7 +3,7 @@ Editing notes:
 The table of contents is manually created and relies on the wording of the headings. Check for broken links when updating headings.
 -->
 
-# CICS bundle Gradle plugin (`com.ibm.cics.bundle`) [![Maven Central Latest](https://maven-badges.herokuapp.com/maven-central/com.ibm.cics/cics-bundle-gradle/badge.svg)](https://search.maven.org/search?q=g:com.ibm.cics%20AND%20a:cics-bundle-gradle) [![Build Status](https://github.com/IBM/cics-bundle-gradle/actions/workflows/gradle-build.yml/badge.svg?branch=main)](https://github.com/IBM/cics-bundle-gradle/actions/workflows/gradle-build.yml) [![Nexus Snapshots](https://img.shields.io/nexus/s/com.ibm.cics/cics-bundle-gradle.svg?server=https%3A%2F%2Foss.sonatype.org&label=snapshot&color=success)](https://oss.sonatype.org/#nexus-search;gav~com.ibm.cics~cics-bundle-gradle~~~)
+# CICS bundle Gradle plugin (`com.ibm.cics.bundle`) [![Maven Central Latest](https://maven-badges.sml.io/sonatype-central/com.ibm.cics/cics-bundle-maven-gradle/badge.svg)](https://central.sonatype.com/artifact/com.ibm.cics/cics-bundle-gradle-plugin) [![Build Status](https://github.com/IBM/cics-bundle-gradle/actions/workflows/gradle-build.yml/badge.svg?branch=main)](https://github.com/IBM/cics-bundle-gradle/actions/workflows/gradle-build.yml) [![Nexus Snapshots](https://img.shields.io/nexus/s/com.ibm.cics/cics-bundle-gradle.svg?server=https%3A%2F%2Foss.sonatype.org&label=snapshot&color=success)](https://oss.sonatype.org/#nexus-search;gav~com.ibm.cics~cics-bundle-gradle~~~)
 
 - [About this project](#cics-bundle-gradle-plugin-comibmcicsbundle)
 - The CICS bundle Gradle plugin
@@ -104,7 +104,7 @@ In either case, configure the Gradle module as follows:
         repositories {
             maven {
                 name = "SonatypeSnapshots"
-                url = uri("https://oss.sonatype.org/content/repositories/snapshots")
+                url = uri("https://central.sonatype.com/repository/maven-snapshots")
             }
             gradlePluginPortal() // Needed for the plugin's own dependencies.
         }
