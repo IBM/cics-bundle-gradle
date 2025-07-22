@@ -82,7 +82,7 @@ publishing {
         if (isReleaseVersion) {
             maven {
                 name = "OSSRH"
-                url = uri("https://oss.sonatype.org/service/local/staging/deploy/maven2/")
+                url = uri("https://ossrh-staging-api.central.sonatype.com/service/local/staging/deploy/maven2/")
                 credentials {
                     username = ossrhUser
                     password = ossrhPassword
@@ -91,7 +91,7 @@ publishing {
         } else {
             maven {
                 name = "SonatypeSnapshots"
-                url = uri("https://oss.sonatype.org/content/repositories/snapshots")
+                url = uri("https://central.sonatype.com/repository/maven-snapshots")
                 credentials {
                     username = ossrhUser
                     password = ossrhPassword
@@ -129,7 +129,7 @@ publishing {
 repositories {
     maven {
         name = "SonatypeSnapshots"
-        url = uri("https://oss.sonatype.org/content/repositories/snapshots")
+        url = uri("https://central.sonatype.com/repository/maven-snapshots")
     }
     mavenCentral()
 }
