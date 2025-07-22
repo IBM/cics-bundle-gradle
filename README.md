@@ -179,7 +179,7 @@ In either case, configure the Gradle module as follows:
 ## Deploy a CICS bundle
 Deploying your bundle to CICS requires extra configuration in CICS, as described in [Prerequisites](https://github.com/IBM/cics-bundle-gradle#prerequisites).
 
-Also ensure a BUNDLE definition for this CICS bundle has already been created in the CSD. You can ask your system admin to do this and pass you the CSD group and name of the definition. The bundle directory of the BUNDLE definition should be set as follows to match your CICS bundle: `<bundle_deploy_root>/<bundle_id>_<bundle_version>`.
+Also ensure a BUNDLE definition for this CICS bundle has already been created in the CSD. You can ask your system admin to do this and pass you the CSD group and name of the definition. The bundle directory of the BUNDLE definition should be set as follows to match your CICS bundle: `<bundle_deploy_root>/<bundle_id>_<bundle_version>`. `<bundle_deploy_root>` **must** match the bundles directory specified by `-Dcom.ibm.cics.jvmserver.cmci.bundles.dir` in the JVM profile for your CMCI JVM server.
 
 The username defined in the pom.xml is the developer’s credentials which need to have access to the appropriate RACF profile_prefix.CMCI.DEPLOYER EJBROLE. Credentials, such as a username and password, should not be directly placed into the pom.xml file. Instead, variables for the credentials should be referenced in the pom.xml file.
 
