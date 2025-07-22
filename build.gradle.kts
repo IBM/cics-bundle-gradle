@@ -25,6 +25,8 @@ version = "1.0.8-SNAPSHOT"
 val isReleaseVersion by extra(!version.toString().endsWith("SNAPSHOT"))
 
 gradlePlugin {
+    website = "https://github.com/IBM/cics-bundle-gradle"
+    vcsUrl = "https://github.com/IBM/cics-bundle-gradle"
     plugins {
         register("com.ibm.cics.bundle") {
             id = "com.ibm.cics.bundle"
@@ -33,12 +35,6 @@ gradlePlugin {
             implementationClass = "com.ibm.cics.cbgp.BundlePlugin"
         }
     }
-}
-
-pluginBundle {
-    website = "https://github.com/IBM/cics-bundle-gradle"
-    vcsUrl = "https://github.com/IBM/cics-bundle-gradle"
-    tags = listOf("cics", "cicsts", "cicsbundle", "cics-bundle")
 }
 
 val ossrhUser: String? by project
