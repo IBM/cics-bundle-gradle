@@ -90,6 +90,9 @@ open class DeployBundleTask : DefaultTask() {
 		val bundle = inputFile.get().asFile
 		val endpointURL = URI(url)
 		BundleDeployHelper.deployBundle(endpointURL, bundle, bunddef, csdgroup, cicsplex, region, username, password, insecure)
+
+		// Scrub sensitive data from memory
+		password.forEachIndexed { i, _ -> password[i] = '0' }
 	}
 
 	private fun validateBundleExtension() {
