@@ -18,7 +18,7 @@ jobs:
           cache: gradle
       
       - name: Build and deploy with Gradle
-        if: github.ref == 'refs/heads/main'
+        if: github.ref != 'refs/heads/main'
         run: ./gradlew build publishAll --no-daemon --info --stacktrace
         env:
           # Sign artifacts
@@ -32,8 +32,12 @@ jobs:
           GRADLE_PUBLISH_KEY: ${{ secrets.GPP_KEY }}
           GRADLE_PUBLISH_SECRET: ${{ secrets.GPP_SECRET }}
       
-      - name: Build with Gradle
+      - name: Post to OSSRH
         if: github.ref != 'refs/heads/main'
+        run: curl -X POST "https://ossrh-staging-api.central.sonatype.com/service/local/staging/deploy/maven2/manual/upload/defaultRepository/com.ibm.cics" -u "${{ secrets.OSSRH_USERNAME }}:${{ secrets.OSSRH_PASSWORD }}"
+
+      - name: Build with Gradle
+        if: github.ref == 'refs/heads/main'
         run: ./gradlew build --no-daemon --info --stacktrace
 
       - name: Build Gradle War Sample

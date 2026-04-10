@@ -151,9 +151,9 @@ tasks.named<Test>("test") {
 
 tasks.register("publishAll") {
     group = "publishing"
-    if (isReleaseVersion) {
-        dependsOn("publishPlugins") // Publish to Gradle Plugin Portal if a release
-    }
+    // if (isReleaseVersion) {
+        // dependsOn("publishPlugins") // Publish to Gradle Plugin Portal if a release
+    // }
     dependsOn("publish") // Publish to Sonatype Snapshots or Central Staging, defined in 'publishing' extension
 }
 
