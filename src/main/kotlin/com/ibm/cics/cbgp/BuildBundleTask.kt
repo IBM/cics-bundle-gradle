@@ -21,11 +21,42 @@ import org.gradle.api.GradleException
 import org.gradle.api.artifacts.Configuration
 import org.gradle.api.file.DirectoryProperty
 import org.gradle.api.tasks.*
-import org.gradle.util.VersionNumber
 import java.io.File
 import java.io.IOException
 import java.nio.file.Files
 
+/**
+ * Custom version class to replace deprecated org.gradle.util.VersionNumber
+ */
+data class ProjectVersion(
+	val major: Int,
+	val minor: Int,
+	val micro: Int,
+	val patch: Int = 0
+) {
+	companion object {
+		fun parse(version: String): ProjectVersion? {
+			// Remove any qualifiers (e.g., "-SNAPSHOT", "-RC1")
+			val cleanVersion = version.split("-")[0]
+			
+			// Split by dots to get version components
+			val parts = cleanVersion.split(".")
+			
+			return try {
+				ProjectVersion(
+					major = parts.getOrNull(0)?.toIntOrNull() ?: return null,
+					minor = parts.getOrNull(1)?.toIntOrNull() ?: 0,
+					micro = parts.getOrNull(2)?.toIntOrNull() ?: 0,
+					patch = parts.getOrNull(3)?.toIntOrNull() ?: 0
+				)
+			} catch (e: Exception) {
+				null
+			}
+		}
+	}
+}
+
+@CacheableTask
 open class BuildBundleTask : DefaultTask() {
 
 	companion object {
@@ -54,12 +85,14 @@ open class BuildBundleTask : DefaultTask() {
 	 * Set the cicsBundlePart dependency configuration as a task input.
 	 */
 	@InputFiles
+	@PathSensitive(PathSensitivity.RELATIVE)
 	val cicsBundlePartConfig: Configuration = project.configurations.getByName(BundlePlugin.BUNDLE_DEPENDENCY_CONFIGURATION_NAME)
 
 	/**
 	 * Set the resources directory as an optional task input.
 	 */
 	@InputDirectory
+	@PathSensitive(PathSensitivity.RELATIVE)
 	@Optional
 	val resourcesDirectory: DirectoryProperty = project.objects.directoryProperty()
 
@@ -107,13 +140,12 @@ open class BuildBundleTask : DefaultTask() {
 		return bundlePublisher
 	}
 
-	private fun getProjectVersionNumber(): VersionNumber {
+	private fun getProjectVersionNumber(): ProjectVersion {
 		val pv = project.version
-		val versionNumber = VersionNumber.parse(pv.toString())
-		if (!VersionNumber.UNKNOWN.equals(versionNumber)) {
-			return versionNumber
-		}
-		throw GradleException("Project version number '$pv' could not be parsed into MAJOR.MINOR.MICRO.PATCH format")
+		val versionNumber = ProjectVersion.parse(pv.toString())
+		return versionNumber ?: throw GradleException(
+			"Project version number '$pv' could not be parsed into MAJOR.MINOR.MICRO.PATCH format"
+		)
 	}
 
 	private fun addJavaBundlePartsToBundle(bundlePublisher: BundlePublisher) {
@@ -123,17 +155,31 @@ open class BuildBundleTask : DefaultTask() {
 		if (resolved.hasError()) {
 			throw GradleException("Failed to resolve Java-based bundle parts from '${BundlePlugin.BUNDLE_DEPENDENCY_CONFIGURATION_NAME}' dependency configuration")
 		}
-
-		if (resolved.files.isEmpty()) {
+	
+		// Get files from both artifact-based and file-based dependencies
+		// Artifact-based dependencies (from repositories and projects)
+		val artifactFiles = resolved.resolvedArtifacts.map { it.file }
+		
+		// File-based dependencies (e.g., files('path/to/file.jar'))
+		// These are in the configuration's files but not in resolvedArtifacts
+		val allConfigFiles = cicsBundlePartConfig.files.toList()
+		val fileBasedDeps = allConfigFiles.filter { file ->
+			!artifactFiles.contains(file)
+		}
+		
+		// Combine both types of dependencies
+		val resolvedFiles = artifactFiles + fileBasedDeps
+		
+		if (resolvedFiles.isEmpty()) {
 			logger.info("No Java-based bundle parts found in '${BundlePlugin.BUNDLE_DEPENDENCY_CONFIGURATION_NAME}' dependency configuration")
 			return
 		}
-
+	
 		val extraConfigMap = createExtraConfigMap()
-
-		resolved.files.toTypedArray().forEach { file ->
+	
+		resolvedFiles.forEach { file ->
 			logger.lifecycle("Adding Java-based bundle part: '$file'")
-
+	
 			// If extra config has been provided for this bundle part then use it
 			var binding: AbstractJavaBundlePartBinding? = extraConfigMap[file.name]
 			if (binding == null) {
@@ -147,7 +193,7 @@ open class BuildBundleTask : DefaultTask() {
 			}
 			binding.file = file
 			binding.applyDefaults(defaultJVMServer)
-
+	
 			try {
 				bundlePublisher.addResource(binding.toBundlePart())
 			} catch (e: PublishException) {
@@ -166,7 +212,17 @@ open class BuildBundleTask : DefaultTask() {
 			// Get the resolved filenames for the dependency by assigning it to a temporary configuration
 			val temp: Configuration = project.configurations.create("cicsBundleTemp")
 			temp.dependencies.add(bundlePartWithExtraConfig.dependency)
-			temp.resolvedConfiguration.files.toTypedArray().forEach { file ->
+			
+			// Handle both artifact-based and file-based dependencies
+			val tempFiles = if (temp.resolvedConfiguration.resolvedArtifacts.isNotEmpty()) {
+				// Artifact-based dependencies (from repositories)
+				temp.resolvedConfiguration.resolvedArtifacts.map { it.file }
+			} else {
+				// File-based dependencies
+				temp.files.toList()
+			}
+			
+			tempFiles.forEach { file ->
 				logger.lifecycle("Extra configuration found for Java-based bundle part: '${file.name}': ${bundlePartWithExtraConfig.extraConfigAsString()}")
 				extraConfigMap[file.name] = bundlePartWithExtraConfig
 			}

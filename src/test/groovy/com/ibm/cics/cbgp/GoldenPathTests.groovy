@@ -311,4 +311,43 @@ class GoldenPathTests extends AbstractTest {
 		where:
 		gradleVersion << GradleVersions.GRADLE_VERSIONS
 	}
+
+	@Unroll
+	def "Test file-based dependency on Gradle #gradleVersion"(String gradleVersion) {
+
+		given:
+		rootProjectName = bundleProjectName = "empty"
+		
+		copyTestProject()
+		
+		// Create a dummy WAR file to use as file-based dependency
+		def libsDir = new File(bundleProjectDir, "libs")
+		libsDir.mkdirs()
+		def warFile = new File(libsDir, "test-app.war")
+		warFile.createNewFile()
+		
+		// Add file-based dependency to build.gradle
+		buildFile << """
+		dependencies {
+			cicsBundlePart files('libs/test-app.war')
+		}
+		""".stripIndent()
+
+		when:
+		def result = runGradleAndSucceed([BundlePlugin.PACKAGE_TASK_NAME], gradleVersion)
+
+		then:
+		checkBuildOutputStrings(result, [
+			"Adding Java-based bundle part:",
+			"libs/test-app.war"
+		])
+		checkBuildOutputFiles([
+			"test-app.war",
+			"test-app.warbundle"
+		])
+		checkBundleArchiveFile()
+
+		where:
+		gradleVersion << GradleVersions.GRADLE_VERSIONS
+	}
 }

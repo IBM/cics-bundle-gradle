@@ -20,6 +20,7 @@ import org.gradle.api.file.RegularFileProperty
 import org.gradle.api.tasks.*
 import java.net.URI
 
+@UntrackedTask(because = "Deploy task always needs to run to ensure bundle is deployed to CICS")
 open class DeployBundleTask : DefaultTask() {
 
 	companion object {
@@ -79,6 +80,7 @@ open class DeployBundleTask : DefaultTask() {
 	 * Set the bundle archive file as a task input. This will be linked to the output of the package task.
 	 */
 	@InputFile
+	@PathSensitive(PathSensitivity.RELATIVE)
 	val inputFile: RegularFileProperty = project.objects.fileProperty()
 
 	@TaskAction

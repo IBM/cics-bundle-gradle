@@ -2,7 +2,7 @@ plugins {
 	id 'com.ibm.cics.bundle'
 }
 
-version  = new org.gradle.util.VersionNumber(1, 2, 3, null)
+version = "1.2.3"
 
 repositories {
     mavenCentral()
