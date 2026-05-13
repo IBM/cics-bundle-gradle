@@ -15,23 +15,29 @@ package com.ibm.cics.cbgp
 
 import org.gradle.api.file.DirectoryProperty
 import org.gradle.api.file.RegularFileProperty
+import org.gradle.api.tasks.CacheableTask
 import org.gradle.api.tasks.InputDirectory
 import org.gradle.api.tasks.OutputFile
+import org.gradle.api.tasks.PathSensitive
+import org.gradle.api.tasks.PathSensitivity
 import org.gradle.api.tasks.bundling.Zip
+import javax.inject.Inject
 
-open class PackageBundleTask : Zip() {
+@CacheableTask
+abstract class PackageBundleTask @Inject constructor() : Zip() {
 
 	/**
 	 * Set the build directory as a task input. This will be linked to the output of the build task.
 	 */
-	@InputDirectory
-	val inputDirectory: DirectoryProperty = project.objects.directoryProperty()
+	@get:InputDirectory
+	@get:PathSensitive(PathSensitivity.RELATIVE)
+	abstract val inputDirectory: DirectoryProperty
 
     /**
      * Set the zip archive file as a task output. This will be linked to the input of the deploy task.
      */
-    @OutputFile @Deprecated("Will be removed in v2.0.0", ReplaceWith("archiveFile"))
-    val outputFile: RegularFileProperty = project.objects.fileProperty()
+    @get:OutputFile @Deprecated("Will be removed in v2.0.0", ReplaceWith("archiveFile"))
+    abstract val outputFile: RegularFileProperty
 
 	init {
 		// Tell the task which directory to zip up

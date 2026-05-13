@@ -15,7 +15,7 @@ plugins {
     id("groovy")
     id("java-gradle-plugin")
     id("maven-publish")
-    id("com.gradle.plugin-publish") version "1.2.0"
+    id("com.gradle.plugin-publish") version "1.3.0"
     id("signing")
     `kotlin-dsl`
 }
@@ -25,20 +25,17 @@ version = "1.0.9-SNAPSHOT"
 val isReleaseVersion by extra(!version.toString().endsWith("SNAPSHOT"))
 
 gradlePlugin {
+    website.set("https://github.com/IBM/cics-bundle-gradle")
+    vcsUrl.set("https://github.com/IBM/cics-bundle-gradle")
     plugins {
         register("com.ibm.cics.bundle") {
             id = "com.ibm.cics.bundle"
             displayName = "CICS Bundle Gradle Plugin"
             description = "A Gradle plugin to build CICS bundles, including external dependencies."
             implementationClass = "com.ibm.cics.cbgp.BundlePlugin"
+            tags.set(listOf("cics", "cicsts", "cicsbundle", "cics-bundle"))
         }
     }
-}
-
-pluginBundle {
-    website = "https://github.com/IBM/cics-bundle-gradle"
-    vcsUrl = "https://github.com/IBM/cics-bundle-gradle"
-    tags = listOf("cics", "cicsts", "cicsbundle", "cics-bundle")
 }
 
 val ossrhUser: String? by project
@@ -140,13 +137,23 @@ dependencies {
     implementation("com.ibm.cics:cics-bundle-common:2.0.2")
     testImplementation("junit:junit:4.13.2")
     testImplementation("com.github.tomakehurst:wiremock-jre8:2.35.1")
-    testImplementation(enforcedPlatform("org.spockframework:spock-bom:2.3-groovy-3.0"))
+    testImplementation(enforcedPlatform("org.spockframework:spock-bom:2.3-groovy-4.0"))
     testImplementation("org.spockframework:spock-junit4")
     testImplementation("org.spockframework:spock-core")
+    
+    // JUnit Platform (Jupiter) for Spock 2.x compatibility with Gradle 9
+    testRuntimeOnly("org.junit.platform:junit-platform-launcher")
+    testRuntimeOnly("org.junit.vintage:junit-vintage-engine")
 }
 
 tasks.named<Test>("test") {
     useJUnitPlatform()
+    
+    // Configure test discovery for Spock tests
+    testLogging {
+        events("passed", "skipped", "failed")
+        showStandardStreams = false
+    }
 }
 
 tasks.register("publishAll") {
