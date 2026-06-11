@@ -1,11 +1,13 @@
 plugins {
     id 'java'
-    id 'biz.aQute.bnd.builder' version '7.0.0'
+    id 'biz.aQute.bnd.builder' version '7.1.0'
 }
 
 version '1.0.0'
 
-java.sourceCompatibility = JavaVersion.VERSION_1_8
+java {
+    sourceCompatibility = JavaVersion.VERSION_1_8
+}
 
 repositories {
     mavenCentral()
