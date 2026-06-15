@@ -15,6 +15,7 @@ plugins {
     id("groovy")
     id("java-gradle-plugin")
     id("maven-publish")
+    id("org.jreleaser") version "1.13.1"
     id("com.gradle.plugin-publish") version "1.3.0"
     id("signing")
     `kotlin-dsl`
@@ -24,22 +25,23 @@ group = "com.ibm.cics"
 version = "1.0.9-SNAPSHOT"
 val isReleaseVersion by extra(!version.toString().endsWith("SNAPSHOT"))
 
+// Project metadata
+val pluginDisplayName = "CICS Bundle Gradle Plugin"
+val pluginDescription = "A Gradle plugin to build CICS bundles, including external dependencies, and deploy them into CICS TS."
+
 gradlePlugin {
     website.set("https://github.com/IBM/cics-bundle-gradle")
     vcsUrl.set("https://github.com/IBM/cics-bundle-gradle")
     plugins {
         register("com.ibm.cics.bundle") {
             id = "com.ibm.cics.bundle"
-            displayName = "CICS Bundle Gradle Plugin"
-            description = "A Gradle plugin to build CICS bundles, including external dependencies."
+            displayName = pluginDisplayName
+            description = pluginDescription
             implementationClass = "com.ibm.cics.cbgp.BundlePlugin"
             tags.set(listOf("cics", "cicsts", "cicsbundle", "cics-bundle"))
         }
     }
 }
-
-val ossrhUser: String? by project
-val ossrhPassword: String? by project
 
 signing {
     setRequired { !gradle.taskGraph.hasTask(":publishToMavenLocal") }
@@ -74,49 +76,52 @@ fun MavenPom.ibmScm() {
         url.set("http://github.com/IBM/cics-bundle-gradle/tree/main")
     }
 }
+
 publishing {
     repositories {
-        if (isReleaseVersion) {
             maven {
-                name = "OSSRH"
-                url = uri("https://ossrh-staging-api.central.sonatype.com/service/local/staging/deploy/maven2/")
-                credentials {
-                    username = ossrhUser
-                    password = ossrhPassword
-                }
-            }
-        } else {
-            maven {
-                name = "SonatypeSnapshots"
-                url = uri("https://central.sonatype.com/repository/maven-snapshots")
-                credentials {
-                    username = ossrhUser
-                    password = ossrhPassword
-                }
-            }
+            name = "local"
+            url = layout.buildDirectory.dir("staging-deploy").get().asFile.toURI()
         }
     }
     publications {
         withType<MavenPublication>().configureEach {
             pom {
+                name.set(pluginDisplayName)
+                description.set(pluginDescription)
                 url.set("https://github.com/IBM/cics-bundle-gradle")
                 licenseEpl20()
                 ibmDeveloper()
                 ibmScm()
             }
+        }
+    }
+}
 
-            when (name) {
-                "pluginMaven" -> {
-                    pom {
-                        name.set("CICS Bundle Gradle")
-                        description.set("A Gradle plugin to build CICS bundles, and deploy them into CICS TS")
-                    }
-                }
-                "com.ibm.cics.bundlePluginMarkerMaven" -> {
-                    pom {
-                        name.set("CICS Bundle Gradle Plugin")
-                        description.set("A Gradle plugin to build CICS bundles, including external dependencies.")
-                    }
+jreleaser {
+    project {
+        name.set("cics-bundle-gradle")
+        description.set(pluginDescription)
+        authors.set(listOf("IBM"))
+        license.set("EPL-2.0")
+        links {
+            homepage.set("https://github.com/IBM/cics-bundle-gradle")
+        }
+        inceptionYear.set("2019")
+    }
+    
+    signing {
+        active.set(org.jreleaser.model.Active.NEVER)
+    }
+    
+    deploy {
+        maven {
+            mavenCentral {
+                create("sonatype") {
+                    active.set(org.jreleaser.model.Active.ALWAYS)
+                    url.set("https://central.sonatype.com/api/v1/publisher")
+                    stagingRepository("build/staging-deploy")
+                    sign.set(false)
                 }
             }
         }
@@ -158,9 +163,19 @@ tasks.named<Test>("test") {
 
 tasks.register("publishAll") {
     group = "publishing"
+    description = "Publishes all artifacts to appropriate places depending on whether it's a snapshot or release build"
+    
+    // Publish to local staging directory, always (using maven-publish)
+    dependsOn("publish")
+
+    // Publish to Maven Central, if a release (using org.jreleaser)
     if (isReleaseVersion) {
-        dependsOn("publishPlugins") // Publish to Gradle Plugin Portal if a release
+        finalizedBy("jreleaserFullRelease")
     }
-    dependsOn("publish") // Publish to Sonatype Snapshots or Central Staging, defined in 'publishing' extension
+
+    // Publish to Gradle Plugin Portal, if a release (using com.gradle.plugin-publish)
+    if (isReleaseVersion) {
+        finalizedBy("publishPlugins")
+    }
 }
 
