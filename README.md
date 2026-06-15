@@ -27,7 +27,7 @@ This project contains:
   * `samples`, a collection of samples that show different ways of using this plugin.
 
 ## Supported Gradle versions
-The CICS bundle Gradle plugin supports Gradle 5 to Gradle 8.
+The CICS bundle Gradle plugin supports Gradle 7 to Gradle 9.
 
 ## Supported bundle part types
 The CICS bundle Gradle plugin supports building CICS bundles that contain the following bundle parts:
@@ -55,8 +55,6 @@ The CICS bundle Gradle plugin supports building CICS bundles that contain the fo
 It can deploy CICS bundles containing any bundle parts.
 
 ## Prerequisites
-The plugin requires Gradle version 5 features and will not work correctly on earlier releases of Gradle.
-
 The plugin builds CICS bundles for any in-service version of CICS Transaction Server for z/OS (version 5.3 and later at the time of writing).
 
 However, if you're using the `deployCICSBundle` task of the plugin to deploy bundles to CICS, you must enable the CICS bundle deployment API. The CICS bundle deployment API is supported by the CMCI JVM server that must be set up in a WUI region or a single CICS region. See the [CICS TS doc](https://www.ibm.com/docs/en/cics-ts/latest?topic=suc-configuring-cmci-jvm-server-cics-bundle-deployment-api) for details. To use the `deployCICSBundle` task, make sure that:
