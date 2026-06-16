@@ -27,7 +27,9 @@ This project contains:
   * `samples`, a collection of samples that show different ways of using this plugin.
 
 ## Supported Gradle versions
-The CICS bundle Gradle plugin supports Gradle 7 to Gradle 9.
+The CICS bundle Gradle plugin supports Gradle 8 and 9.
+
+**Note:** Gradle 7 support was removed in version 1.0.9 to enable Java 21 compatibility.
 
 ## Supported bundle part types
 The CICS bundle Gradle plugin supports building CICS bundles that contain the following bundle parts:

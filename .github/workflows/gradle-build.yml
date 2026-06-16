@@ -13,8 +13,8 @@ jobs:
       - name: Setup Java
         uses: actions/setup-java@v3
         with:
-          # We specifically need Java 17 as it's the only one which supports every Gradle version we build/test with (7, 8, and 9).
-          java-version: '17'
+          # Java 21 is required for Jackson 2.21 and supports Gradle 8 and 9.
+          java-version: '21'
           distribution: 'temurin'
           cache: gradle
       
