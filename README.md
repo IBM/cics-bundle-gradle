@@ -37,7 +37,9 @@ The CICS bundle Gradle plugin supports building CICS bundles that contain the fo
  * Web Archive (WAR)
  * Enterprise Archive (EAR)
  * Enterprise Bundle Archive (EBA)  
- **Note:** [Enterprise Bundle Archive (EBA) support is stabilized in CICS TS](https://www.ibm.com/docs/en/cics-ts/latest?topic=releases-stabilization-notices).
+
+> [!NOTE]
+> [Enterprise Bundle Archive (EBA) support is stabilized in CICS TS](https://www.ibm.com/docs/en/cics-ts/latest?topic=releases-stabilization-notices-discontinued-functions).
 
 **Non-Java-based bundle parts**
  * EPADAPTER
@@ -280,8 +282,11 @@ For security consideration, you may still want the TLS/SSL checking to be enable
     * [Certificate encoding & extensions](https://support.ssl.com/Knowledgebase/Article/View/19/0/der-vs-crt-vs-cer-vs-pem-certificates-and-how-to-convert-them)
 
 1. Disable TLS/SSL certificate checking:  
-Add `insecure = true` to the `deploy` configuration of your bundle's `build.gradle` (See snippet in Step 1 of [Deploy a CICS bundle](#deploy-a-cics-bundle)).  
-**Note:** Trusting all certificates can pose a security issue for your environment.
+   
+   Add `insecure = true` to the `deploy` configuration of your bundle's `build.gradle` (See snippet in Step 1 of [Deploy a CICS bundle](#deploy-a-cics-bundle)).  
+
+> [!WARNING]
+> Trusting all certificates can pose a security issue for your environment.
 
 ### `internal server error` during deployment  
 You might see this error in the Gradle log when you deploy a CICS bundle:  
