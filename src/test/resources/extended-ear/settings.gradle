@@ -1,0 +1,4 @@
+rootProject.name = 'extended-ear'
+
+include 'standalone-ear-osgi'
+include 'standalone-ear-war'

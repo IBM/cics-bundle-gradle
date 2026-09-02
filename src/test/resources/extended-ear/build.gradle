@@ -1,0 +1,37 @@
+plugins {
+    id 'ear'
+    id 'com.ibm.cics.bundle'
+}
+
+version '1.0.0'
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    deploy project(path: ':standalone-ear-osgi', configuration: 'archives')
+    deploy project(path: ':standalone-ear-war', configuration: 'archives')
+    earlib (group: 'log4j', name: 'log4j', version: '1.2.15', ext: 'jar')
+    cicsBundleEar {
+        dependency = cicsBundlePart files(ear)
+        addCICSAllAuthenticatedRole = false
+        libertyAppConfigFile = file("src/main/resources/test.xml")
+    } 
+}
+
+cicsBundle {
+    build {
+        defaultJVMServer = project.jvmsWlp
+    }
+    deploy {
+        url = project.url
+        cicsplex = project.cicsplex
+        region = project.region
+        bunddef = 'GRADLESE'
+        csdgroup = project.csdgroup
+        username = project.username
+        password = project.password
+        insecure = project.insecure
+    }
+}

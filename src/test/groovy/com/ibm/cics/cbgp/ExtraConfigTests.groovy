@@ -82,14 +82,14 @@ class ExtraConfigTests extends AbstractTest {
         ])
 
         checkFileContains(getFileInDir(bundleBuildDir, "${osgiNameOverrideModule}.osgibundle"), ["<osgibundle jvmserver=\"${jvmserverOverride}\" symbolicname=\"org.codehaus.cargo.simple-bundle\" version=\"1.7.0\"/>"])
-        checkFileContains(getFileInDir(bundleBuildDir, "${warNameOverrideModule}.warbundle"), ["<warbundle jvmserver=\"${jvmserverOriginal}\" symbolicname=\"${warNameOverrideModule}\"/>"])
-        checkFileContains(getFileInDir(bundleBuildDir, "${earNameOverrideModule}.earbundle"), ["<earbundle jvmserver=\"${jvmserverOriginal}\" symbolicname=\"${earNameOverrideModule}\"/>"])
+        checkFileContains(getFileInDir(bundleBuildDir, "${warNameOverrideModule}.warbundle"), ["<warbundle addCICSAllAuth=\"false\" jvmserver=\"${jvmserverOriginal}\" symbolicname=\"${warNameOverrideModule}\"/>"])
+        checkFileContains(getFileInDir(bundleBuildDir, "${earNameOverrideModule}.earbundle"), ["<earbundle addCICSAllAuth=\"false\" jvmserver=\"${jvmserverOriginal}\" symbolicname=\"${earNameOverrideModule}\"/>"])
         checkFileContains(getFileInDir(bundleBuildDir, "${osgiNameOverrideProject}.osgibundle"), ["<osgibundle jvmserver=\"${jvmserverOverride}\" symbolicname=\"com.ibm.cics.extra-config-osgi\" version=\"1.0.0\"/>"])
-        checkFileContains(getFileInDir(bundleBuildDir, "${warNameOverrideProject}.warbundle"), ["<warbundle jvmserver=\"${jvmserverOriginal}\" symbolicname=\"${warNameOverrideProject}\"/>"])
-        checkFileContains(getFileInDir(bundleBuildDir, "${earNameOverrideProject}.earbundle"), ["<earbundle jvmserver=\"${jvmserverOriginal}\" symbolicname=\"${earNameOverrideProject}\"/>"])
+        checkFileContains(getFileInDir(bundleBuildDir, "${warNameOverrideProject}.warbundle"), ["<warbundle addCICSAllAuth=\"false\" jvmserver=\"${jvmserverOriginal}\" symbolicname=\"${warNameOverrideProject}\"/>"])
+        checkFileContains(getFileInDir(bundleBuildDir, "${earNameOverrideProject}.earbundle"), ["<earbundle addCICSAllAuth=\"false\" jvmserver=\"${jvmserverOriginal}\" symbolicname=\"${earNameOverrideProject}\"/>"])
         checkFileContains(getFileInDir(bundleBuildDir, "${osgiNameOverrideFile}.osgibundle"), ["<osgibundle jvmserver=\"${jvmserverOverride}\" symbolicname=\"com.ibm.cics.standalone-osgi\" version=\"1.0.1\"/>"])
-        checkFileContains(getFileInDir(bundleBuildDir, "${warNameOverrideFile}.warbundle"), ["<warbundle jvmserver=\"${jvmserverOriginal}\" symbolicname=\"${warNameOverrideFile}\"/>"])
-        checkFileContains(getFileInDir(bundleBuildDir, "${earNameOverrideFile}.earbundle"), ["<earbundle jvmserver=\"${jvmserverOriginal}\" symbolicname=\"${earNameOverrideFile}\"/>"])
+        checkFileContains(getFileInDir(bundleBuildDir, "${warNameOverrideFile}.warbundle"), ["<warbundle addCICSAllAuth=\"false\" jvmserver=\"${jvmserverOriginal}\" symbolicname=\"${warNameOverrideFile}\"/>"])
+        checkFileContains(getFileInDir(bundleBuildDir, "${earNameOverrideFile}.earbundle"), ["<earbundle addCICSAllAuth=\"false\" jvmserver=\"${jvmserverOriginal}\" symbolicname=\"${earNameOverrideFile}\"/>"])
         checkFileContains(getFileInDir(bundleBuildDir, "${ebaNameOverrideFile}.ebabundle"), ["<ebabundle jvmserver=\"${jvmserverOriginal}\" symbolicname=\"${ebaNameOverrideFile}\"/>"])
 
         checkManifest([

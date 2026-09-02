@@ -1,0 +1,37 @@
+plugins {
+    id 'war'
+    id 'com.ibm.cics.bundle'
+}
+
+version '1.0.0'
+
+sourceCompatibility = 1.8
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    providedCompile 'javax.servlet:javax.servlet-api:3.1.0'
+    cicsBundleWar {
+        dependency = cicsBundlePart files(war)
+        addCICSAllAuthenticatedRole = false
+        libertyAppConfigFile = file("src/main/resources/test.xml")
+    } 
+}
+
+cicsBundle {
+    build {
+        defaultJVMServer = project.jvmsWlp
+    }
+    deploy {
+        url = project.url
+        cicsplex = project.cicsplex
+        region = project.region
+        bunddef = 'GRADLESW'
+        csdgroup = project.csdgroup
+        username = project.username
+        password = project.password
+        insecure = project.insecure
+    }
+}
