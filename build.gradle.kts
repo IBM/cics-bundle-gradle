@@ -22,7 +22,7 @@ plugins {
 }
 
 group = "com.ibm.cics"
-version = "1.0.12"
+version = "1.0.13-SNAPSHOT"
 val isReleaseVersion by extra(!version.toString().endsWith("SNAPSHOT"))
 
 // Project metadata
