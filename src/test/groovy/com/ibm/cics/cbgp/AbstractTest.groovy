@@ -237,7 +237,7 @@ abstract class AbstractTest extends Specification {
 				return line.contains(expectedString)
 			}
 			if (!found) {
-				assert false: "${file.name} is missing : '$expectedString'"
+				assert false: "${file.name} is missing : '${expectedString}', but was : '${lines}'"
 			}
 		}
 	}

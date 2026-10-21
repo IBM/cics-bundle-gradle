@@ -47,7 +47,7 @@ abstract class AbstractJavaBundlePartBinding() : AbstractBundlePartBinding() {
 		}
 	}
 
-	fun extraConfigAsString(): String {
+	open fun extraConfigAsString(): String {
 		val map = LinkedHashMap<String, String>()
 		if (name.isNotEmpty()) {
 			map["name"] = name
@@ -55,7 +55,7 @@ abstract class AbstractJavaBundlePartBinding() : AbstractBundlePartBinding() {
 		if (jvmserver.isNotEmpty()) {
 			map["jvmserver"] = jvmserver
 		}
-		if(versionRange.isNotEmpty()) {
+		if (versionRange.isNotEmpty()) {
 			map["versionRange"] = versionRange
 		}
 		return map.toString()

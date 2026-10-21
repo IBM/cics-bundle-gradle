@@ -1,0 +1,9 @@
+<server>
+    <application context-root="/" location="" >
+        <application-bnd>
+            <security-role name="testers">
+                <group name="TESTR" />
+            </security-role>
+        </application-bnd>
+    </application>
+</server>

@@ -60,8 +60,10 @@ It can deploy CICS bundles containing any bundle parts.
 The plugin builds CICS bundles for any in-service version of CICS Transaction Server for z/OS (version 5.3 and later at the time of writing).
 
 However, if you're using the `deployCICSBundle` task of the plugin to deploy bundles to CICS, you must enable the CICS bundle deployment API. The CICS bundle deployment API is supported by the CMCI JVM server that must be set up in a WUI region or a single CICS region. See the [CICS TS doc](https://www.ibm.com/docs/en/cics-ts/latest?topic=suc-configuring-cmci-jvm-server-cics-bundle-deployment-api) for details. To use the `deployCICSBundle` task, make sure that:
- * For a CICSPlex SM environment, set up the CMCI JVM server in the WUI region of the CICSplex that contains the deployment target region. The WUI region must be at CICS TS 5.6 or later.  
- * For a single CICS region environment (SMSS), set up the CMCI JVM server in the deployment target region. The region must be at CICS TS 5.6 with APAR PH35122 applied, or later. 
+ * For a CICSPlex SM environment, set up the CMCI JVM server in the WUI region of the CICSplex that contains the deployment target region. The WUI region must be at CICS TS 5.6 or later.
+ * For a single CICS region environment (SMSS), set up the CMCI JVM server in the deployment target region. The region must be at CICS TS 5.6 with APAR PH35122 applied, or later.
+
+To use the `libertyAppConfigFile` and `addCICSAllAuthenticatedRole` properties on WAR and EAR bundle parts, the CICS region where the bundle is installed must have APAR PH70490 applied. See [Customizing the Liberty application element](#customizing-the-liberty-application-element).
 
 ## Gradle tasks
 The CICS bundle Gradle plugin contributes the following gradle tasks in sequential order.
@@ -254,6 +256,49 @@ dependencies {
     }
 }
 ```
+
+### Customizing the Liberty application element
+
+When a WAR or EAR bundle part is installed into a Liberty JVM server, CICS defines the application to Liberty on your behalf. You can customize that definition by supplying your own `<application>` element, in the same form that you would use in a Liberty `server.xml`. For example, you can use it to configure the application's class loader or private libraries.
+
+For `cicsBundleWar` and `cicsBundleEar` bundle parts, you can configure:
+
+* `addCICSAllAuthenticatedRole` - (Boolean, defaults to `true`) Controls whether CICS adds the `cicsAllAuthenticated` security role. Set to `false` to prevent CICS from adding this default role.
+* `libertyAppConfigFile` - (File, optional) Points to a Liberty configuration XML snippet containing an `<application>` element. The plugin copies this file into the bundle and references it from the bundle part descriptor.
+
+Example `<application>` XML snippet (e.g. `src/main/resources/server.xml`):
+
+```xml
+<server>
+    <application id="my-web-app" name="my-web-app" type="war" location="my-web-app.war">
+        <classloader delegation="parentLast"/>
+    </application>
+</server>
+```
+
+Configuring in `build.gradle`:
+
+```gradle
+dependencies {
+    // Closure syntax
+    cicsBundleWar {
+        dependency = cicsBundlePart 'org.codehaus.cargo:simple-war:1.7.7@war'
+        addCICSAllAuthenticatedRole = false
+        libertyAppConfigFile = file('src/main/resources/server.xml')
+    }
+    // Map syntax
+    cicsBundleEar(
+        dependency: cicsBundlePart('org.codehaus.cargo:simple-ear:1.7.7@ear'),
+        addCICSAllAuthenticatedRole: false,
+        libertyAppConfigFile: file('src/main/resources/server.xml')
+    )
+}
+```
+
+> [!IMPORTANT]
+> `libertyAppConfigFile` and `addCICSAllAuthenticatedRole` depend on attributes on the WAR and EAR bundle part descriptors provided by CICS APAR [PH70490](https://www.ibm.com/support/pages/apar/PH70490) ("Custom application configuration for Liberty applications defined in CICS bundles"). You can only use these properties if the target CICS region has PH70490 applied.
+
+For more information, see [Configuring Liberty applications in CICS bundles](https://www.ibm.com/docs/en/cics-ts/latest?topic=bundles-configuring-liberty-applications-in-cics).
 
 ## Samples
 Use of this plugin will vary depending on what you’re starting with and the structure of your project, for example, whether you'd like to create a separate Gradle module for the bundle configuration or you'd like to include it into your existing module. We have included some samples to demonstrate the different methods.  

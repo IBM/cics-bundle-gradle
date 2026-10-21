@@ -169,7 +169,7 @@ class GoldenPathTests extends AbstractTest {
         if (type == "osgi") {
             checkFileContains(getFileInDir(bundleBuildDir, "${bundleNameAndVersion}.${bindingExtension}") , ["<${bindingExtension} jvmserver=\"${jvmsOsgi}\" symbolicname=\"com.ibm.cics.standalone-osgi\" version=\"1.0.0\"/>"])
         } else {
-            checkFileContains(getFileInDir(bundleBuildDir, "${bundleNameAndVersion}.${bindingExtension}") , ["<${bindingExtension} jvmserver=\"${jvmsWlp}\" symbolicname=\"${bundleNameAndVersion}\"/>"])
+            checkFileContains(getFileInDir(bundleBuildDir, "${bundleNameAndVersion}.${bindingExtension}") , ["<${bindingExtension} addCICSAllAuth=\"true\" jvmserver=\"${jvmsWlp}\" symbolicname=\"${bundleNameAndVersion}\"/>"])
         }
 
 		checkManifest([
@@ -223,11 +223,11 @@ class GoldenPathTests extends AbstractTest {
 		])
 
 		checkFileContains(getFileInDir(bundleBuildDir, "${localOsgiNameAndVersion}.osgibundle"), ["<osgibundle jvmserver=\"${jvmsOsgi}\" symbolicname=\"com.ibm.cics.multi-osgi\" version=\"1.0.0\"/>"])
-		checkFileContains(getFileInDir(bundleBuildDir, "${localWarNameAndVersion}.warbundle"), ["<warbundle jvmserver=\"${jvmsWlp}\" symbolicname=\"${localWarNameAndVersion}\"/>"])
-		checkFileContains(getFileInDir(bundleBuildDir, "${localEarNameAndVersion}.earbundle"), ["<earbundle jvmserver=\"${jvmsWlp}\" symbolicname=\"${localEarNameAndVersion}\"/>"])
+		checkFileContains(getFileInDir(bundleBuildDir, "${localWarNameAndVersion}.warbundle"), ["<warbundle addCICSAllAuth=\"true\" jvmserver=\"${jvmsWlp}\" symbolicname=\"${localWarNameAndVersion}\"/>"])
+		checkFileContains(getFileInDir(bundleBuildDir, "${localEarNameAndVersion}.earbundle"), ["<earbundle addCICSAllAuth=\"true\" jvmserver=\"${jvmsWlp}\" symbolicname=\"${localEarNameAndVersion}\"/>"])
 		checkFileContains(getFileInDir(bundleBuildDir, "${remoteOsgiNameAndVersion}.osgibundle"), ["<osgibundle jvmserver=\"${jvmsOsgi}\" symbolicname=\"org.codehaus.cargo.simple-bundle\" version=\"1.7.0\"/>"])
-		checkFileContains(getFileInDir(bundleBuildDir, "${remoteWarNameAndVersion}.warbundle"), ["<warbundle jvmserver=\"${jvmsWlp}\" symbolicname=\"${remoteWarNameAndVersion}\"/>"])
-		checkFileContains(getFileInDir(bundleBuildDir, "${remoteEarNameAndVersion}.earbundle"), ["<earbundle jvmserver=\"${jvmsWlp}\" symbolicname=\"${remoteEarNameAndVersion}\"/>"])
+		checkFileContains(getFileInDir(bundleBuildDir, "${remoteWarNameAndVersion}.warbundle"), ["<warbundle addCICSAllAuth=\"true\" jvmserver=\"${jvmsWlp}\" symbolicname=\"${remoteWarNameAndVersion}\"/>"])
+		checkFileContains(getFileInDir(bundleBuildDir, "${remoteEarNameAndVersion}.earbundle"), ["<earbundle addCICSAllAuth=\"true\" jvmserver=\"${jvmsWlp}\" symbolicname=\"${remoteEarNameAndVersion}\"/>"])
 		checkFileContains(getFileInDir(bundleBuildDir, "${remoteEbaNameAndVersion}.ebabundle"), ["<ebabundle jvmserver=\"${jvmsWlp}\" symbolicname=\"${remoteEbaNameAndVersion}\"/>"])
 
 		checkManifest([
@@ -317,15 +317,15 @@ class GoldenPathTests extends AbstractTest {
 
 		given:
 		rootProjectName = bundleProjectName = "empty"
-		
+
 		copyTestProject()
-		
+
 		// Create a dummy WAR file to use as file-based dependency
 		def libsDir = new File(bundleProjectDir, "libs")
 		libsDir.mkdirs()
 		def warFile = new File(libsDir, "test-app.war")
 		warFile.createNewFile()
-		
+
 		// Add file-based dependency to build.gradle
 		buildFile << """
 		dependencies {
@@ -349,5 +349,54 @@ class GoldenPathTests extends AbstractTest {
 
 		where:
 		gradleVersion << GradleVersions.GRADLE_VERSIONS
+	}
+
+	@Unroll
+	def "Test extended CICS configuration #type project on Gradle #gradleVersion"(String gradleVersion, String type) {
+
+		def projectName = null
+		def archiveExtension = null
+		def bindingExtension = null
+		switch(type) {
+			case "war":
+				projectName = "extended-war"
+				archiveExtension = "war"
+				bindingExtension = "warbundle"
+				break
+			case "ear":
+				projectName = "extended-ear"
+				archiveExtension = "ear"
+				bindingExtension = "earbundle"
+				break
+			default:
+				assert false : "Unsupported extended type: $type"
+		}
+
+		given:
+		rootProjectName = bundleProjectName = projectName
+
+		copyTestProject()
+		def jvmsWlp = gradleProperties.getProperty("jvmsWlp")
+
+		when:
+		runGradleAndSucceed([BundlePlugin.DEPLOY_TASK_NAME], gradleVersion)
+
+		then:
+		checkBuildOutputFiles([
+				"${bundleNameAndVersion}.${archiveExtension}",
+				"${bundleNameAndVersion}.${bindingExtension}"
+		])
+
+		checkFileContains(getFileInDir(bundleBuildDir, "${bundleNameAndVersion}.${bindingExtension}"), ["<${bindingExtension} addCICSAllAuth=\"false\" appConfigFile=\"test.xml\" jvmserver=\"${jvmsWlp}\" symbolicname=\"${bundleNameAndVersion}\"/>"])
+
+		checkManifest([
+				"<define name=\"${bundleNameAndVersion}\" path=\"${bundleNameAndVersion}.${bindingExtension}\" type=\"http://www.ibm.com/xmlns/prod/cics/bundle/${bindingExtension.toUpperCase()}\"/>"
+		])
+
+		checkBundleArchiveFile()
+
+		// Parameterize test so the same test can be used for each project type
+		where:
+		[gradleVersion, type] << GradleVersions.onAllVersions(["war", "ear"])
 	}
 }
