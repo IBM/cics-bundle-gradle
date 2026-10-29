@@ -1,6 +1,6 @@
 plugins {
     id 'biz.aQute.bnd.builder' version '7.1.0'
-    id 'com.ibm.cics.bundle' version '1.0.12'
+    id 'com.ibm.cics.bundle' version '1.0.13'
 }
 
 group 'com.ibm.cics'
