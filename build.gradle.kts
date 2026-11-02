@@ -22,7 +22,7 @@ plugins {
 }
 
 group = "com.ibm.cics"
-version = "1.0.13"
+version = "1.0.14-SNAPSHOT"
 val isReleaseVersion by extra(!version.toString().endsWith("SNAPSHOT"))
 
 // Project metadata
@@ -40,6 +40,13 @@ gradlePlugin {
             implementationClass = "com.ibm.cics.cbgp.BundlePlugin"
             tags.set(listOf("cics", "cicsts", "cicsbundle", "cics-bundle"))
         }
+        register("com.ibm.cics.appdeploy") {
+            id = "com.ibm.cics.appdeploy"
+            displayName = "CICS AppDeploy Gradle Plugin"
+            description = "A Gradle plugin to upload a WAR file directly to a Liberty JVM server in CICS TS that has the cicsts:appDeploy-1.0 feature, without building a CICS bundle."
+            implementationClass = "com.ibm.cics.cbgp.AppDeployPlugin"
+            tags.set(listOf("cics", "cicsts", "liberty", "appdeploy"))
+        }
     }
 }
 
@@ -47,7 +54,7 @@ signing {
     setRequired { !gradle.taskGraph.hasTask(":publishToMavenLocal") }
     val signingKeyId: String? by project
     val signingKey: String? by project
-    val signingPassword: String? by project
+    val signingPassword: String? by project // pragma: allowlist secret
     useInMemoryPgpKeys(signingKeyId, signingKey, signingPassword)
     sign(publishing.publications)
 }
@@ -182,11 +189,12 @@ tasks.register("setReleaseVersion") {
     dependsOn("setVersion")
     doLast {
         val newVersion = project.property("newVersion") as String
-        val pluginVersionRegex = Regex("""(id 'com\.ibm\.cics\.bundle' version ')[^']+'""")
+        val pluginVersionRegex = Regex("""(id 'com\.ibm\.cics\.(?:bundle|appdeploy)' version ')[^']+'""")
         listOf(
             "samples/gradle-war-sample/standalone-war-demo/build.gradle",
             "samples/gradle-multipart-sample/gradle-bundle-demo/build.gradle",
             "samples/gradle-osgi-sample/build.gradle",
+            "samples/gradle-appdeploy-sample/build.gradle",
             "README.md"
         ).forEach { path ->
             val file = layout.projectDirectory.file(path).asFile

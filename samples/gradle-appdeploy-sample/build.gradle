@@ -1,0 +1,59 @@
+plugins {
+    id 'war'
+    id 'com.ibm.cics.appdeploy' version '1.0.14-SNAPSHOT'
+}
+
+group = 'com.ibm.cics'
+version = '0.0.1'
+
+java {
+    sourceCompatibility = JavaVersion.VERSION_1_8
+}
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    // JCICS dependency, used in SimpleServlet.java
+    compileOnly 'com.ibm.cics:com.ibm.cics.server:1.800.1-5.6-PH34012'
+    compileOnly 'javax.servlet:javax.servlet-api:4.0.1'
+    compileOnly 'javax.annotation:jsr250-api:1.0'
+}
+
+// Uploads the WAR straight to a Liberty JVM server that has the cicsts:appDeploy-1.0 feature. No CICS bundle is built.
+// "gradle uploadWarToLiberty" builds the WAR first, then uploads it.
+cicsAppDeploy {
+    // Base URL of the Liberty server. The plugin adds /appdeploy/uploadApp itself.
+    // Use https in a real environment.
+    serverUrl = 'http://localhost:9080'
+
+    // Supply credentials from Gradle properties or environment variables, never in this file.
+    // JWT for the server's jwt mode:
+    bearerToken = project.findProperty('cicsToken') ?: ''
+
+    // Alternative: Basic Authentication
+    //userName = project.findProperty('cicsUser') ?: ''
+    //password = project.findProperty('cicsPass') ?: ''
+
+    // Alternative: Client Certificate Authentication
+    //clientKeyStore = project.findProperty('clientKeyStorePath') ?: ''
+    //clientKeyStorePassword = project.findProperty('clientKeyStorePass') ?: ''
+
+    // Time to establish the connection, and to wait for the response, in milliseconds
+    //connectTimeout = 30000
+    //readTimeout = 300000
+
+    // Option 1: inline Liberty application XML
+    applicationXml = '''
+        <server>
+          <application id="demo-war-upload" location="demo-war-upload-0.0.1.war" type="war">
+            <context-root>/demo-war-upload</context-root>
+            <classloader delegation="parentLast"/>
+          </application>
+        </server>
+    '''
+
+    // Option 2: read the Liberty application XML from a file instead
+    //applicationXmlLocation = 'src/main/liberty/application.xml'
+}

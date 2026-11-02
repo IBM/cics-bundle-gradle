@@ -15,6 +15,7 @@ The table of contents is manually created and relies on the wording of the headi
   - [Deploy a CICS bundle](#deploy-a-cics-bundle)
   - [Advanced configuration](#advanced-configuration)
   - [Samples](#samples)
+  - [Upload a WAR to Liberty with AppDeploy](#upload-a-war-to-liberty-with-appdeploy)
   - [Troubleshooting](#troubleshooting)
 - [Contributing](#contributing)
 - [Support](#support)
@@ -24,7 +25,8 @@ This is a Gradle plugin that can be used to build CICS bundles, ready to be inst
 
 This project contains:
   * The CICS bundle Gradle plugin (`com.ibm.cics.bundle`), a Gradle plugin that can build CICS bundles, include selected bundle parts, and deploy them to CICS. It's available from both the [Gradle Plugin Portal](https://plugins.gradle.org/plugin/com.ibm.cics.bundle) and [Maven Central](https://search.maven.org/artifact/com.ibm.cics.bundle/com.ibm.cics.bundle.gradle.plugin).
-  * `samples`, a collection of samples that show different ways of using this plugin.
+  * The CICS AppDeploy Gradle plugin (`com.ibm.cics.appdeploy`), a Gradle plugin that uploads a WAR file straight to a Liberty JVM server in CICS, without building a CICS bundle. See [Upload a WAR to Liberty with AppDeploy](#upload-a-war-to-liberty-with-appdeploy).
+  * `samples`, a collection of samples that show different ways of using these plugins.
 
 ## Supported Gradle versions
 The CICS bundle Gradle plugin supports Gradle 7 to Gradle 9.
@@ -262,6 +264,9 @@ This sample is the quickest way to try the plugin out if you don't already have 
 
 [Standalone project sample (`gradle-war-sample`)](https://github.com/IBM/cics-bundle-gradle/tree/main/samples/gradle-war-sample)  
 If you already have a Gradle module and want to add extra configuration to it for quick use of the plugin, check out this sample. It shows you how to configure an existing WAR project to build a CICS bundle. You can either copy and paste the configuration to your WAR project or import the full sample to see how it works. A `README` is included in the sample with detailed instructions.
+
+## Upload a WAR to Liberty with AppDeploy
+The project also contains a second plugin, `com.ibm.cics.appdeploy`. It uploads a WAR file straight to a Liberty JVM server that has the `cicsts:appDeploy-1.0` feature, without building a CICS bundle. You configure it in a `cicsAppDeploy` block, and its `uploadWarToLiberty` task builds the WAR with the `war` task, then uploads it. It is the Gradle equivalent of `cics-appdeploy-maven-plugin`. See the [AppDeploy sample (`gradle-appdeploy-sample`)](https://github.com/IBM/cics-bundle-gradle/tree/main/samples/gradle-appdeploy-sample) for the parameters and the authentication modes.
 
 ## Troubleshooting
 ### `unable to find valid certification path to requested target` during deployment
