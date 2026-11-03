@@ -24,7 +24,7 @@ import org.gradle.api.tasks.bundling.War
  */
 class AppDeployPlugin : Plugin<Project> {
 	companion object {
-		const val UPLOAD_TASK_NAME = "uploadWarToLiberty"
+		const val UPLOAD_TASK_NAME = "deployWarToLiberty"
 		const val EXTENSION_NAME = "cicsAppDeploy"
 	}
 

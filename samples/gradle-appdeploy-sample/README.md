@@ -14,17 +14,17 @@ It is a different route from the `com.ibm.cics.bundle` plugin samples. Use this 
 
 The `build.gradle` is an ordinary WAR project with the `com.ibm.cics.appdeploy` plugin added. You don't configure how the WAR is built or packaged.
 
-Running the `uploadWarToLiberty` task does everything in order:
+Running the `deployWarToLiberty` task does everything in order:
 
 1. Gradle compiles the code and builds the WAR with the `war` task.
-2. The `uploadWarToLiberty` task sends the WAR, plus the Liberty application XML, as a `multipart/form-data` POST to your Liberty server.
+2. The `deployWarToLiberty` task sends the WAR, plus the Liberty application XML, as a `multipart/form-data` POST to your Liberty server.
 
 ## Running the sample
 
 Pass your credentials on the command line. Not recommended to put them in the `build.gradle`.
 
 ```sh
-./gradlew uploadWarToLiberty -PcicsToken=<token>
+./gradlew deployWarToLiberty -PcicsToken=<token>
 ```
 
 This builds the WAR for you and then uploads it, so you don't need to run `war` first. The task uploads war every time you run it.
@@ -54,10 +54,10 @@ These are the settings of the `cicsAppDeploy` extension.
 | `connectTimeout` | Time to establish the connection, in milliseconds. | `30000` |
 | `readTimeout` | Time to wait for the server's response, in milliseconds. | `300000` |
 
-The `uploadWarToLiberty` task also has a `warFile` property, the WAR to upload. It defaults to the output of the `war` task. Set it only to upload a WAR built another way:
+The `deployWarToLiberty` task also has a `warFile` property, the WAR to upload. It defaults to the output of the `war` task. Set it only to upload a WAR built another way:
 
 ```gradle
-tasks.named('uploadWarToLiberty') {
+tasks.named('deployWarToLiberty') {
     warFile = file('build/other/app.war')
 }
 ```

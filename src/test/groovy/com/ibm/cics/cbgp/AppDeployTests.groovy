@@ -26,7 +26,7 @@ import static com.github.tomakehurst.wiremock.client.WireMock.*
 import static com.github.tomakehurst.wiremock.core.WireMockConfiguration.wireMockConfig
 
 /**
- * Tests for the com.ibm.cics.appdeploy plugin and its uploadWarToLiberty task.
+ * Tests for the com.ibm.cics.appdeploy plugin and its deployWarToLiberty task.
  */
 class AppDeployTests extends Specification {
 

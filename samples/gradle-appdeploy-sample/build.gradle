@@ -22,7 +22,7 @@ dependencies {
 }
 
 // Uploads the WAR straight to a Liberty JVM server that has the cicsts:appDeploy-1.0 feature. No CICS bundle is built.
-// "gradle uploadWarToLiberty" builds the WAR first, then uploads it.
+// "gradle deployWarToLiberty" builds the WAR first, then uploads it.
 cicsAppDeploy {
     // Base URL of the Liberty server. The plugin adds /appdeploy/uploadApp itself.
     // Use https in a real environment.
