@@ -19,3 +19,8 @@ dependencies {
     compileOnly 'com.ibm.cics:com.ibm.cics.server:1.800.1-5.6-PH34012'
     compileOnly 'javax.annotation:jsr250-api:1.0'
 }
+
+// In Gradle 9+, the war plugin adds both JAR and WAR to the archives configuration.
+// We only want the WAR file, so remove the JAR from archives to prevent the CICS bundle
+// plugin from mistakenly picking up the JAR (which has no OSGi Bundle-SymbolicName header).
+configurations.archives.artifacts.removeAll { it.file.name.endsWith('.jar') && !it.file.name.endsWith('.war') }
