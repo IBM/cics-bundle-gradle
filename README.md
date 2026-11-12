@@ -18,6 +18,7 @@ The table of contents is manually created and relies on the wording of the headi
   - [Upload a WAR to Liberty with AppDeploy](#upload-a-war-to-liberty-with-appdeploy)
   - [Troubleshooting](#troubleshooting)
 - [Contributing](#contributing)
+- [Releasing the plugins](#releasing-the-plugins)
 - [Support](#support)
 - [License](#license)
 
@@ -318,6 +319,10 @@ For instructions on how to specify the bundles directory and grant access to `de
 ## Contributing
 
 We welcome contributions! Find out how in our [contribution guide](CONTRIBUTING.md).
+
+## Releasing the plugins
+
+`com.ibm.cics.bundle` and `com.ibm.cics.appdeploy` are one Gradle project with one version, so every release includes both. A release is started by running the Prepare Release workflow in GitHub Actions. The full step-by-step process is in [RELEASING.md](RELEASING.md).
 
 ## Support
 
