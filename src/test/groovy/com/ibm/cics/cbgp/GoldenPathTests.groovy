@@ -202,9 +202,11 @@ class GoldenPathTests extends AbstractTest {
 		def jvmsOsgi = gradleProperties.getProperty("jvmsOsgi")
 
 		when:
-		runGradleAndSucceed([BundlePlugin.DEPLOY_TASK_NAME], gradleVersion)
+		def result = runGradleAndSucceed([BundlePlugin.DEPLOY_TASK_NAME], gradleVersion)
 
 		then:
+		assert !result.output.contains(BuildBundleTask.ARCHIVES_CONFIGURATION_WARNING_PREFIX): "Unexpected warning about use of the 'archives' configuration"
+
 		checkBuildOutputFiles([
 				"${localOsgiNameAndVersion}.jar",
 				"${localOsgiNameAndVersion}.osgibundle",
@@ -241,6 +243,32 @@ class GoldenPathTests extends AbstractTest {
 		])
 
 		checkBundleArchiveFile()
+
+		where:
+		gradleVersion << GradleVersions.GRADLE_VERSIONS
+	}
+
+	/**
+	 * Consuming another project's 'archives' configuration is deprecated from Gradle 9+, so check that we give a warning.
+	 */
+	@Unroll
+	def "Test warning when archives configuration is used as bundle part on Gradle #gradleVersion"(String gradleVersion) {
+
+		given:
+		rootProjectName = "multi-project"
+		bundleProjectName = "multi-bundle"
+
+		copyTestProject()
+
+		buildFile.text = buildFile.text.replace("':multi-ear', configuration: 'earElements'", "':multi-ear', configuration: 'archives'")
+
+		when:
+		def result = runGradleAndSucceed([BundlePlugin.DEPLOY_TASK_NAME], gradleVersion)
+
+		then:
+		checkBuildOutputStrings(result, [
+				"$BuildBundleTask.ARCHIVES_CONFIGURATION_WARNING_PREFIX 'multi-ear'."
+		])
 
 		where:
 		gradleVersion << GradleVersions.GRADLE_VERSIONS

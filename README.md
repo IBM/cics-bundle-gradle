@@ -123,12 +123,48 @@ In either case, configure the Gradle module as follows:
             cicsBundlePart files(war)
         }
         ```
-    * If using the multi-part project option: To include a bundle part produced by a separate Gradle module, use the `project` notation with the `archives` configuration, and specify the path to the module.
+    * If using the multi-part project option: To include a bundle part produced by a separate Gradle module, first declare a consumable configuration in that module which exposes only the archive to include. A consumable configuration makes the archive available to other Gradle modules. The name of the configuration is up to you, but the names below follow Gradle's convention of naming consumable configurations `...Elements`.
+        * For a module that produces a WAR, add this to the WAR module's `build.gradle`:
+            ```gradle
+            configurations {
+                warElements {
+                    canBeResolved = false
+                    canBeConsumed = true
+                    outgoing.artifact(tasks.named('war'))
+                }
+            }
+            ```
+        * For a module that produces an EAR, add this to the EAR module's `build.gradle`:
+            ```gradle
+            configurations {
+                earElements {
+                    canBeResolved = false
+                    canBeConsumed = true
+                    outgoing.artifact(tasks.named('ear'))
+                }
+            }
+            ```
+        * For a module that produces a JAR, such as an OSGi bundle, add this to the module's `build.gradle`:
+            ```gradle
+            configurations {
+                jarElements {
+                    canBeResolved = false
+                    canBeConsumed = true
+                    outgoing.artifact(tasks.named('jar'))
+                }
+            }
+            ```
+        Then, in the bundle project, use the `project` notation to refer to that configuration, specifying the path to the module and the name of the configuration:
         ```gradle
         dependencies {
-            cicsBundlePart project(path: ':path-to-other-module', configuration: 'archives')
+            cicsBundlePart project(path: ':path-to-war-module', configuration: 'warElements')
+            cicsBundlePart project(path: ':path-to-ear-module', configuration: 'earElements')
+            cicsBundlePart project(path: ':path-to-jar-module', configuration: 'jarElements')
         }
         ```
+        > **Important:** Previous versions of the CICS Bundle Gradle plugin advised referring to the other module's `archives` configuration, as in `configuration: 'archives'`. Gradle has deprecated consuming the `archives` configuration, and it will fail with an error in Gradle 10, so existing projects that use it need to be updated to declare and refer to a consumable configuration as described above. The plugin logs a warning if it finds a bundle part dependency on an `archives` configuration.
+        >
+        > There is also a more immediate problem from Gradle 9 onwards. The `archives` configuration now contains every archive that the module builds. For a WAR module this means that it contains both the WAR and the JAR that the `java` plugin (applied implicitly by the `war` plugin) produces, so the JAR is added to the bundle as a second, unwanted bundle part, which typically fails the build because the JAR is not a valid OSGi bundle. In earlier Gradle versions `archives` contained only the WAR. See [Ear and War plugins contribute all artifacts to the archives configuration](https://docs.gradle.org/current/userguide/upgrading_major_version_9.html#ear_and_war_plugins_contribute_all_artifacts_to_the_archives_configuration) in the Gradle documentation.
     * To include a bundle part hosted in a remote repository such as Maven Central, use the default `module` notation, using any of the permitted formats.
         ```gradle
         dependencies {

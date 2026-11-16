@@ -10,8 +10,8 @@ repositories {
 }
 
 dependencies {
-    deploy project(path: ':standalone-ear-osgi', configuration: 'archives')
-    deploy project(path: ':standalone-ear-war', configuration: 'archives')
+    deploy project(path: ':standalone-ear-osgi', configuration: 'jarElements')
+    deploy project(path: ':standalone-ear-war', configuration: 'warElements')
     earlib (group: 'log4j', name: 'log4j', version: '1.2.15', ext: 'jar')
     cicsBundlePart files(ear)
 }

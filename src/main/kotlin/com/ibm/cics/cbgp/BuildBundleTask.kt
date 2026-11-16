@@ -19,6 +19,7 @@ import org.apache.commons.io.FileUtils
 import org.gradle.api.DefaultTask
 import org.gradle.api.GradleException
 import org.gradle.api.artifacts.Configuration
+import org.gradle.api.artifacts.ResolvedConfiguration
 import org.gradle.api.file.DirectoryProperty
 import org.gradle.api.tasks.*
 import java.io.File
@@ -61,6 +62,7 @@ open class BuildBundleTask : DefaultTask() {
 
 	companion object {
 		val VALID_DEPENDENCY_FILE_EXTENSIONS = listOf("ear", "jar", "war", "eba")
+		const val ARCHIVES_CONFIGURATION_WARNING_PREFIX = "WARNING: '${BundlePlugin.BUNDLE_DEPENDENCY_CONFIGURATION_NAME}' depends on the 'archives' configuration of project"
 	}
 
 	/**
@@ -175,10 +177,13 @@ open class BuildBundleTask : DefaultTask() {
 			return
 		}
 	
+		val archivesWarningsByFile = findArchivesConfigurationWarnings(resolved)
+
 		val extraConfigMap = createExtraConfigMap()
 	
 		resolvedFiles.forEach { file ->
 			logger.lifecycle("Adding Java-based bundle part: '$file'")
+			archivesWarningsByFile[file]?.let { logger.warn("\n$it\n") }
 	
 			// If extra config has been provided for this bundle part then use it
 			var binding: AbstractJavaBundlePartBinding? = extraConfigMap[file.name]
@@ -191,16 +196,40 @@ open class BuildBundleTask : DefaultTask() {
 					else -> throw GradleException("Unsupported file extension '${file.extension}' for Java-based bundle part '${file.name}'. Supported extensions are: $VALID_DEPENDENCY_FILE_EXTENSIONS.")
 				}
 			}
-			binding.file = file
-			binding.applyDefaults(defaultJVMServer)
-	
+
 			try {
+				binding.file = file
+				binding.applyDefaults(defaultJVMServer)	
 				bundlePublisher.addResource(binding.toBundlePart())
-			} catch (e: PublishException) {
+			} catch (e: Exception) {
 				throw GradleException("Failure adding Java-based bundle part '${binding.name}' : ${e.message}", e)
 			}
 		}
 		return
+	}
+
+	/**
+	 * Create a map of bundle part file to a warning about it having come from a dependency on another project's
+	 * 'archives' configuration. Gradle deprecates consuming 'archives' from Gradle 9 and will fail with an error in
+	 * Gradle 10. It also contains every archive built by the project, so from Gradle 9 a WAR project's 'archives'
+	 * includes a JAR as well as the WAR.
+	 */
+	private fun findArchivesConfigurationWarnings(resolved: ResolvedConfiguration): Map<File, String> {
+		val warningsByFile = HashMap<File, String>()
+		resolved.firstLevelModuleDependencies
+			.filter { it.configuration == "archives" }
+			.forEach { dependency ->
+				val warning = """
+					|$ARCHIVES_CONFIGURATION_WARNING_PREFIX '${dependency.moduleName}'.
+					|    Gradle has deprecated consuming 'archives', and will fail with an error in Gradle 10. From Gradle 9 it also
+					|    contains every archive the project builds, such as the JAR in a WAR project, which would be added to the
+					|    bundle as an extra, unwanted bundle part.
+					|    To fix this, declare a consumable configuration in project '${dependency.moduleName}' that exposes just the archive
+					|    to include, and refer to that configuration in the dependency. See the plugin README for details.
+					""".trimMargin()
+				dependency.moduleArtifacts.forEach { warningsByFile[it.file] = warning }
+			}
+		return warningsByFile
 	}
 
 	/**

@@ -26,7 +26,7 @@ cicsBundle {
 
 dependencies {
     cicsBundleOsgi {
-        dependency = cicsBundlePart project(path: 'multi-osgi', configuration: 'archives')
+        dependency = cicsBundlePart project(path: 'multi-osgi', configuration: 'jarElements')
         versionRange = "[1.0.0,2.0.0)"
     }
 }

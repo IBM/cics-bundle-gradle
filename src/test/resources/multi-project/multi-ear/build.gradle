@@ -9,7 +9,16 @@ repositories {
 }
 
 dependencies {
-    deploy project(path: ':multi-ear-osgi', configuration: 'archives')
-    deploy project(path: ':multi-ear-war', configuration: 'archives')
+    deploy project(path: ':multi-ear-osgi', configuration: 'jarElements')
+    deploy project(path: ':multi-ear-war', configuration: 'warElements')
     earlib (group: 'log4j', name: 'log4j', version: '1.2.15', ext: 'jar')
+}
+
+// Expose the EAR for consumption by the CICS bundle project
+configurations {
+    earElements {
+        canBeResolved = false
+        canBeConsumed = true
+        outgoing.artifact(tasks.named('ear'))
+    }
 }
