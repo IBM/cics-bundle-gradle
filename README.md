@@ -7,6 +7,7 @@ The table of contents is manually created and relies on the wording of the headi
 
 - [About this project](#cics-bundle-gradle-plugin-comibmcicsbundle)
 - The CICS bundle Gradle plugin
+  - [Supported Gradle versions](#supported-gradle-versions)
   - [Supported bundle part types](#supported-bundle-part-types)
   - [Prerequisites](#prerequisites)
   - [Gradle tasks](#gradle-tasks)
@@ -28,6 +29,12 @@ This project contains:
 
 ## Supported Gradle versions
 The CICS bundle Gradle plugin supports Gradle 7 to Gradle 9.
+
+> **Breaking change:** Before you upgrade to Gradle 9, you will need to update any CICS bundle projects you have that use the `archives` configuration to include a bundle part from another Gradle module, like this: `project(path: ..., configuration: 'archives')`. Earlier versions of this documentation advised using this approach, but from Gradle 9, the behaviour of the `archives` configuration has changed, so that it now includes every archive that the module builds. For a WAR module, that includes both a WAR and a JAR archive, so the JAR is added to the bundle as a second, unwanted bundle part. This typically causes the build to fail, because the JAR is not a valid OSGi bundle. See [Ear and War plugins contribute all artifacts to the archives configuration](https://docs.gradle.org/current/userguide/upgrading_major_version_9.html#ear_and_war_plugins_contribute_all_artifacts_to_the_archives_configuration) in the Gradle documentation.
+>
+> In addition, consuming the `archives` configuration is deprecated in Gradle 9, and will fail with an error in Gradle 10.
+>
+> See [Build and package a CICS bundle](#build-and-package-a-cics-bundle) for details of how to update your projects to use a new approach, which involves declaring a consumable configuration in each bundle part module to expose only the desired archive, and then referencing that configuration (instead of the `archives` configuration) in the CICS bundle project. This approach works with Gradle 7, 8, and 9, so you can make the change before you upgrade.
 
 ## Supported bundle part types
 The CICS bundle Gradle plugin supports building CICS bundles that contain the following bundle parts:
@@ -162,9 +169,7 @@ In either case, configure the Gradle module as follows:
             cicsBundlePart project(path: ':path-to-jar-module', configuration: 'jarElements')
         }
         ```
-        > **Important:** Previous versions of the CICS Bundle Gradle plugin advised referring to the other module's `archives` configuration, as in `configuration: 'archives'`. Gradle has deprecated consuming the `archives` configuration, and it will fail with an error in Gradle 10, so existing projects that use it need to be updated to declare and refer to a consumable configuration as described above. The plugin logs a warning if it finds a bundle part dependency on an `archives` configuration.
-        >
-        > There is also a more immediate problem from Gradle 9 onwards. The `archives` configuration now contains every archive that the module builds. For a WAR module this means that it contains both the WAR and the JAR that the `java` plugin (applied implicitly by the `war` plugin) produces, so the JAR is added to the bundle as a second, unwanted bundle part, which typically fails the build because the JAR is not a valid OSGi bundle. In earlier Gradle versions `archives` contained only the WAR. See [Ear and War plugins contribute all artifacts to the archives configuration](https://docs.gradle.org/current/userguide/upgrading_major_version_9.html#ear_and_war_plugins_contribute_all_artifacts_to_the_archives_configuration) in the Gradle documentation.
+        > **Important:** Don't refer to the other module's `archives` configuration, as previous versions of this documentation advised. See the breaking change in [Supported Gradle versions](#supported-gradle-versions). The plugin logs a warning if it finds a bundle part dependency on an `archives` configuration.
     * To include a bundle part hosted in a remote repository such as Maven Central, use the default `module` notation, using any of the permitted formats.
         ```gradle
         dependencies {

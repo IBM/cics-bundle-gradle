@@ -199,7 +199,7 @@ open class BuildBundleTask : DefaultTask() {
 
 			try {
 				binding.file = file
-				binding.applyDefaults(defaultJVMServer)	
+				binding.applyDefaults(defaultJVMServer)
 				bundlePublisher.addResource(binding.toBundlePart())
 			} catch (e: Exception) {
 				throw GradleException("Failure adding Java-based bundle part '${binding.name}' : ${e.message}", e)
@@ -225,7 +225,7 @@ open class BuildBundleTask : DefaultTask() {
 					|    contains every archive the project builds, such as the JAR in a WAR project, which would be added to the
 					|    bundle as an extra, unwanted bundle part.
 					|    To fix this, declare a consumable configuration in project '${dependency.moduleName}' that exposes just the archive
-					|    to include, and refer to that configuration in the dependency. See the plugin README for details.
+					|    to include, and refer to that configuration in the dependency. See https://github.com/IBM/cics-bundle-gradle#supported-gradle-versions for details.
 					""".trimMargin()
 				dependency.moduleArtifacts.forEach { warningsByFile[it.file] = warning }
 			}
