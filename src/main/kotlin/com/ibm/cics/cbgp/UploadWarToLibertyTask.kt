@@ -256,7 +256,7 @@ open class UploadWarToLibertyTask : DefaultTask() {
 	 * Validates the HTTP response code.
 	 */
 	private fun validateResponse(connection: HttpURLConnection, responseCode: Int) {
-		if (responseCode != 200 && responseCode != 201) {
+		if (responseCode !in 200..202) {
 			val message = "Upload failed with code $responseCode: ${getErrorMessage(connection)}"
 			// 3xx (redirects are never followed) and 4xx (refused) cannot succeed on retry, and
 			// retrying bad credentials could lock the user ID.
