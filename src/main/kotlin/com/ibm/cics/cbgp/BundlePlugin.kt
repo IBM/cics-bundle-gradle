@@ -71,7 +71,7 @@ class BundlePlugin : Plugin<Project> {
 		}
 
 
-		project.configurations.create("cicsBundle") {
+		val cicsBundleConfiguration = project.configurations.create("cicsBundle") {
 			isCanBeConsumed = true
 			isCanBeResolved = false
 			val objects = project.objects
@@ -82,6 +82,11 @@ class BundlePlugin : Plugin<Project> {
 		}
 
 		project.artifacts.add("cicsBundle", packageTaskProvider)
+
+		// From Gradle 9, 'assemble' no longer implicitly builds the artifacts of custom configurations, so declare it explicitly
+		project.tasks.named(BasePlugin.ASSEMBLE_TASK_NAME) {
+			dependsOn(cicsBundleConfiguration.artifacts)
+		}
 
 		// Define deploy task
 		val deployTaskProvider = project.tasks.register(DEPLOY_TASK_NAME, DeployBundleTask::class.java) {
