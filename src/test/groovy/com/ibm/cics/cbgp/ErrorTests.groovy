@@ -48,6 +48,34 @@ class ErrorTests extends AbstractTest {
 		gradleVersion << GradleVersions.GRADLE_VERSIONS
 	}
 
+	/**
+	 * From Gradle 9 the 'archives' configuration of a WAR project contains the JAR from the implicitly applied java
+	 * plugin as well as the WAR, so the JAR is added as a second bundle part and the build fails because it isn't a
+	 * valid OSGi bundle. Check we warn about the use of 'archives' to explain the cause of the failure.
+	 */
+	@Unroll
+	def "Test warning when archives configuration of WAR project is used as bundle part on Gradle #gradleVersion"(String gradleVersion) {
+
+		given:
+		rootProjectName = "multi-project"
+		bundleProjectName = "multi-bundle"
+
+		copyTestProject()
+
+		buildFile.text = buildFile.text.replace("':multi-war', configuration: 'warElements'", "':multi-war', configuration: 'archives'")
+
+		when:
+		def result = runGradleAndFail([BundlePlugin.DEPLOY_TASK_NAME], gradleVersion)
+
+		then:
+		checkBuildOutputStrings(result, [
+				"$BuildBundleTask.ARCHIVES_CONFIGURATION_WARNING_PREFIX 'multi-war'."
+		])
+
+		where:
+		gradleVersion << GradleVersions.GRADLE_VERSIONS.findAll { it.startsWith("9.") }
+	}
+
 	@Unroll
 	def "Test cicsBundle extension missing #propertiesToRemove on Gradle version #gradleVersion"(List<String> propertiesToRemove, List<String> expectedMessages, String gradleVersion) {
 

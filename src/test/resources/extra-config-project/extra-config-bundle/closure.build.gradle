@@ -23,16 +23,16 @@ dependencies {
         name = 'new-ear-module'
     }
     cicsBundleOsgi {
-        dependency = cicsBundlePart project(path: ':extra-config-osgi', configuration: 'archives')
+        dependency = cicsBundlePart project(path: ':extra-config-osgi', configuration: 'jarElements')
         name = 'new-osgi-project'
         jvmserver = project.jvmsOsgi
     }
     cicsBundleWar {
-        dependency = cicsBundlePart project(path: ':extra-config-war', configuration: 'archives')
+        dependency = cicsBundlePart project(path: ':extra-config-war', configuration: 'warElements')
         name = 'new-war-project'
     }
     cicsBundleEar {
-        dependency = cicsBundlePart project(path: ':extra-config-ear', configuration: 'archives')
+        dependency = cicsBundlePart project(path: ':extra-config-ear', configuration: 'earElements')
         name = 'new-ear-project'
     }
     cicsBundleOsgi {

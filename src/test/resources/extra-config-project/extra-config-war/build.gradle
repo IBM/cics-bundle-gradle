@@ -16,6 +16,11 @@ dependencies {
     providedCompile (group: 'javax.servlet', name: 'javax.servlet-api', version: '3.1.0')
 }
 
-// In Gradle 9+, the war plugin adds both JAR and WAR to archives configuration
-// We only want the WAR file, so remove JAR from archives
-configurations.archives.artifacts.removeAll { it.file.name.endsWith('.jar') && !it.file.name.endsWith('.war') }
+// Expose the WAR for consumption by the CICS bundle project
+configurations {
+    warElements {
+        canBeResolved = false
+        canBeConsumed = true
+        outgoing.artifact(tasks.named('war'))
+    }
+}

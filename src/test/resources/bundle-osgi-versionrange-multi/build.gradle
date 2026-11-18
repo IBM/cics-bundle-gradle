@@ -26,11 +26,11 @@ cicsBundle {
 
 dependencies {
     cicsBundleOsgi {
-        dependency = cicsBundlePart project(path: ':multi-osgi', configuration:'archives')
+        dependency = cicsBundlePart project(path: ':multi-osgi', configuration:'jarElements')
         versionRange = "[1.0.0,2.0.0)"
     }
     cicsBundleOsgi {
-        dependency = cicsBundlePart project(path: ':multi-osgi-repeat', configuration:'archives')
+        dependency = cicsBundlePart project(path: ':multi-osgi-repeat', configuration:'jarElements')
         versionRange = "[1.0.0,3.0.0)"
     }
 }

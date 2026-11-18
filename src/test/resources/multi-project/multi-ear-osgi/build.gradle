@@ -25,3 +25,12 @@ jar {
         )
     }
 }
+
+// Expose the JAR for consumption by the CICS bundle project
+configurations {
+    jarElements {
+        canBeResolved = false
+        canBeConsumed = true
+        outgoing.artifact(tasks.named('jar'))
+    }
+}

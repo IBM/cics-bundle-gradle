@@ -28,5 +28,5 @@ cicsBundle {
 
 dependencies {
     cicsBundlePart group: 'org.codehaus.cargo', name: 'simple-war', version: '1.9.9', ext: 'war'
-    cicsBundlePart project(path:':gradle-war-demo', configuration: 'archives')
+    cicsBundlePart project(path:':gradle-war-demo', configuration: 'warElements')
 }

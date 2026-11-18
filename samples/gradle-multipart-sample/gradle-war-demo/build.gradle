@@ -19,3 +19,12 @@ dependencies {
     compileOnly 'com.ibm.cics:com.ibm.cics.server:1.800.1-5.6-PH34012'
     compileOnly 'javax.annotation:jsr250-api:1.0'
 }
+
+// Expose the WAR for consumption by the CICS bundle project
+configurations {
+    warElements {
+        canBeResolved = false
+        canBeConsumed = true
+        outgoing.artifact(tasks.named('war'))
+    }
+}
