@@ -48,3 +48,7 @@ jobs:
       - name: Build Gradle Multipart Sample
         working-directory: ./samples/gradle-multipart-sample
         run: ./gradlew build -PcicsUser=user -PcicsPass=pass --no-daemon --info --stacktrace --include-build ../..
+
+      - name: Build Gradle AppDeploy Sample
+        working-directory: ./samples/gradle-appdeploy-sample
+        run: ./gradlew build --no-daemon --info --stacktrace --include-build ../..

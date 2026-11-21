@@ -1,0 +1,18 @@
+plugins {
+    id 'war'
+    id 'com.ibm.cics.appdeploy'
+}
+
+version '1.0.0'
+
+// Each test passes the settings it needs as -P properties. Anything not passed stays at its default.
+cicsAppDeploy {
+    serverUrl = project.findProperty('uploadUrl') ?: ''
+    applicationXml = project.findProperty('uploadAppXml') ?: ''
+    applicationXmlLocation = project.findProperty('uploadAppXmlLocation') ?: ''
+    userName = project.findProperty('uploadUser') ?: ''
+    password = project.findProperty('uploadPassword') ?: ''
+    bearerToken = project.findProperty('uploadToken') ?: ''
+    clientKeyStore = project.findProperty('uploadKeyStore') ?: ''
+    clientKeyStorePassword = project.findProperty('uploadKeyStorePassword') ?: ''
+}
